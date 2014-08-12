@@ -10,7 +10,7 @@
         <version>3.3-RC4-SNAPSHOT</version>
     </parent>
 
-    <artifactId>hazelcast-sessions</artifactId>
+    <artifactId>hazelcast-enterprise-sessions</artifactId>
     <packaging>pom</packaging>
     <version>3.3-RC4-SNAPSHOT</version>
     <name>Hazelcast Enterprise Session Replication</name>

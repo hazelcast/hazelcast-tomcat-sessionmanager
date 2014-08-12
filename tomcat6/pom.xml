@@ -14,7 +14,7 @@
     </properties>
     <parent>
         <groupId>com.hazelcast</groupId>
-        <artifactId>hazelcast-sessions</artifactId>
+        <artifactId>hazelcast-enterprise-sessions</artifactId>
         <version>3.3-RC4-SNAPSHOT</version>
     </parent>
 
