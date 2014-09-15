@@ -42,9 +42,10 @@
     </organization>
 
     <modules>
-        <module>sessions-core</module>
+        <module>tomcat-core</module>
         <module>tomcat6</module>
         <module>tomcat7</module>
+        <module>jetty9</module>
     </modules>
 
     <dependencies>
