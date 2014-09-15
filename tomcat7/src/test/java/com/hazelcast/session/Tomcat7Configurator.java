@@ -2,7 +2,6 @@ package com.hazelcast.session;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.startup.Tomcat;
 
 import java.io.File;
@@ -16,7 +15,7 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
     private Tomcat tomcat;
 
 
-    private HazelcastSessionManager manager;
+    private SessionManager manager;
 
 
     @Override
@@ -52,8 +51,8 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
         }
 
         this.manager = new HazelcastSessionManager();
-        context.setManager(manager);
-        updateManager(this.manager);
+        context.setManager((HazelcastSessionManager)manager);
+        updateManager((HazelcastSessionManager)manager);
         context.setCookies(true);
         context.setBackgroundProcessorDelay(1);
         context.setReloadable(true);
@@ -79,8 +78,8 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
     }
 
     @Override
-    public ManagerBase getManager() {
-        return (ManagerBase)manager;
+    public SessionManager getManager() {
+        return manager;
     }
 
     private void updateManager(HazelcastSessionManager manager) {

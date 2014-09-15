@@ -1,7 +1,5 @@
 package com.hazelcast.session;
 
-import org.apache.catalina.session.ManagerBase;
-
 /**
  * Created by mesutcelik on 6/12/14.
  */
@@ -44,7 +42,7 @@ public abstract class WebContainerConfigurator<T> {
     public abstract void stop() throws Exception;
     public abstract void reload();
 
-    public abstract ManagerBase getManager();
+    public abstract SessionManager getManager();
 
 
 }

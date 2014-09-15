@@ -5,7 +5,6 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardServer;
-import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.startup.Embedded;
 
 import java.io.File;
@@ -17,7 +16,7 @@ import java.net.URL;
 public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
 
     private Embedded tomcat;
-    private HazelcastSessionManager manager;
+    private SessionManager manager;
 
     private static String DEFAULT_HOST = "localhost";
 
@@ -57,8 +56,8 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
         host.addChild(context);
 
         this.manager = new HazelcastSessionManager();
-        context.setManager(manager);
-        updateManager(this.manager);
+        context.setManager((HazelcastSessionManager)manager);
+        updateManager((HazelcastSessionManager)manager);
         context.setBackgroundProcessorDelay(1);
         context.setCookies(true);
         // new File( "webapp" + File.separator + "webapp" ).mkdirs();
@@ -87,8 +86,8 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
     }
 
     @Override
-    public ManagerBase getManager() {
-        return (ManagerBase)manager;
+    public SessionManager getManager() {
+        return manager;
     }
 
 
