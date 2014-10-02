@@ -20,7 +20,7 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
 
     @Override
     public Tomcat configure() throws Exception {
-        final URL root = new URL(TestServlet.class.getResource("/"), "../../../sessions-core/target/test-classes");
+        final URL root = new URL(TestServlet.class.getResource("/"), "../../../tomcat-core/target/test-classes");
         // use file to get correct separator char, replace %20 introduced by URL for spaces
         final String cleanedRoot = new File(root.getFile().replaceAll("%20", " ")).toString();
 
