@@ -46,6 +46,7 @@
         <module>tomcat6</module>
         <module>tomcat7</module>
         <module>jetty9</module>
+        <module>jetty8</module>
     </modules>
 
     <dependencies>
