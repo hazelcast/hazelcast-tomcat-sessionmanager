@@ -29,14 +29,14 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <artifactSet>
                         <includes>
-                            <include>com.hazelcast:sessions-core</include>
+                            <include>com.hazelcast:tomcat-core</include>
                         </includes>
                     </artifactSet>
                     <filters>
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
-                                <exclude>META-INF/maven/com.hazelcast/sessions-core/*</exclude>
+                                <exclude>META-INF/maven/com.hazelcast/tomcat-core/*</exclude>
                             </excludes>
                         </filter>
                     </filters>
