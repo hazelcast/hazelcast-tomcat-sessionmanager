@@ -87,8 +87,10 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         super.generateSessionId();
 
-        HazelcastSessionChangeValve hazelcastSessionChangeValve = new HazelcastSessionChangeValve(this);
-        getContainer().getPipeline().addValve(hazelcastSessionChangeValve);
+        if (isSticky()) {
+            HazelcastSessionChangeValve hazelcastSessionChangeValve = new HazelcastSessionChangeValve(this);
+            getContainer().getPipeline().addValve(hazelcastSessionChangeValve);
+        }
 
         if (isDeferredEnabled()) {
             HazelcastSessionCommitValve hazelcastSessionCommitValve = new HazelcastSessionCommitValve(this);
@@ -220,19 +222,21 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             return null;
         }
 
-        if (sessions.containsKey(id)) {
-            return sessions.get(id);
-        }
+        if (!isSticky() || (isSticky() && !sessions.containsKey(id))) {
 
-        if (isSticky()) {
-            log.info("Sticky Session is currently enabled."
-                    + "Some failover occured so reading session from Hazelcast map:" + getMapName());
-        }
+            if (isSticky()) {
+                log.info("Sticky Session is currently enabled."
+                        + "Some failover occured so reading session from Hazelcast map:" + getMapName());
+            }
+
         HazelcastSession hazelcastSession = sessionMap.get(id);
         if (hazelcastSession == null) {
             log.info("No Session found for:" + id);
             return null;
         }
+
+        hazelcastSession.access();
+        hazelcastSession.endAccess();
 
         hazelcastSession.setSessionManager(this);
 
@@ -242,8 +246,12 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         sessionMap.remove(id);
         sessionMap.put(id, hazelcastSession);
 
-
         return hazelcastSession;
+        } else {
+            return sessions.get(id);
+
+        }
+
     }
 
     public void commit(Session session) {

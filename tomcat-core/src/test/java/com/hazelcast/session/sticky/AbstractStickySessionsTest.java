@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Created by mesutcelik on 5/5/14.
@@ -134,6 +135,25 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
         assertEquals("key",commatSeperatedAttributeNames);
 
     }
+
+    @Test(timeout = 60000)
+    public void test_isNew() throws Exception {
+        CookieStore cookieStore = new BasicCookieStore();
+
+        assertEquals("true", executeRequest("isNew", SERVER_PORT_1, cookieStore));
+        assertEquals("false", executeRequest("isNew", SERVER_PORT_1, cookieStore));
+    }
+
+    @Test(timeout = 60000)
+    public void test_LastAccessTime() throws Exception {
+        CookieStore cookieStore = new BasicCookieStore();
+        String lastAccessTime1 = executeRequest("lastAccessTime", SERVER_PORT_1, cookieStore);
+        String lastAccessTime2 = executeRequest("lastAccessTime", SERVER_PORT_1, cookieStore);
+        String lastAccessTime3 = executeRequest("lastAccessTime", SERVER_PORT_1, cookieStore);
+
+        assertNotEquals(lastAccessTime1,lastAccessTime3);
+    }
+
 
 //    @Test
 //    public void testCleanupAfterSessionExpire() throws Exception {

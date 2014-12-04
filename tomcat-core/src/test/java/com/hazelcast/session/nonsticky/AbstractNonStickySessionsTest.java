@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Created by mesutcelik on 5/5/14.
@@ -101,22 +102,6 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
         assertEquals(0, map.size());
     }
 
-//    @Test
-//    public void testSessionExpire() throws Exception {
-//
-//        int DEFAULT_SESSION_TIMEOUT = 10;
-//        CookieStore cookieStore = new BasicCookieStore();
-//        executeRequest("write", SERVER_PORT_1, cookieStore);
-//        String value = executeRequest("read", SERVER_PORT_1, cookieStore);
-//        assertEquals("value", value);
-//
-//        sleepSeconds(DEFAULT_SESSION_TIMEOUT+instance1.getManager().getProcessExpiresFrequency());
-//
-//
-//        value = executeRequest("read", SERVER_PORT_2, cookieStore);
-//        assertEquals("null", value);
-//    }
-
     @Test(timeout = 60000)
     public void testAttributeNames() throws Exception {
 
@@ -134,25 +119,24 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
         assertEquals("key",commatSeperatedAttributeNames);
 
     }
+    @Test(timeout = 60000)
+    public void test_isNew() throws Exception {
+        CookieStore cookieStore = new BasicCookieStore();
 
-//    @Test
-//    public void testCleanupAfterSessionExpire() throws Exception {
-//
-//        int DEFAULT_SESSION_TIMEOUT = 10;
-//        CookieStore cookieStore = new BasicCookieStore();
-//        executeRequest("write", SERVER_PORT_1, cookieStore);
-//        String value = executeRequest("read", SERVER_PORT_1, cookieStore);
-//        assertEquals("value", value);
-//
-//        sleepSeconds(DEFAULT_SESSION_TIMEOUT+instance1.getManager().getProcessExpiresFrequency());
-//
-//
-//        HazelcastInstance instance = Hazelcast.newHazelcastInstance();
-//        IMap<Object, Object> map = instance.getMap("default");
-//        assertEquals(0,map.size());
-//
-//
-//
-//    }
+        assertEquals("true", executeRequest("isNew", SERVER_PORT_1, cookieStore));
+        assertEquals("false", executeRequest("isNew", SERVER_PORT_2, cookieStore));
+    }
+
+    @Test(timeout = 60000)
+    public void test_LastAccessTime() throws Exception {
+        CookieStore cookieStore = new BasicCookieStore();
+        String lastAccessTime1 = executeRequest("lastAccessTime", SERVER_PORT_1, cookieStore);
+        String lastAccessTime2 = executeRequest("lastAccessTime", SERVER_PORT_2, cookieStore);
+        String lastAccessTime3 = executeRequest("lastAccessTime", SERVER_PORT_2, cookieStore);
+
+        assertNotEquals(lastAccessTime1,lastAccessTime3);
+    }
+
+
 
 }
