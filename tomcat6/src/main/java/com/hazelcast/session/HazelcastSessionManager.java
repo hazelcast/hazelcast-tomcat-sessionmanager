@@ -100,15 +100,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         super.generateSessionId();
 
-        if (isSticky()) {
-        HazelcastSessionChangeValve hazelcastSessionChangeValve = new HazelcastSessionChangeValve(this);
-        getContainer().getPipeline().addValve(hazelcastSessionChangeValve);
-        }
-
-        if (isDeferredEnabled()) {
-            HazelcastSessionCommitValve hazelcastSessionCommitValve = new HazelcastSessionCommitValve(this);
-            getContainer().getPipeline().addValve(hazelcastSessionCommitValve);
-        }
+        configureValves();
 
         HazelcastInstance instance;
         if (isClientOnly()) {
@@ -129,7 +121,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             if (contextPath == null || contextPath.equals("/") || contextPath.equals("")) {
                 mapName = "empty_session_replication";
             } else {
-                mapName = contextPath.substring(1, contextPath.length())  + "_session_replication";
+                mapName = contextPath.substring(1, contextPath.length()) + "_session_replication";
             }
             sessionMap = instance.getMap(mapName);
         } else {
@@ -168,6 +160,19 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         log.info("HazelcastSessionManager started...");
 
+    }
+
+    private void configureValves() {
+
+        if (isSticky()) {
+            HazelcastSessionChangeValve hazelcastSessionChangeValve = new HazelcastSessionChangeValve(this);
+            getContainer().getPipeline().addValve(hazelcastSessionChangeValve);
+        }
+
+        if (isDeferredEnabled()) {
+            HazelcastSessionCommitValve hazelcastSessionCommitValve = new HazelcastSessionCommitValve(this);
+            getContainer().getPipeline().addValve(hazelcastSessionCommitValve);
+        }
     }
 
 

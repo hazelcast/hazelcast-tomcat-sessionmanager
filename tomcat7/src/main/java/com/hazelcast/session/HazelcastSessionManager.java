@@ -87,15 +87,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         super.generateSessionId();
 
-        if (isSticky()) {
-            HazelcastSessionChangeValve hazelcastSessionChangeValve = new HazelcastSessionChangeValve(this);
-            getContainer().getPipeline().addValve(hazelcastSessionChangeValve);
-        }
-
-        if (isDeferredEnabled()) {
-            HazelcastSessionCommitValve hazelcastSessionCommitValve = new HazelcastSessionCommitValve(this);
-            getContainer().getPipeline().addValve(hazelcastSessionCommitValve);
-        }
+        configureValves();
 
         HazelcastInstance instance;
         if (isClientOnly()) {
@@ -156,6 +148,18 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         log.info("HazelcastSessionManager started...");
         setState(LifecycleState.STARTING);
 
+    }
+
+    private void configureValves() {
+        if (isSticky()) {
+            HazelcastSessionChangeValve hazelcastSessionChangeValve = new HazelcastSessionChangeValve(this);
+            getContainer().getPipeline().addValve(hazelcastSessionChangeValve);
+        }
+
+        if (isDeferredEnabled()) {
+            HazelcastSessionCommitValve hazelcastSessionCommitValve = new HazelcastSessionCommitValve(this);
+            getContainer().getPipeline().addValve(hazelcastSessionCommitValve);
+        }
     }
 
 
