@@ -63,7 +63,7 @@ public class TestServlet extends HttpServlet {
             session.setAttribute("second-key", "second-value");
             resp.getWriter().write("true");
         }  else if (req.getRequestURI().endsWith("isNew")) {
-            resp.getWriter().write(session.isNew() == true ? "true" : "false");
+            resp.getWriter().write(session.isNew() ? "true" : "false");
         } else if (req.getRequestURI().endsWith("lastAccessTime")) {
             resp.getWriter().write(String.valueOf(session.getLastAccessedTime()));
         }
