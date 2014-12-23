@@ -11,13 +11,15 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 
+import java.net.ServerSocket;
+
 /**
  * Created by mesutcelik on 6/12/14.
  */
-public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport{
+public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport {
 
-    protected static int SERVER_PORT_1 = 8899;
-    protected static int SERVER_PORT_2 = 8999;
+    protected static int SERVER_PORT_1 = findFreeTCPPort();
+    protected static int SERVER_PORT_2 = findFreeTCPPort();
     protected static String SESSION_REPLICATION_MAP_NAME = "session-replication-map";
 
 
@@ -28,7 +30,7 @@ public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport
     protected abstract WebContainerConfigurator<?> getWebContainerConfigurator();
 
     @After
-    public void cleanup() throws Exception{
+    public void cleanup() throws Exception {
         instance1.stop();
         instance2.stop();
         Hazelcast.shutdownAll();
@@ -42,5 +44,18 @@ public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport
         return EntityUtils.toString(entity);
     }
 
+    /**
+     * Returns any free local TCP port number available.
+     */
+    private static int findFreeTCPPort() {
+        try {
+            ServerSocket serverSocket = new ServerSocket(0);
+            int localPort = serverSocket.getLocalPort();
+            serverSocket.close();
+            return localPort;
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not find any available port", e);
+        }
+    }
 
 }
