@@ -45,6 +45,8 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private boolean deferredWrite = true;
 
+    private HazelcastInstance instance;
+
     @Override
     public String getInfo() {
         return INFO;
@@ -89,7 +91,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         configureValves();
 
-        HazelcastInstance instance;
         if (isClientOnly()) {
             try {
                 instance = HazelcastClient.newHazelcastClient(ClientServerLifecycleListener.getConfig());
@@ -168,7 +169,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         log.info("stopping HazelcastSessionManager...");
 
         setState(LifecycleState.STOPPING);
-
+        if (isClientOnly()) {
+            instance.shutdown();
+        }
         super.stopInternal();
         log.info("HazelcastSessionManager stopped...");
     }
