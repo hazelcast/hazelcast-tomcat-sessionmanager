@@ -42,7 +42,7 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
 
     }
 
-    @Test(timeout = 60000)
+    @Test(timeout = 80000)
     public void testAttributeDistribution() throws Exception {
 
         CookieStore cookieStore = new BasicCookieStore();
@@ -52,7 +52,7 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
         assertEquals("value", value);
     }
 
-    @Test(timeout = 60000)
+    @Test(timeout = 80000)
     public void testAttributeRemoval() throws Exception {
 
         CookieStore cookieStore = new BasicCookieStore();
@@ -69,7 +69,7 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
         assertEquals("null", value);
     }
 
-    @Test(timeout = 60000)
+    @Test(timeout = 80000)
     public void testAttributeUpdate() throws Exception {
 
         CookieStore cookieStore = new BasicCookieStore();
@@ -85,7 +85,7 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
         assertEquals("value-updated", value);
     }
 
-    @Test(timeout = 60000)
+    @Test(timeout = 80000)
     public void testAttributeInvalidate() throws Exception {
 
         CookieStore cookieStore = new BasicCookieStore();
@@ -118,7 +118,7 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
 //        assertEquals("null", value);
 //    }
 //
-    @Test(timeout = 60000)
+    @Test(timeout = 80000)
     public void testAttributeNames() throws Exception {
 
         CookieStore cookieStore = new BasicCookieStore();
@@ -136,7 +136,7 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
 
     }
 
-    @Test(timeout = 60000)
+    @Test(timeout = 80000)
     public void test_isNew() throws Exception {
         CookieStore cookieStore = new BasicCookieStore();
 
@@ -144,7 +144,7 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
         assertEquals("false", executeRequest("isNew", SERVER_PORT_1, cookieStore));
     }
 
-    @Test(timeout = 60000)
+    @Test(timeout = 80000)
     public void test_LastAccessTime() throws Exception {
         CookieStore cookieStore = new BasicCookieStore();
         String lastAccessTime1 = executeRequest("lastAccessTime", SERVER_PORT_1, cookieStore);

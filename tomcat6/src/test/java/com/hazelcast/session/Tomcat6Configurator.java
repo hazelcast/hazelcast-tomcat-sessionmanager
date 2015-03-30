@@ -20,15 +20,32 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
 
     private static String DEFAULT_HOST = "localhost";
 
+    private String p2pConfigLocation;
+    private String clientServerConfigLocation;
+
+    public Tomcat6Configurator(String p2pConfigLocation, String clientServerConfigLocation) {
+        super();
+        this.p2pConfigLocation = p2pConfigLocation;
+        this.clientServerConfigLocation = clientServerConfigLocation;
+    }
+
+    public Tomcat6Configurator() {
+        super();
+        this.clientServerConfigLocation = "hazelcast-client-with-valid-license.xml";
+        this.p2pConfigLocation = "hazelcast-with-valid-license.xml";
+    }
 
     @Override
     public Embedded configure() throws Exception {
         final Embedded catalina = new Embedded();
         if (!clientOnly) {
-            String configLocation = "hazelcast.xml";
             P2PLifecycleListener p2PLifecycleListener = new P2PLifecycleListener();
-            p2PLifecycleListener.setConfigLocation(configLocation);
+            p2PLifecycleListener.setConfigLocation(p2pConfigLocation);
             catalina.addLifecycleListener(p2PLifecycleListener);
+        } else {
+            ClientServerLifecycleListener clientServerLifecycleListener = new ClientServerLifecycleListener();
+            clientServerLifecycleListener.setConfigLocation(clientServerConfigLocation);
+            catalina.addLifecycleListener(clientServerLifecycleListener);
         }
 
         final StandardServer server = new StandardServer();

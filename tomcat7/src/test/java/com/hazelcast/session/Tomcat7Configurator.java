@@ -17,6 +17,20 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
 
     private SessionManager manager;
 
+    private String p2pConfigLocation;
+    private String clientServerConfigLocation;
+
+    public Tomcat7Configurator(String p2pConfigLocation, String clientServerConfigLocation) {
+        super();
+        this.p2pConfigLocation = p2pConfigLocation;
+        this.clientServerConfigLocation = clientServerConfigLocation;
+    }
+
+    public Tomcat7Configurator() {
+        super();
+        this.clientServerConfigLocation = "hazelcast-client-with-valid-license.xml";
+        this.p2pConfigLocation = "hazelcast-with-valid-license.xml";
+    }
 
     @Override
     public Tomcat configure() throws Exception {
@@ -29,10 +43,13 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
 
         Tomcat tomcat = new Tomcat();
         if (!clientOnly) {
-            String configLocation = "hazelcast.xml";
             P2PLifecycleListener p2PLifecycleListener = new P2PLifecycleListener();
-            p2PLifecycleListener.setConfigLocation(configLocation);
+            p2PLifecycleListener.setConfigLocation(p2pConfigLocation);
             tomcat.getServer().addLifecycleListener(p2PLifecycleListener);
+        } else {
+            ClientServerLifecycleListener clientServerLifecycleListener = new ClientServerLifecycleListener();
+            clientServerLifecycleListener.setConfigLocation(clientServerConfigLocation);
+            tomcat.getServer().addLifecycleListener(clientServerLifecycleListener);
         }
         tomcat.getEngine().setJvmRoute("tomcat-" + port);
         tomcat.setBaseDir(docBase);
