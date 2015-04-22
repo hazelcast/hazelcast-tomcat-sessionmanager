@@ -34,9 +34,11 @@ public class ClientServerLifecycleListener implements LifecycleListener {
             if (config == null) {
                 throw new RuntimeException("failed to find configLocation:" + getConfigLocation());
             }
-            String licenseKey = config.getProperty(GroupProperties.PROP_ENTERPRISE_LICENSE_KEY);
+            String licenseKey = config.getLicenseKey();
+            if (licenseKey == null) {
+                licenseKey = config.getProperty(GroupProperties.PROP_ENTERPRISE_LICENSE_KEY);
+            }
             LicenseHelper.checkLicenseKey(licenseKey);
-
         }
 
     }
