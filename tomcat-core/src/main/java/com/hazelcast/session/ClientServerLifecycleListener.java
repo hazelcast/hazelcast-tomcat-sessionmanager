@@ -4,6 +4,7 @@ package com.hazelcast.session;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.XmlClientConfigBuilder;
 import com.hazelcast.instance.GroupProperties;
+import com.hazelcast.license.domain.License;
 import com.hazelcast.license.util.LicenseHelper;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -38,7 +39,8 @@ public class ClientServerLifecycleListener implements LifecycleListener {
             if (licenseKey == null) {
                 licenseKey = config.getProperty(GroupProperties.PROP_ENTERPRISE_LICENSE_KEY);
             }
-            LicenseHelper.checkLicenseKey(licenseKey);
+            License license = LicenseHelper.checkLicenseKey(licenseKey);
+            LicenseHelper.checkLicenseType(license, "Tomcat Clustered Web Sessions");
         }
 
     }
