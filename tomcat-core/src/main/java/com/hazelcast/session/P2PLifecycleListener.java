@@ -4,7 +4,7 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.ConfigLoader;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.license.domain.License;
+import com.hazelcast.license.domain.LicenseType;
 import com.hazelcast.license.util.LicenseHelper;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -40,8 +40,7 @@ public class P2PLifecycleListener implements LifecycleListener {
             config.setInstanceName(SessionManager.DEFAULT_INSTANCE_NAME);
             Hazelcast.getOrCreateHazelcastInstance(config);
             String licenseKey = config.getLicenseKey();
-            License license = LicenseHelper.checkLicenseKey(licenseKey);
-            LicenseHelper.checkLicenseType(license, "Tomcat Clustered Web Sessions");
+            LicenseHelper.checkLicenseKey(licenseKey, LicenseType.ENTERPRISE);
 
         } else if ("stop".equals(event.getType()) && !"false".equals(shutdown)) {
             HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(SessionManager.DEFAULT_INSTANCE_NAME);
