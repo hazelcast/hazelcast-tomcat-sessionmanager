@@ -4,9 +4,11 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.session.AbstractHazelcastSessionsTest;
 import com.hazelcast.test.HazelcastSerialClassRunner;
+import com.hazelcast.test.annotation.QuickTest;
 import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
@@ -16,6 +18,7 @@ import static org.junit.Assert.assertNotEquals;
  * Created by mesutcelik on 5/5/14.
  */
 @RunWith(HazelcastSerialClassRunner.class)
+@Category(QuickTest.class)
 public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessionsTest {
 
     @Test
