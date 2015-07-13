@@ -3,14 +3,10 @@ package com.hazelcast.session;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.hazelcast.test.HazelcastSerialClassRunner;
-import com.hazelcast.test.annotation.QuickTest;
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -19,8 +15,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by mesutcelik on 5/5/14.
  */
-@RunWith(HazelcastSerialClassRunner.class)
-@Category(QuickTest.class)
+
 public abstract class AbstractMapNameTest extends AbstractHazelcastSessionsTest {
 
     @Test
