@@ -7,12 +7,12 @@
     <parent>
         <artifactId>hazelcast-enterprise-root</artifactId>
         <groupId>com.hazelcast</groupId>
-        <version>3.5.1-SNAPSHOT</version>
+        <version>3.5.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>hazelcast-enterprise-sessions</artifactId>
     <packaging>pom</packaging>
-    <version>3.5.1-SNAPSHOT</version>
+    <version>3.5.2-SNAPSHOT</version>
     <name>Hazelcast Enterprise Session Replication</name>
     <description>Session Replication Module for Hazelcast</description>
     <url>http://www.hazelcast.com/</url>
