@@ -3,7 +3,7 @@ package com.hazelcast.session;
 
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.XmlClientConfigBuilder;
-import com.hazelcast.instance.GroupProperties;
+import com.hazelcast.instance.GroupProperty;
 import com.hazelcast.license.domain.LicenseType;
 import com.hazelcast.license.util.LicenseHelper;
 import org.apache.catalina.LifecycleEvent;
@@ -37,7 +37,7 @@ public class ClientServerLifecycleListener implements LifecycleListener {
             }
             String licenseKey = config.getLicenseKey();
             if (licenseKey == null) {
-                licenseKey = config.getProperty(GroupProperties.PROP_ENTERPRISE_LICENSE_KEY);
+                licenseKey = config.getProperty(GroupProperty.ENTERPRISE_LICENSE_KEY.getName());
             }
             LicenseHelper.checkLicenseKey(licenseKey, LicenseType.ENTERPRISE);
         }
