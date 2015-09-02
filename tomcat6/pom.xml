@@ -15,7 +15,7 @@
     <parent>
         <groupId>com.hazelcast</groupId>
         <artifactId>hazelcast-enterprise-sessions</artifactId>
-        <version>3.5-3-SNAPSHOT</version>
+        <version>3.5.3-SNAPSHOT</version>
     </parent>
 
     <build>
