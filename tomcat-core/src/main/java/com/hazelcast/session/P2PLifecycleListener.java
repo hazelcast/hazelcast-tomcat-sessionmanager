@@ -4,6 +4,8 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.ConfigLoader;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.instance.BuildInfo;
+import com.hazelcast.instance.BuildInfoProvider;
 import com.hazelcast.license.domain.LicenseType;
 import com.hazelcast.license.util.LicenseHelper;
 import org.apache.catalina.LifecycleEvent;
@@ -40,7 +42,9 @@ public class P2PLifecycleListener implements LifecycleListener {
             config.setInstanceName(SessionManager.DEFAULT_INSTANCE_NAME);
             Hazelcast.getOrCreateHazelcastInstance(config);
             String licenseKey = config.getLicenseKey();
-            LicenseHelper.checkLicenseKey(licenseKey, LicenseType.ENTERPRISE);
+            final BuildInfo buildInfo = BuildInfoProvider.getBuildInfo();
+            LicenseHelper.checkLicenseKey(licenseKey, buildInfo.getVersion(),
+                    LicenseType.ENTERPRISE);
 
         } else if ("stop".equals(event.getType()) && !"false".equals(shutdown)) {
             HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(SessionManager.DEFAULT_INSTANCE_NAME);
