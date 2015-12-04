@@ -51,9 +51,9 @@ public class TestServlet extends HttpServlet {
             resp.getWriter().write("true");
 
         } else if (req.getRequestURI().endsWith("names")) {
-            List<String> names = Collections.list(session.getAttributeNames());
+            List names = Collections.list(session.getAttributeNames());
             String nameList = names.toString();
-            //return comma seperated list of attribute names
+            //return comma separated list of attribute names
             resp.getWriter().write(nameList.substring(1, nameList.length() - 1).replace(", ", ","));
 
         } else if (req.getRequestURI().endsWith("reload")) {
@@ -62,7 +62,7 @@ public class TestServlet extends HttpServlet {
             session.setAttribute("first-key", "first-value");
             session.setAttribute("second-key", "second-value");
             resp.getWriter().write("true");
-        }  else if (req.getRequestURI().endsWith("isNew")) {
+        } else if (req.getRequestURI().endsWith("isNew")) {
             resp.getWriter().write(session.isNew() ? "true" : "false");
         } else if (req.getRequestURI().endsWith("lastAccessTime")) {
             resp.getWriter().write(String.valueOf(session.getLastAccessedTime()));

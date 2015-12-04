@@ -13,19 +13,14 @@ import org.junit.After;
 
 import java.net.ServerSocket;
 
-/**
- * Created by mesutcelik on 6/12/14.
- */
 public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport {
 
     protected static int SERVER_PORT_1 = findFreeTCPPort();
     protected static int SERVER_PORT_2 = findFreeTCPPort();
     protected static String SESSION_REPLICATION_MAP_NAME = "session-replication-map";
 
-
     protected WebContainerConfigurator<?> instance1;
     protected WebContainerConfigurator<?> instance2;
-
 
     protected abstract WebContainerConfigurator<?> getWebContainerConfigurator();
 
@@ -57,5 +52,4 @@ public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport
             throw new IllegalStateException("Could not find any available port", e);
         }
     }
-
 }

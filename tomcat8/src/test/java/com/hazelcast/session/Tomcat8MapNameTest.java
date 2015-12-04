@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(EnterpriseSerialJUnitClassRunner.class)
 @Category(QuickTest.class)
-public class Tomcat8MapNameTest extends AbstractMapNameTest{
+public class Tomcat8MapNameTest extends AbstractMapNameTest {
 
     @Rule
     public Java6ExcludeRule java6ExcludeRule = new Java6ExcludeRule();
@@ -17,5 +17,4 @@ public class Tomcat8MapNameTest extends AbstractMapNameTest{
     protected WebContainerConfigurator<?> getWebContainerConfigurator() {
         return new Tomcat8Configurator();
     }
-
 }

@@ -3,10 +3,7 @@ package com.hazelcast.session.sticky;
 import com.hazelcast.core.Hazelcast;
 import org.junit.Before;
 
-/**
- * Created by mesutcelik on 6/12/14.
- */
-public abstract class ClientServerStickySessionsTest extends AbstractStickySessionsTest {
+public abstract class AbstractClientServerStickySessionsTest extends AbstractStickySessionsTest {
 
     @Before
     public void init() throws Exception{
@@ -16,5 +13,4 @@ public abstract class ClientServerStickySessionsTest extends AbstractStickySessi
         instance2 = getWebContainerConfigurator();
         instance2.port(SERVER_PORT_2).sticky(true).clientOnly(true).sessionTimeout(10).start();
     }
-
 }

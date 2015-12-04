@@ -10,9 +10,6 @@ import org.apache.catalina.startup.Embedded;
 import java.io.File;
 import java.net.URL;
 
-/**
- * Created by mesutcelik on 6/12/14.
- */
 public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
 
     private Embedded tomcat;
@@ -73,11 +70,11 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
         host.addChild(context);
 
         this.manager = new HazelcastSessionManager();
-        context.setManager((HazelcastSessionManager)manager);
-        updateManager((HazelcastSessionManager)manager);
+        context.setManager((HazelcastSessionManager) manager);
+        updateManager((HazelcastSessionManager) manager);
         context.setBackgroundProcessorDelay(1);
         context.setCookies(true);
-        // new File( "webapp" + File.separator + "webapp" ).mkdirs();
+        // new File("webapp" + File.separator + "webapp").mkdirs();
 
         final Connector connector = catalina.createConnector("localhost", port, false);
         connector.setProperty("bindOnInit", "false");
@@ -107,7 +104,6 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
         return manager;
     }
 
-
     protected Context createContext(final Embedded catalina, final String contextPath, final String docBase) {
         return catalina.createContext(contextPath, docBase);
     }
@@ -119,6 +115,4 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
         manager.setMaxInactiveInterval(sessionTimeout);
         manager.setDeferredWrite(deferredWrite);
     }
-
-
 }

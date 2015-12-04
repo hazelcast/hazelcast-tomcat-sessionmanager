@@ -10,15 +10,10 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-/**
- * Created by mesutcelik on 5/5/14.
- */
-
 public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSessionsTest {
 
-
     @Test
-    public void testContextReloadNonSticky() throws Exception{
+    public void testContextReloadNonSticky() throws Exception {
         CookieStore cookieStore = new BasicCookieStore();
         executeRequest("write", SERVER_PORT_1, cookieStore);
         instance1.reload();
@@ -28,7 +23,7 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
     }
 
     @Test
-    public void testReadWriteRead() throws Exception{
+    public void testReadWriteRead() throws Exception {
         CookieStore cookieStore = new BasicCookieStore();
         String value = executeRequest("read", SERVER_PORT_1, cookieStore);
         assertEquals("null", value);
@@ -37,12 +32,10 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
 
         value = executeRequest("read", SERVER_PORT_2, cookieStore);
         assertEquals("value", value);
-
     }
 
     @Test(timeout = 60000)
     public void testAttributeDistribution() throws Exception {
-
         CookieStore cookieStore = new BasicCookieStore();
         executeRequest("write", SERVER_PORT_1, cookieStore);
 
@@ -52,10 +45,8 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
 
     @Test(timeout = 60000)
     public void testAttributeRemoval() throws Exception {
-
         CookieStore cookieStore = new BasicCookieStore();
         executeRequest("write", SERVER_PORT_1, cookieStore);
-
 
         String value = executeRequest("read", SERVER_PORT_2, cookieStore);
         assertEquals("value", value);
@@ -69,7 +60,6 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
 
     @Test(timeout = 60000)
     public void testAttributeUpdate() throws Exception {
-
         CookieStore cookieStore = new BasicCookieStore();
         executeRequest("write", SERVER_PORT_1, cookieStore);
 
@@ -85,7 +75,6 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
 
     @Test(timeout = 60000)
     public void testAttributeInvalidate() throws Exception {
-
         CookieStore cookieStore = new BasicCookieStore();
         executeRequest("write", SERVER_PORT_1, cookieStore);
 
@@ -102,21 +91,21 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
 
     @Test(timeout = 60000)
     public void testAttributeNames() throws Exception {
-
         CookieStore cookieStore = new BasicCookieStore();
         executeRequest("read", SERVER_PORT_1, cookieStore);
 
-        String commatSeperatedAttributeNames = executeRequest("names", SERVER_PORT_2, cookieStore);
+        String commaSeparatedAttributeNames = executeRequest("names", SERVER_PORT_2, cookieStore);
 
-        //no name should be created
-        assertEquals("",commatSeperatedAttributeNames);
+        // no name should be created
+        assertEquals("", commaSeparatedAttributeNames);
 
         executeRequest("write", SERVER_PORT_2, cookieStore);
 
-        commatSeperatedAttributeNames = executeRequest("names", SERVER_PORT_1, cookieStore);
-        assertEquals("key",commatSeperatedAttributeNames);
+        commaSeparatedAttributeNames = executeRequest("names", SERVER_PORT_1, cookieStore);
+        assertEquals("key", commaSeparatedAttributeNames);
 
     }
+
     @Test(timeout = 60000)
     public void test_isNew() throws Exception {
         CookieStore cookieStore = new BasicCookieStore();
@@ -129,12 +118,9 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
     public void test_LastAccessTime() throws Exception {
         CookieStore cookieStore = new BasicCookieStore();
         String lastAccessTime1 = executeRequest("lastAccessTime", SERVER_PORT_1, cookieStore);
+        executeRequest("lastAccessTime", SERVER_PORT_2, cookieStore);
         String lastAccessTime2 = executeRequest("lastAccessTime", SERVER_PORT_2, cookieStore);
-        String lastAccessTime3 = executeRequest("lastAccessTime", SERVER_PORT_2, cookieStore);
 
-        assertNotEquals(lastAccessTime1,lastAccessTime3);
+        assertNotEquals(lastAccessTime1, lastAccessTime2);
     }
-
-
-
 }

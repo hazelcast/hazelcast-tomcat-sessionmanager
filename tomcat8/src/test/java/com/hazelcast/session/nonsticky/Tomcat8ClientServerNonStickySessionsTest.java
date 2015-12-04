@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(EnterpriseSerialJUnitClassRunner.class)
 @Category(QuickTest.class)
-public class Tomcat8ClientServerNonStickySessionsTest extends ClientServerNonStickySessionsTest {
+public class Tomcat8ClientServerNonStickySessionsTest extends AbstractClientServerNonStickySessionsTest {
 
     @Rule
     public Java6ExcludeRule java6ExcludeRule = new Java6ExcludeRule();

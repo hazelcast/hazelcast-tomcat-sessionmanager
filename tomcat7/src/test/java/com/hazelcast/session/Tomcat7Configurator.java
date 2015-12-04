@@ -7,14 +7,9 @@ import org.apache.catalina.startup.Tomcat;
 import java.io.File;
 import java.net.URL;
 
-/**
- * Created by mesutcelik on 6/12/14.
- */
 public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
 
     private Tomcat tomcat;
-
-
     private SessionManager manager;
 
     private String p2pConfigLocation;
@@ -68,8 +63,8 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
         }
 
         this.manager = new HazelcastSessionManager();
-        context.setManager((HazelcastSessionManager)manager);
-        updateManager((HazelcastSessionManager)manager);
+        context.setManager((HazelcastSessionManager) manager);
+        updateManager((HazelcastSessionManager) manager);
         context.setCookies(true);
         context.setBackgroundProcessorDelay(1);
         context.setReloadable(true);
@@ -106,7 +101,4 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
         manager.setMaxInactiveInterval(sessionTimeout);
         manager.setDeferredWrite(deferredWrite);
     }
-
-
-
 }

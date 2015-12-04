@@ -12,15 +12,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by mesutcelik on 5/5/14.
- */
-
 public abstract class AbstractMapNameTest extends AbstractHazelcastSessionsTest {
 
     @Test
-    public void testMapName() throws Exception{
-
+    public void testMapName() throws Exception {
         HazelcastInstance hz = Hazelcast.newHazelcastInstance();
 
         instance1 = getWebContainerConfigurator();
@@ -34,8 +29,8 @@ public abstract class AbstractMapNameTest extends AbstractHazelcastSessionsTest 
         Cookie cookie = cookieStore.getCookies().get(0);
         String sessionId = cookie.getValue();
 
-        IMap<String,HazelcastSession> map = hz.getMap(SESSION_REPLICATION_MAP_NAME);
-        assertEquals(1,map.size());
+        IMap<String, HazelcastSession> map = hz.getMap(SESSION_REPLICATION_MAP_NAME);
+        assertEquals(1, map.size());
         HazelcastSession session = map.get(sessionId);
 
         assertFalse(session.getAttributes().isEmpty());
@@ -46,8 +41,5 @@ public abstract class AbstractMapNameTest extends AbstractHazelcastSessionsTest 
         session = map.get(newSessionId);
 
         assertTrue(session.getAttributes().isEmpty());
-
     }
-
-
 }

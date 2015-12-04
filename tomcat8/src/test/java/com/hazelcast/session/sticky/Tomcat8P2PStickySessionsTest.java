@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(EnterpriseSerialJUnitClassRunner.class)
 @Category(QuickTest.class)
-public class Tomcat8P2PStickySessionsTest extends P2PStickySessionsTest {
+public class Tomcat8P2PStickySessionsTest extends AbstractP2PStickySessionsTest {
 
     @Rule
     public Java6ExcludeRule java6ExcludeRule = new Java6ExcludeRule();

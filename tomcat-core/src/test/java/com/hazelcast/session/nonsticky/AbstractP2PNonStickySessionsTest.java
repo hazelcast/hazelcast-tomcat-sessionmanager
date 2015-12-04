@@ -2,10 +2,7 @@ package com.hazelcast.session.nonsticky;
 
 import org.junit.Before;
 
-/**
- * Created by mesutcelik on 6/12/14.
- */
-public abstract class P2PNonStickySessionsTest extends AbstractNonStickySessionsTest {
+public abstract class AbstractP2PNonStickySessionsTest extends AbstractNonStickySessionsTest {
 
     @Before
     public void init() throws Exception {
@@ -14,5 +11,4 @@ public abstract class P2PNonStickySessionsTest extends AbstractNonStickySessions
         instance2 = getWebContainerConfigurator();
         instance2.port(SERVER_PORT_2).sticky(false).clientOnly(false).sessionTimeout(10).start();
     }
-
 }

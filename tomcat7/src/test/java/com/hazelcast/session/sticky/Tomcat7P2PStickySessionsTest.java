@@ -7,12 +7,9 @@ import com.hazelcast.test.annotation.QuickTest;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
-/**
- * Created by mesutcelik on 6/12/14.
- */
 @RunWith(EnterpriseSerialJUnitClassRunner.class)
 @Category(QuickTest.class)
-public class Tomcat7P2PStickySessionsTest extends P2PStickySessionsTest {
+public class Tomcat7P2PStickySessionsTest extends AbstractP2PStickySessionsTest {
 
     @Override
     protected WebContainerConfigurator<?> getWebContainerConfigurator() {
