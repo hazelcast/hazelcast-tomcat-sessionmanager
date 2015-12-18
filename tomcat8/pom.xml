@@ -9,7 +9,7 @@
     <parent>
         <artifactId>hazelcast-enterprise-sessions</artifactId>
         <groupId>com.hazelcast</groupId>
-        <version>3.6-RC2-SNAPSHOT</version>
+        <version>3.6-SNAPSHOT</version>
     </parent>
 
     <properties>
