@@ -6,6 +6,7 @@ import org.apache.catalina.startup.Tomcat;
 
 import java.io.File;
 import java.net.URL;
+import java.net.URLDecoder;
 
 public class Tomcat8Configurator extends WebContainerConfigurator<Tomcat> {
 
@@ -30,8 +31,7 @@ public class Tomcat8Configurator extends WebContainerConfigurator<Tomcat> {
     @Override
     public Tomcat configure() throws Exception {
         final URL root = new URL(TestServlet.class.getResource("/"), "../../../tomcat-core/target/test-classes");
-        // use file to get correct separator char, replace %20 introduced by URL for spaces
-        final String cleanedRoot = new File(root.getFile().replaceAll("%20", " ")).toString();
+        final String cleanedRoot = URLDecoder.decode(root.getFile(), "UTF-8");
 
         final String fileSeparator = File.separator.equals("\\") ? "\\\\" : File.separator;
         final String docBase = cleanedRoot + File.separator + TestServlet.class.getPackage().getName().replaceAll("\\.", fileSeparator);
