@@ -43,7 +43,7 @@ public class ClientServerLifecycleListener implements LifecycleListener {
             }
             final BuildInfo buildInfo = BuildInfoProvider.getBuildInfo();
             LicenseHelper.checkLicenseKey(licenseKey, buildInfo.getVersion(),
-                    LicenseType.ENTERPRISE);
+                    LicenseType.ENTERPRISE, LicenseType.ENTERPRISE_HD);
         }
 
     }

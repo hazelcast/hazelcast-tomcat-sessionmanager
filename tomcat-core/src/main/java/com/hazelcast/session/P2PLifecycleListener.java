@@ -48,7 +48,7 @@ public class P2PLifecycleListener implements LifecycleListener {
             }
             final BuildInfo buildInfo = BuildInfoProvider.getBuildInfo();
             LicenseHelper.checkLicenseKey(licenseKey, buildInfo.getVersion(),
-                    LicenseType.ENTERPRISE);
+                    LicenseType.ENTERPRISE, LicenseType.ENTERPRISE_HD);
 
         } else if ("stop".equals(event.getType()) && !"false".equals(shutdown)) {
             HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(SessionManager.DEFAULT_INSTANCE_NAME);
