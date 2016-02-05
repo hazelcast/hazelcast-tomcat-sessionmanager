@@ -13,20 +13,30 @@
     <url>http://www.hazelcast.com/</url>
 
     <properties>
-        <hazelcast.version>${project.version}</hazelcast.version>
+        <main.basedir>${project.basedir}</main.basedir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <jdk.version>1.6</jdk.version>
         <target.dir>target</target.dir>
-        <servlet.api.version>3.0.1</servlet.api.version>
-        <junit.version>4.11</junit.version>
-        <log4j.version>1.2.12</log4j.version>
-        <main.basedir>${project.basedir}</main.basedir>
+        <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+        <timestamp>${maven.build.timestamp}</timestamp>
+
+        <!-- Not using 3.1 at the moment since it recompiles all classes every time -->
+        <!-- https://jira.codehaus.org/browse/MCOMPILER-205 -->
+        <!--<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>-->
+        <maven.compiler.plugin.version>2.5.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>2.17</maven.surefire.plugin.version>
         <maven.findbugs.plugin.version>3.0.0</maven.findbugs.plugin.version>
         <maven.checkstyle.plugin.version>2.12</maven.checkstyle.plugin.version>
         <maven.sonar.plugin.version>2.6</maven.sonar.plugin.version>
         <maven.jacoco.plugin.version>0.7.4.201502262128</maven.jacoco.plugin.version>
+
+        <hazelcast.version>${project.version}</hazelcast.version>
         <license.extractor.version>1.1.3</license.extractor.version>
+
+        <servlet.api.version>3.0.1</servlet.api.version>
+        <junit.version>4.11</junit.version>
+        <log4j.version>1.2.12</log4j.version>
     </properties>
 
     <licenses>
@@ -53,18 +63,38 @@
         <module>jetty7</module>
     </modules>
 
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>${maven.compiler.plugin.version}</version>
-            <configuration>
-                <source>${jdk.version}</source>
-                <target>${jdk.version}</target>
-                <encoding>${project.build.sourceEncoding}</encoding>
-            </configuration>
-        </plugin>
-    </plugins>
+    <repositories>
+        <repository>
+            <id>snapshot-repository</id>
+            <name>Maven2 Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+        <repository>
+            <id>private-repository</id>
+            <name>Hazelcast Private Repository</name>
+            <url>https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
+        </repository>
+        <repository>
+            <id>private-repository-snapshot</id>
+            <name>Hazelcast Private Repository (Snapshot)</name>
+            <url>https://repository-hazelcast-l337.forge.cloudbees.com/snapshot/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -107,8 +137,8 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast-enterprise</artifactId>
-            <type>test-jar</type>
             <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
