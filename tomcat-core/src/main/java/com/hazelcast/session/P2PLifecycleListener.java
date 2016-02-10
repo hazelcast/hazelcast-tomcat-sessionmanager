@@ -37,14 +37,12 @@ public class P2PLifecycleListener implements LifecycleListener {
 
     @Override
     public void lifecycleEvent(LifecycleEvent event) {
-
         String shutdown = System.getProperty("hazelcast.tomcat.shutdown_hazelcast_instance");
         if (getConfigLocation() == null) {
             setConfigLocation("hazelcast.xml");
         }
 
         if ("start".equals(event.getType())) {
-
             try {
                 config = ConfigLoader.load(getConfigLocation());
             } catch (IOException e) {
@@ -61,8 +59,7 @@ public class P2PLifecycleListener implements LifecycleListener {
                 licenseKey = config.getProperty(GroupProperty.ENTERPRISE_LICENSE_KEY.getName());
             }
             final BuildInfo buildInfo = BuildInfoProvider.getBuildInfo();
-            LicenseHelper.checkLicenseKey(licenseKey, buildInfo.getVersion(),
-                    LicenseType.ENTERPRISE, LicenseType.ENTERPRISE_HD);
+            LicenseHelper.checkLicenseKey(licenseKey, buildInfo.getVersion(), LicenseType.ENTERPRISE, LicenseType.ENTERPRISE_HD);
 
         } else if ("stop".equals(event.getType()) && !"false".equals(shutdown)) {
             HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(SessionManager.DEFAULT_INSTANCE_NAME);
