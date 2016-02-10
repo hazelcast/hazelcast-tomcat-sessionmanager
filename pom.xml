@@ -243,4 +243,10 @@
             </build>
         </profile>
     </profiles>
+    <distributionManagement>
+        <repository>
+            <id>cloudbees-private-repository</id>
+            <url>dav:https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
+        </repository>
+    </distributionManagement>
 </project>
