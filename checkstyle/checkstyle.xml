@@ -4,7 +4,6 @@
         "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 
 <!--
-
   Checkstyle configuration that checks the sun coding conventions from:
 
     - the Java Language Specification at
@@ -27,7 +26,6 @@
   To completely disable a check, just comment it out or delete it from the file.
 
   Finally, it is worth reading the documentation.
-
 -->
 
 <module name="Checker">
@@ -48,7 +46,7 @@
     <module name="SuppressionCommentFilter"/>
 
     <!-- Enable the suppression annotation @SuppressWarnings("checkstyle:lowercasecheckname"} -->
-    <module name="SuppressWarningsFilter" />
+    <module name="SuppressWarningsFilter"/>
 
     <!-- Checks that a package-info.java file exists for each package.     -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html#JavadocPackage -->
@@ -65,7 +63,7 @@
     <!-- Checks for Size Violations.                    -->
     <!-- See http://checkstyle.sf.net/config_sizes.html -->
     <module name="FileLength">
-        <property name="max" value="1400"/>
+        <property name="max" value="1500"/>
     </module>
 
     <!-- Checks for whitespace                               -->
@@ -83,40 +81,38 @@
 
     <!-- Checks for Headers                                -->
     <!-- See http://checkstyle.sf.net/config_header.html   -->
-     <!--<module name="Header">-->
-       <!--<property name="headerFile" value="${basedir}/checkstyle/ClassHeader.txt"/>-->
-       <!--<property name="fileExtensions" value="java"/>-->
-     <!--</module>-->
+    <module name="Header">
+        <property name="headerFile" value="${main.basedir}/checkstyle/ClassHeader.txt"/>
+        <property name="fileExtensions" value="java"/>
+    </module>
 
     <module name="TreeWalker">
-        <!-- Needed for SuppressionCommentFilter to work -->
+        <!-- Activate comment suppression filters -->
         <module name="FileContentsHolder"/>
 
         <!-- Needed for SuppressWarningsFilter to work -->
-        <module name="SuppressWarningsHolder" />
+        <module name="SuppressWarningsHolder"/>
 
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
-        <module name="JavadocType">
-            <property name="scope" value="package"/>
-        </module>
-        <!-- Only some methods, on public APIs we agreed to JavaDoc. TODO figure out how to do that -->
+        <!-- Only for methods on public APIs we agreed to have JavaDoc. -->
+        <!-- TODO: figure out how to do that -->
         <!--<module name="JavadocMethod">-->
-            <!--<property name="scope" value="public"/>-->
-            <!--<property name="allowMissingParamTags" value="true"/>-->
+        <!--<property name="scope" value="public"/>-->
+        <!--<property name="allowMissingParamTags" value="true"/>-->
         <!--</module>-->
-
+        <module name="JavadocType">
+            <property name="scope" value="public"/>
+        </module>
         <module name="JavadocVariable">
             <property name="scope" value="public"/>
         </module>
-
         <module name="JavadocStyle">
             <property name="checkFirstSentence" value="false"/>
+            <property name="checkHtml" value="false"/>
         </module>
 
         <module name="TrailingComment"/>
-
-
 
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
@@ -131,16 +127,15 @@
         <module name="TypeName"/>
         <module name="UpperEll"/>
 
-
         <!-- Checks for imports                              -->
         <!-- See http://checkstyle.sf.net/config_import.html -->
         <module name="AvoidStarImport"/>
-        <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
+        <!-- defaults to sun.* packages -->
+        <module name="IllegalImport"/>
         <module name="RedundantImport"/>
         <module name="UnusedImports">
             <property name="processJavadoc" value="true"/>
         </module>
-
 
         <!-- Checks for Size Violations.                    -->
         <!-- See http://checkstyle.sf.net/config_sizes.html -->
@@ -182,27 +177,23 @@
             <property name="maxTotal" value="30"/>
         </module>
 
-
-
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
-        <module name="EmptyForIteratorPad"/>
+        <!-- module name="EmptyForIteratorPad"/ -->
         <module name="GenericWhitespace"/>
         <module name="MethodParamPad"/>
-        <module name="NoWhitespaceAfter"/>
-        <module name="NoWhitespaceBefore"/>
+        <!-- module name="NoWhitespaceAfter"/ -->
+        <!-- module name="NoWhitespaceBefore"/ -->
         <module name="OperatorWrap"/>
         <module name="ParenPad"/>
         <module name="TypecastParenPad"/>
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
 
-
         <!-- Modifier Checks                                    -->
         <!-- See http://checkstyle.sf.net/config_modifiers.html -->
         <module name="ModifierOrder"/>
         <module name="RedundantModifier"/>
-
 
         <!-- Checks for blocks. You know, those {}'s         -->
         <!-- See http://checkstyle.sf.net/config_blocks.html -->
@@ -212,10 +203,8 @@
         <module name="NeedBraces"/>
         <module name="RightCurly"/>
 
-
         <!-- Checks for common coding problems               -->
         <!-- See http://checkstyle.sf.net/config_coding.html -->
-        <!-- Coding Problems -->
         <module name="ArrayTrailingComma"/>
         <module name="CovariantEquals"/>
         <module name="DeclarationOrder"/>
@@ -225,7 +214,7 @@
         <module name="MultipleVariableDeclarations"/>
         <module name="EmptyStatement"/>
         <!--<module name="HiddenField">-->
-            <!--<property name="tokens" value="VARIABLE_DEF"/>-->
+        <!--<property name="tokens" value="VARIABLE_DEF"/>-->
         <!--</module>-->
         <module name="IllegalInstantiation">
             <property name="classes" value="java.lang.Boolean"/>
@@ -240,6 +229,7 @@
             <property name="tokens" value="PARAMETER_DEF, METHOD_DEF"/>
         </module>
         <module name="InnerAssignment"/>
+        <module name="JUnitTestCase"/>
         <module name="ReturnCount">
             <property name="max" value="8"/>
         </module>
@@ -250,6 +240,10 @@
             <property name="max" value="2"/>
         </module>
         <module name="PackageDeclaration"/>
+        <module name="RedundantThrows">
+            <property name="severity" value="warning"/>
+            <property name="allowUnchecked" value="true"/>
+        </module>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
         <module name="StringLiteralEquality"/>
@@ -258,20 +252,22 @@
         <module name="MagicNumber">
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreAnnotation" value="true"/>
+            <property name="ignoreNumbers" value="-1, 0, 1, 2, 3"/>
         </module>
         <module name="EqualsHashCode"/>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MissingSwitchDefault"/>
 
-
-
         <!-- Checks for class design                         -->
         <!-- See http://checkstyle.sf.net/config_design.html -->
-        <!-- module name="DesignForExtension"/ -->
         <module name="FinalClass"/>
         <module name="HideUtilityClassConstructor"/>
         <module name="InterfaceIsType"/>
+        <module name="VisibilityModifier">
+            <property name="packageAllowed" value="true"/>
+            <property name="protectedAllowed" value="true"/>
+        </module>
 
         <!-- Metrics -->
         <module name="BooleanExpressionComplexity">
@@ -294,7 +290,6 @@
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
         <module name="ArrayTypeStyle"/>
-        <module name="TodoComment"/>
         <module name="UpperEll"/>
 
         <!-- Check for usage of UuidUtil instead of UUID -->
@@ -303,7 +298,5 @@
             <property name="ignoreComments" value="true"/>
             <property name="message" value="Please use UuidUtil.buildRandomUUID() instead of UUID.randomUUID()!"/>
         </module>
-
     </module>
-
 </module>
