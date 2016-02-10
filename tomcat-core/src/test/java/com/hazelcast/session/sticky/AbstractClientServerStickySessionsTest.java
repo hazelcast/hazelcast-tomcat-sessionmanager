@@ -6,7 +6,7 @@ import org.junit.Before;
 public abstract class AbstractClientServerStickySessionsTest extends AbstractStickySessionsTest {
 
     @Before
-    public void init() throws Exception{
+    public void init() throws Exception {
         Hazelcast.newHazelcastInstance();
         instance1 = getWebContainerConfigurator();
         instance1.port(SERVER_PORT_1).sticky(true).clientOnly(true).sessionTimeout(10).start();

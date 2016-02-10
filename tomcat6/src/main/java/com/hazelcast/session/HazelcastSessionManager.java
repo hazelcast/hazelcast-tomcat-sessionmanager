@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2008-2016, Hazelcast, Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.hazelcast.session;
 
 import com.hazelcast.client.HazelcastClient;
@@ -21,7 +37,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
-
 public class HazelcastSessionManager extends ManagerBase implements Lifecycle, PropertyChangeListener, SessionManager {
 
     private static final String NAME = "HazelcastSessionManager";
@@ -32,7 +47,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
 
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);
-
 
     private int rejectedSessions;
     private int maxActiveSessions = -1;
@@ -61,7 +75,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     @Override
     public void setRejectedSessions(int i) {
-
     }
 
     @Override
@@ -71,12 +84,10 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     @Override
     public void load() throws ClassNotFoundException, IOException {
-
     }
 
     @Override
     public void unload() throws IOException {
-
     }
 
     @Override
@@ -96,7 +107,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     @Override
     public void start() throws LifecycleException {
-
         init();
         lifecycle.fireLifecycleEvent(START_EVENT, null);
 
@@ -132,7 +142,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         if (!isSticky()) {
             sessionMap.addEntryListener(new EntryListener<String, HazelcastSession>() {
                 public void entryAdded(EntryEvent<String, HazelcastSession> event) {
-
                 }
 
                 public void entryRemoved(EntryEvent<String, HazelcastSession> entryEvent) {
@@ -142,7 +151,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
                 }
 
                 public void entryUpdated(EntryEvent<String, HazelcastSession> event) {
-
                 }
 
                 public void entryEvicted(EntryEvent<String, HazelcastSession> entryEvent) {
@@ -155,16 +163,12 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
                 public void mapCleared(MapEvent event) {
                 }
             }, false);
-
         }
 
-
         log.info("HazelcastSessionManager started...");
-
     }
 
     private void configureValves() {
-
         if (isSticky()) {
             HazelcastSessionChangeValve hazelcastSessionChangeValve = new HazelcastSessionChangeValve(this);
             getContainer().getPipeline().addValve(hazelcastSessionChangeValve);
@@ -175,7 +179,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             getContainer().getPipeline().addValve(hazelcastSessionCommitValve);
         }
     }
-
 
     @Override
     public void stop() throws LifecycleException {
@@ -232,7 +235,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         }
 
         if (!isSticky() || (isSticky() && !sessions.containsKey(id))) {
-
             if (isSticky()) {
                 log.info("Sticky Session is currently enabled."
                         + "Some failover occured so reading session from Hazelcast map:" + getMapName());
@@ -255,19 +257,15 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             sessionMap.remove(id);
             sessionMap.put(id, hazelcastSession);
 
-
             return hazelcastSession;
 
         } else {
             return sessions.get(id);
         }
-
     }
 
     public void commit(Session session) {
-
         HazelcastSession hazelcastSession = (HazelcastSession) session;
-
         if (hazelcastSession.isDirty()) {
             hazelcastSession.setDirty(false);
             sessionMap.put(session.getId(), hazelcastSession);
@@ -310,7 +308,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         remove(session.getId());
     }
 
-
     public boolean isClientOnly() {
         return clientOnly;
     }
@@ -341,14 +338,11 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         remove(sessionId);
     }
 
-
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-
         if (evt.getPropertyName().equals("sessionTimeout")) {
             setMaxInactiveInterval((Integer) evt.getNewValue() * DEFAULT_SESSION_TIMEOUT);
         }
-
     }
 
     public String getMapName() {
@@ -373,10 +367,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     public void setMaxActiveSessions(int maxActiveSessions) {
         int oldMaxActiveSessions = this.maxActiveSessions;
         this.maxActiveSessions = maxActiveSessions;
-        this.support.firePropertyChange("maxActiveSessions",
-                new Integer(oldMaxActiveSessions), new Integer(this.maxActiveSessions));
+        this.support.firePropertyChange("maxActiveSessions", new Integer(oldMaxActiveSessions),
+                new Integer(this.maxActiveSessions));
     }
-
 
     public void setDeferredWrite(boolean deferredWrite) {
         this.deferredWrite = deferredWrite;
