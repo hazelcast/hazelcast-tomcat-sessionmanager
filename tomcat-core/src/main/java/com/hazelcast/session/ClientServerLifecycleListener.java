@@ -4,12 +4,13 @@
 
 package com.hazelcast.session;
 
+
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.XmlClientConfigBuilder;
 import com.hazelcast.instance.BuildInfo;
 import com.hazelcast.instance.BuildInfoProvider;
 import com.hazelcast.instance.GroupProperty;
-import com.hazelcast.license.domain.LicenseType;
+import com.hazelcast.license.domain.Feature;
 import com.hazelcast.license.util.LicenseHelper;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -29,6 +30,7 @@ public class ClientServerLifecycleListener implements LifecycleListener {
         }
 
         if ("start".equals(event.getType())) {
+
             try {
                 XmlClientConfigBuilder builder = new XmlClientConfigBuilder(getConfigLocation());
                 config = builder.build();
@@ -44,9 +46,12 @@ public class ClientServerLifecycleListener implements LifecycleListener {
                 licenseKey = config.getProperty(GroupProperty.ENTERPRISE_LICENSE_KEY.getName());
             }
             final BuildInfo buildInfo = BuildInfoProvider.getBuildInfo();
-            LicenseHelper.checkLicenseKey(licenseKey, buildInfo.getVersion(), LicenseType.ENTERPRISE, LicenseType.ENTERPRISE_HD);
+            LicenseHelper.checkLicenseKeyPerFeature(licenseKey, buildInfo.getVersion(),
+                    Feature.WEB_SESSION);
         }
+
     }
+
 
     public String getConfigLocation() {
         return configLocation;
@@ -59,4 +64,5 @@ public class ClientServerLifecycleListener implements LifecycleListener {
     public static ClientConfig getConfig() {
         return config;
     }
+
 }
