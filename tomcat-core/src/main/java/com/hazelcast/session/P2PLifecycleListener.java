@@ -11,26 +11,30 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.BuildInfo;
 import com.hazelcast.instance.BuildInfoProvider;
 import com.hazelcast.instance.GroupProperty;
-import com.hazelcast.license.domain.LicenseType;
+import com.hazelcast.license.domain.Feature;
 import com.hazelcast.license.util.LicenseHelper;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 
 import java.io.IOException;
 
+
 public class P2PLifecycleListener implements LifecycleListener {
+
 
     private static Config config;
     private String configLocation;
 
     @Override
     public void lifecycleEvent(LifecycleEvent event) {
+
         String shutdown = System.getProperty("hazelcast.tomcat.shutdown_hazelcast_instance");
         if (getConfigLocation() == null) {
             setConfigLocation("hazelcast.xml");
         }
 
         if ("start".equals(event.getType())) {
+
             try {
                 config = ConfigLoader.load(getConfigLocation());
             } catch (IOException e) {
@@ -47,7 +51,8 @@ public class P2PLifecycleListener implements LifecycleListener {
                 licenseKey = config.getProperty(GroupProperty.ENTERPRISE_LICENSE_KEY.getName());
             }
             final BuildInfo buildInfo = BuildInfoProvider.getBuildInfo();
-            LicenseHelper.checkLicenseKey(licenseKey, buildInfo.getVersion(), LicenseType.ENTERPRISE, LicenseType.ENTERPRISE_HD);
+            LicenseHelper.checkLicenseKeyPerFeature(licenseKey, buildInfo.getVersion(),
+                    Feature.WEB_SESSION);
 
         } else if ("stop".equals(event.getType()) && !"false".equals(shutdown)) {
             HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(SessionManager.DEFAULT_INSTANCE_NAME);
@@ -55,7 +60,9 @@ public class P2PLifecycleListener implements LifecycleListener {
                 instance.shutdown();
             }
         }
+
     }
+
 
     public String getConfigLocation() {
         return configLocation;
@@ -68,4 +75,5 @@ public class P2PLifecycleListener implements LifecycleListener {
     public static Config getConfig() {
         return config;
     }
+
 }
