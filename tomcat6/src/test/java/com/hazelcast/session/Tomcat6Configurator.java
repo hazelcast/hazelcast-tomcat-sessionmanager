@@ -28,9 +28,6 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
     }
 
     public Tomcat6Configurator() {
-        super();
-        this.clientServerConfigLocation = "hazelcast-client-with-valid-license.xml";
-        this.p2pConfigLocation = "hazelcast-with-valid-license.xml";
     }
 
     @Override

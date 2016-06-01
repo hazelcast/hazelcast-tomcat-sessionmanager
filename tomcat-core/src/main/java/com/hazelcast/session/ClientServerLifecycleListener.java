@@ -7,11 +7,6 @@ package com.hazelcast.session;
 
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.XmlClientConfigBuilder;
-import com.hazelcast.instance.BuildInfo;
-import com.hazelcast.instance.BuildInfoProvider;
-import com.hazelcast.instance.GroupProperty;
-import com.hazelcast.license.domain.Feature;
-import com.hazelcast.license.util.LicenseHelper;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 
@@ -41,15 +36,7 @@ public class ClientServerLifecycleListener implements LifecycleListener {
             if (config == null) {
                 throw new RuntimeException("failed to find configLocation:" + getConfigLocation());
             }
-            String licenseKey = config.getLicenseKey();
-            if (licenseKey == null) {
-                licenseKey = config.getProperty(GroupProperty.ENTERPRISE_LICENSE_KEY.getName());
-            }
-            final BuildInfo buildInfo = BuildInfoProvider.getBuildInfo();
-            LicenseHelper.checkLicenseKeyPerFeature(licenseKey, buildInfo.getVersion(),
-                    Feature.WEB_SESSION);
         }
-
     }
 
 

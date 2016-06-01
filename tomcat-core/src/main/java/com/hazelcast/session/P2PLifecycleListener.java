@@ -8,11 +8,6 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.ConfigLoader;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.instance.BuildInfo;
-import com.hazelcast.instance.BuildInfoProvider;
-import com.hazelcast.instance.GroupProperty;
-import com.hazelcast.license.domain.Feature;
-import com.hazelcast.license.util.LicenseHelper;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 
@@ -30,7 +25,7 @@ public class P2PLifecycleListener implements LifecycleListener {
 
         String shutdown = System.getProperty("hazelcast.tomcat.shutdown_hazelcast_instance");
         if (getConfigLocation() == null) {
-            setConfigLocation("hazelcast.xml");
+            setConfigLocation("hazelcast-default.xml");
         }
 
         if ("start".equals(event.getType())) {
@@ -46,14 +41,6 @@ public class P2PLifecycleListener implements LifecycleListener {
             }
             config.setInstanceName(SessionManager.DEFAULT_INSTANCE_NAME);
             Hazelcast.getOrCreateHazelcastInstance(config);
-            String licenseKey = config.getLicenseKey();
-            if (licenseKey == null) {
-                licenseKey = config.getProperty(GroupProperty.ENTERPRISE_LICENSE_KEY.getName());
-            }
-            final BuildInfo buildInfo = BuildInfoProvider.getBuildInfo();
-            LicenseHelper.checkLicenseKeyPerFeature(licenseKey, buildInfo.getVersion(),
-                    Feature.WEB_SESSION);
-
         } else if ("stop".equals(event.getType()) && !"false".equals(shutdown)) {
             HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(SessionManager.DEFAULT_INSTANCE_NAME);
             if (instance != null) {

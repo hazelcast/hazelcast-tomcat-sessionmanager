@@ -23,9 +23,6 @@ public class Tomcat8Configurator extends WebContainerConfigurator<Tomcat> {
     }
 
     public Tomcat8Configurator() {
-        super();
-        this.clientServerConfigLocation = "hazelcast-client-with-valid-license.xml";
-        this.p2pConfigLocation = "hazelcast-with-valid-license.xml";
     }
 
     @Override
