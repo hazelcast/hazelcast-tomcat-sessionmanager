@@ -55,6 +55,11 @@
         <maven.findbugs.plugin.version>3.0.1</maven.findbugs.plugin.version>
         <maven.sonar.plugin.version>2.6</maven.sonar.plugin.version>
         <maven.jacoco.plugin.version>0.7.4.201502262128</maven.jacoco.plugin.version>
+
+        <sonar.jacoco.jar>${basedir}/lib/jacocoagent.jar</sonar.jacoco.jar>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.language>java</sonar.language>
+        <sonar.verbose>true</sonar.verbose>
     </properties>
 
     <licenses>
@@ -82,16 +87,6 @@
             <id>snapshot-repository</id>
             <name>Maven2 Snapshot Repository</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-        <repository>
-            <id>private-repository</id>
-            <name>Hazelcast Private Repository</name>
-            <url>https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
-        </repository>
-        <repository>
-            <id>private-repository-snapshot</id>
-            <name>Hazelcast Private Repository (Snapshot)</name>
-            <url>https://repository-hazelcast-l337.forge.cloudbees.com/snapshot/</url>
         </repository>
     </repositories>
 
@@ -124,6 +119,11 @@
                     <excludedGroups>com.hazelcast.test.annotation.NightlyTest,com.hazelcast.test.annotation.SlowTest
                     </excludedGroups>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${maven.sonar.plugin.version}</version>
             </plugin>
         </plugins>
     </build>
@@ -396,12 +396,14 @@
     </profiles>
     <distributionManagement>
         <repository>
-            <id>cloudbees-private-repository</id>
-            <url>dav:https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
+            <id>release-repository</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
-            <id>cloudbees-private-repository</id>
-            <url>dav:https://repository-hazelcast-l337.forge.cloudbees.com/snapshot/</url>
+            <id>snapshot-repository</id>
+            <name>Maven2 Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
 </project>
