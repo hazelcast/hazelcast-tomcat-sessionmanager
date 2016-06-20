@@ -70,6 +70,18 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    <scm>
+        <connection>scm:git:git://github.com/hazelcast/hazelcast-tomcat-sessionmanager.git</connection>
+        <developerConnection>scm:git:git@github.com:hazelcast/hazelcast-tomcat-sessionmanager.git</developerConnection>
+        <url>https://github.com/hazelcast/hazelcast-tomcat-sessionmanager/</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>emrahkocaman</id>
+            <name>Emrah Kocaman</name>
+            <email>emrah@hazelcast.com</email>
+        </developer>
+    </developers>
 
     <organization>
         <name>Hazelcast, Inc.</name>
