@@ -1,10 +1,24 @@
+# Table of Contents
 
-### Tomcat Based Web Session Replication
+* [Tomcat Based Web Session Replication](#tomcat-based-web-session-replication)
+* [Features and Requirements](#features-and-requirements)
+* [How Tomcat Session Replication Works](#how-tomcat-session-replication-works)
+  * [Deploying P2P for Tomcat](#deploying-p2p-for-tomcat)
+  * [Deploying Client-Server for Tomcat](#deploying-client-server-for-tomcat)
+* [Configuring Manager Element for Tomcat](#configuring-manager-element-for-tomcat)
+* [Controlling Session Caching with deferredWrite](#controlling-session-caching-with-deferredWrite)
+* [Setting Session Expiration Checks](#setting-session-expiration-checks)
+* [Enabling Session Replication in Multi-App Environments](#enabling-session-replication-in-multi-app-environments)
+* [Sticky Sessions and Tomcat](#sticky-sessions-and-tomcat)
+* [Tomcat Failover and the jvmRoute Parameter](#tomcatfailover-and-the-jvmroute-parameter)
+
+
+# Tomcat Based Web Session Replication
 
 ***Sample Code:*** *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/manager-based-session-replication" target="_blank">sample application</a> for Tomcat Based Web Session Replication.*
 
 
-#### Hazelcast Tomcat Features and Requirements
+# Features and Requirements
 
 <a href="https://github.com/hazelcast/hazelcast-tomcat-sessionmanager" target="_blank">Hazelcast Tomcat Session Manager</a> is a container specific module that enables session replication for JEE Web Applications without requiring changes to the application.
 
@@ -33,7 +47,7 @@ The latest tested versions are **6.0.39**, **7.0.40** and **8.0.20**.
  - Tomcat instance must be running with Java 1.6 or higher.
  - Session objects that need to be clustered have to be Serializable.
 
-#### How Tomcat Session Replication Works
+# How Tomcat Session Replication Works
 
 Hazelcast Tomcat Session Manager is a Hazelcast Module where each created `HttpSession` Object is kept in the Hazelcast Distributed Map. If configured with Sticky Sessions, each Tomcat Instance has its own local copy of the session for performance boost. 
 
@@ -44,7 +58,7 @@ Tomcat Web Sessions run in two different modes:
 - **P2P**: all Tomcat instances launch its own Hazelcast Instance and join to the Hazelcast Cluster and,
 - **Client/Server**: all Tomcat instances put/retrieve the session data to/from an existing Hazelcast Cluster.
 
-#### Deploying P2P (Peer-to-Peer) for Tomcat
+## Deploying P2P for Tomcat
 
 P2P deployment launches an embedded Hazelcast member in each server instance.
 
@@ -83,7 +97,7 @@ The following steps configure a sample P2P for Hazelcast Session Replication.
 
 Optionally, you can add a `configLocation` attribute into the `<Listener>` element. If not provided, `hazelcast.xml` in the classpath is used by default. URL or full filesystem path as a `configLocation` value is supported.
 
-#### Deploying Client/Server for Tomcat
+## Deploying Client-Server for Tomcat
 
 In this deployment type, Tomcat instances work as clients on an existing Hazelcast Cluster.
 
@@ -128,7 +142,7 @@ The following steps configure a sample Client/Server for Hazelcast Session Repli
 
 Optionally, you can add `configLocation` attribute into the `<Listener>` element. If not provided, `hazelcast-client-default.xml` in `hazelcast-client-`<*version*>`.jar` file is used by default. Any client XML file in the classpath, URL or full filesystem path as a `configLocation` value is also supported.
 
-#### Configuring Manager Element for Tomcat
+# Configuring Manager Element for Tomcat
 
 `<Manager>` element is used both in P2P and Client/Server mode. You can use the following attributes to configure Tomcat Session Replication Module to better serve your needs.
 
@@ -139,19 +153,19 @@ Optionally, you can add `configLocation` attribute into the `<Listener>` element
 
 <br></br>
 
-#### Controlling Session Caching with deferredWrite
+# Controlling Session Caching with deferredWrite
 
 Tomcat Web Session Replication Module has its own nature of caching. Attribute changes during the HTTP Request/HTTP Response cycle is cached by default. Distributing those changes to the Hazelcast Cluster is costly. Because of that, Session Replication is only done at the end of each request for updated and deleted attributes. The risk in this approach is losing data if a Tomcat crash happens in the middle of the HTTP Request operation.
 
 You can change that behavior by setting `deferredWrite=false` in your `<Manager>` element. By disabling it, all updates that are done on session objects are directly distributed into Hazelcast Cluster.
 
-#### Setting Session Expiration Checks
+# Setting Session Expiration Checks
 
 Based on Tomcat configuration or `sessionTimeout` setting in `web.xml`, sessions are expired over time. This requires a cleanup on the Hazelcast Cluster since there is no need to keep expired sessions in the cluster. 
 
 `processExpiresFrequency`, which is defined in [`<Manager>`](#configuring-manager-element-for-tomcat), is the only setting that controls the behavior of session expiry policy in the Tomcat Web Session Replication Module. By setting this, you can set the frequency of the session expiration checks in the Tomcat Instance.
 
-#### Enabling Session Replication in Multi-App Environment
+# Enabling Session Replication in Multi-App Environments
 
 Tomcat can be configured in two ways to enable Session Replication for deployed applications.
 
@@ -167,7 +181,7 @@ By configuring `$CATALINA_HOME$/conf/context.xml`, you can enable session replic
 
 By configuring `$CATALINA_HOME/conf/[enginename]/[hostname]/[applicationName].xml`, you can enable Session Replication per deployed application.
 
-#### Sticky Sessions and Tomcat
+# Sticky Sessions and Tomcat
 
 ***Sticky Sessions (default)***
 
@@ -182,7 +196,7 @@ Non-Sticky Sessions are not good for performance because you need to move sessio
 
 However, load balancing might be super easy with Non-Sticky caches. In case of heavy load, you can distribute the request to the least used Tomcat instance. Hazelcast supports Non-Sticky Sessions as well. 
 
-#### Tomcat Failover and the jvmRoute Parameter
+# Tomcat Failover and the jvmRoute Parameter
 
 Each HTTP Request is redirected to the same Tomcat instance if sticky sessions are enabled. The parameter `jvmRoute` is added to the end of session ID as a suffix, to make Load Balancer aware of the target Tomcat instance. 
 
@@ -194,5 +208,3 @@ When Tomcat Failure happens and Load Balancer cannot redirect the request to the
  <Engine name="Catalina" defaultHost="localhost" jvmRoute="tomcat-8080">
 ```
 
-
-<br></br>
