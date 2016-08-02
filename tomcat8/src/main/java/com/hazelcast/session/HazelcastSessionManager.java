@@ -191,7 +191,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         session.tellNew();
 
         sessions.put(newSessionId, session);
-        sessionMap.put(newSessionId, session);
+        sessionMap.set(newSessionId, session);
         return session;
     }
 
@@ -203,7 +203,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     @Override
     public void add(Session session) {
         sessions.put(session.getId(), (HazelcastSession) session);
-        sessionMap.put(session.getId(), (HazelcastSession) session);
+        sessionMap.set(session.getId(), (HazelcastSession) session);
     }
 
     @Override
@@ -234,7 +234,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
             // call remove method to trigger eviction Listener on each node to invalidate local sessions
             sessionMap.remove(id);
-            sessionMap.put(id, hazelcastSession);
+            sessionMap.set(id, hazelcastSession);
 
             return hazelcastSession;
         } else {
@@ -246,7 +246,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         HazelcastSession hazelcastSession = (HazelcastSession) session;
         if (hazelcastSession.isDirty()) {
             hazelcastSession.setDirty(false);
-            sessionMap.put(session.getId(), hazelcastSession);
+            sessionMap.set(session.getId(), hazelcastSession);
             log.info("Thread name:" + Thread.currentThread().getName() + " commited key:" + hazelcastSession.getAttribute("key"));
         }
     }
@@ -268,7 +268,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         session.setId(newSessionId);
 
         sessionMap.remove(sessionId);
-        sessionMap.put(newSessionId, session);
+        sessionMap.set(newSessionId, session);
         return newSessionId;
     }
 
