@@ -83,6 +83,10 @@ public class Tomcat8Configurator extends WebContainerConfigurator<Tomcat> {
     @Override
     public void reload() {
         Context context = (Context) tomcat.getHost().findChild("/");
+        if (context == null) {
+            //Starting with Tomcat 8.0.35, child name is changed
+            context = (Context) tomcat.getHost().findChild("");
+        }
         context.reload();
     }
 

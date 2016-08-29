@@ -7,10 +7,12 @@ package com.hazelcast.session;
 import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
+import com.hazelcast.util.ExceptionUtil;
 import org.apache.catalina.Manager;
 import org.apache.catalina.session.StandardSession;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Map;
@@ -61,10 +63,6 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         this.sessionManager = sessionManager;
     }
 
-    public Map getAttributes() {
-        return attributes;
-    }
-
     private void updateSession() {
         if (sessionManager.isDeferredEnabled()) {
             dirty = true;
@@ -82,7 +80,7 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         objectDataOutput.writeBoolean(isValid);
         objectDataOutput.writeLong(thisAccessedTime);
         objectDataOutput.writeObject(id);
-        objectDataOutput.writeObject(attributes);
+        objectDataOutput.writeObject(getAttributes());
         objectDataOutput.writeObject(notes);
     }
 
@@ -95,11 +93,41 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         this.isValid = objectDataInput.readBoolean();
         this.thisAccessedTime = objectDataInput.readLong();
         this.id = objectDataInput.readObject();
-        this.attributes = objectDataInput.readObject();
+        setAttributes(objectDataInput.readObject());
         this.notes = objectDataInput.readObject();
 
         if (this.listeners == null) {
             this.listeners = new ArrayList();
+        }
+    }
+
+    public Map getAttributes() {
+        try {
+            return (Map) getAttributesField().get(this);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setAttributes(Object attributes) {
+        try {
+            getAttributesField().set(this, attributes);
+        } catch (IllegalAccessException e) {
+            ExceptionUtil.rethrow(e);
+        }
+    }
+
+    /**
+     * "attributes" field type is changed to ConcurrentMap with Tomcat 8.0.35+ and this causes NoSuchFieldException
+     * if accessed directly. "attributes" is accessed through reflection to support Tomcat 8.0.35+
+     */
+    private Field getAttributesField() {
+        try {
+            Field attributesField = StandardSession.class.getDeclaredField("attributes");
+            attributesField.setAccessible(true);
+            return attributesField;
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
         }
     }
 }
