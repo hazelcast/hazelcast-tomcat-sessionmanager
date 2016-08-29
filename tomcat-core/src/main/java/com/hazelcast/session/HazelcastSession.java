@@ -19,9 +19,15 @@ import java.util.Map;
 
 public class HazelcastSession extends StandardSession implements DataSerializable {
 
+    private static final Field ATTRIBUTES_FIELD;
+
     protected boolean dirty;
 
     private transient SessionManager sessionManager;
+
+    static {
+        ATTRIBUTES_FIELD = getAttributesField();
+    }
 
     public HazelcastSession(SessionManager sessionManager) {
         super((Manager) sessionManager);
@@ -103,7 +109,7 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
 
     public Map getAttributes() {
         try {
-            return (Map) getAttributesField().get(this);
+            return (Map) ATTRIBUTES_FIELD.get(this);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -111,7 +117,7 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
 
     private void setAttributes(Object attributes) {
         try {
-            getAttributesField().set(this, attributes);
+            ATTRIBUTES_FIELD.set(this, attributes);
         } catch (IllegalAccessException e) {
             ExceptionUtil.rethrow(e);
         }
@@ -121,7 +127,7 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
      * "attributes" field type is changed to ConcurrentMap with Tomcat 8.0.35+ and this causes NoSuchFieldException
      * if accessed directly. "attributes" is accessed through reflection to support Tomcat 8.0.35+
      */
-    private Field getAttributesField() {
+    private static Field getAttributesField() {
         try {
             Field attributesField = StandardSession.class.getDeclaredField("attributes");
             attributesField.setAccessible(true);
