@@ -8,13 +8,16 @@ import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 import com.hazelcast.util.ExceptionUtil;
+import com.hazelcast.util.MapUtil;
 import org.apache.catalina.Manager;
 import org.apache.catalina.session.StandardSession;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HazelcastSession extends StandardSession implements DataSerializable {
@@ -87,7 +90,23 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         objectDataOutput.writeLong(thisAccessedTime);
         objectDataOutput.writeObject(id);
         objectDataOutput.writeObject(getAttributes());
-        objectDataOutput.writeObject(notes);
+
+        HashMap<Object, Object> serializableEntries = new HashMap<Object, Object>();
+        for (Object entryObject : notes.entrySet()) {
+            Map.Entry entry = (Map.Entry) entryObject;
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            if (key != null && value != null && key instanceof Serializable && value instanceof Serializable) {
+                serializableEntries.put(key, value);
+            }
+        }
+
+        objectDataOutput.writeInt(serializableEntries.size());
+        for (Map.Entry<Object, Object> entryObject : serializableEntries.entrySet()) {
+            Map.Entry entry = (Map.Entry) entryObject;
+            objectDataOutput.writeObject(entry.getKey());
+            objectDataOutput.writeObject(entry.getValue());
+        }
     }
 
     @Override
@@ -100,7 +119,13 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         this.thisAccessedTime = objectDataInput.readLong();
         this.id = objectDataInput.readObject();
         setAttributes(objectDataInput.readObject());
-        this.notes = objectDataInput.readObject();
+
+        int notesSize = objectDataInput.readInt();
+        this.notes = MapUtil.createHashMap(notesSize);
+        for (int i = 0; i < notesSize; i++) {
+            //noinspection unchecked
+            this.notes.put(objectDataInput.readObject(), objectDataInput.readObject());
+        }
 
         if (this.listeners == null) {
             this.listeners = new ArrayList();

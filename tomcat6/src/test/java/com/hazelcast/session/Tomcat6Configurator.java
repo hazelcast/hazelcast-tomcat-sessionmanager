@@ -5,6 +5,7 @@ import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardServer;
+import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.startup.Embedded;
 
 import java.io.File;
@@ -18,39 +19,35 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
 
     private static String DEFAULT_HOST = "localhost";
 
-    private String p2pConfigLocation;
-    private String clientServerConfigLocation;
+    private String appName;
 
-    public Tomcat6Configurator(String p2pConfigLocation, String clientServerConfigLocation) {
-        super();
-        this.p2pConfigLocation = p2pConfigLocation;
-        this.clientServerConfigLocation = clientServerConfigLocation;
+    public Tomcat6Configurator(String appName) {
+        this.appName = appName;
     }
 
     public Tomcat6Configurator() {
+        this.appName = "defaultApp";
     }
 
     @Override
     public Embedded configure() throws Exception {
-        final Embedded catalina = new Embedded();
+        final URL root = new URL(Tomcat6Configurator.class.getResource("/"), "../../../tomcat-core/target/test-classes");
+        final String cleanedRoot = URLDecoder.decode(root.getFile(), "UTF-8");
+
+        final String docBase = cleanedRoot + File.separator + appName;
+
+        MemoryRealm memoryRealm = new MemoryRealm();
+        memoryRealm.setPathname(docBase + File.separator + "tomcat-users.xml");
+
+        final Embedded catalina = new Embedded(memoryRealm);
         if (!clientOnly) {
-            P2PLifecycleListener p2PLifecycleListener = new P2PLifecycleListener();
-            p2PLifecycleListener.setConfigLocation(p2pConfigLocation);
-            catalina.addLifecycleListener(p2PLifecycleListener);
+            catalina.addLifecycleListener(new P2PLifecycleListener());
         } else {
-            ClientServerLifecycleListener clientServerLifecycleListener = new ClientServerLifecycleListener();
-            clientServerLifecycleListener.setConfigLocation(clientServerConfigLocation);
-            catalina.addLifecycleListener(clientServerLifecycleListener);
+            catalina.addLifecycleListener(new ClientServerLifecycleListener());
         }
 
         final StandardServer server = new StandardServer();
         server.addService(catalina);
-
-        final URL root = new URL(Tomcat6Configurator.class.getResource("/"), "../test-classes");
-        final String cleanedRoot = URLDecoder.decode(root.getFile(), "UTF-8");
-
-        final String fileSeparator = File.separator.equals("\\") ? "\\\\" : File.separator;
-        final String docBase = cleanedRoot + File.separator + Tomcat6Configurator.class.getPackage().getName().replaceAll("\\.", fileSeparator);
 
         final Engine engine = catalina.createEngine();
         engine.setName("engine-" + port);
@@ -63,7 +60,7 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
         final Host host = catalina.createHost(DEFAULT_HOST, docBase);
         engine.addChild(host);
 
-        final Context context = createContext(catalina, "/", "webapp");
+        final Context context = createContext(catalina, "/", docBase);
         host.addChild(context);
 
         this.manager = new HazelcastSessionManager();
@@ -71,11 +68,11 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
         updateManager((HazelcastSessionManager) manager);
         context.setBackgroundProcessorDelay(1);
         context.setCookies(true);
-        // new File("webapp" + File.separator + "webapp").mkdirs();
 
         final Connector connector = catalina.createConnector("localhost", port, false);
         connector.setProperty("bindOnInit", "false");
         catalina.addConnector(connector);
+
         return catalina;
     }
 
@@ -101,7 +98,7 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
         return manager;
     }
 
-    protected Context createContext(final Embedded catalina, final String contextPath, final String docBase) {
+    private Context createContext(final Embedded catalina, final String contextPath, final String docBase) {
         return catalina.createContext(contextPath, docBase);
     }
 

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5"
+         xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <display-name>IntegrationTest Application</display-name>
+
+    <servlet>
+        <servlet-name>secureServlet</servlet-name>
+        <servlet-class>com.hazelcast.session.TestServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>secureServlet</servlet-name>
+        <url-pattern>/secureEndpoint</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>loginServlet</servlet-name>
+        <servlet-class>com.hazelcast.session.LoginServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>loginServlet</servlet-name>
+        <url-pattern>/loginPage</url-pattern>
+    </servlet-mapping>
+
+    <security-constraint>
+        <display-name>Test Security Constraint</display-name>
+        <web-resource-collection>
+            <web-resource-name>Profile Area</web-resource-name>
+            <url-pattern>/secureEndpoint</url-pattern>
+            <http-method>DELETE</http-method>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>PUT</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>role1</role-name>
+            <role-name>role2</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>Form-Based Authentication Area</realm-name>
+        <form-login-config>
+            <form-login-page>/loginPage</form-login-page>
+            <form-error-page>/errorPage</form-error-page>
+        </form-login-config>
+    </login-config>
+
+    <security-role>
+        <role-name>role1</role-name>
+    </security-role>
+    <security-role>
+        <role-name>role2</role-name>
+    </security-role>
+</web-app>
