@@ -19,6 +19,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HazelcastSession extends StandardSession implements DataSerializable {
 
@@ -89,10 +90,14 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         objectDataOutput.writeBoolean(isValid);
         objectDataOutput.writeLong(thisAccessedTime);
         objectDataOutput.writeObject(id);
-        objectDataOutput.writeObject(getAttributes());
 
+        serializeMap(getAttributes(), objectDataOutput);
+        serializeMap(notes, objectDataOutput);
+    }
+
+    private void serializeMap(Map map, ObjectDataOutput objectDataOutput) throws IOException {
         HashMap<Object, Object> serializableEntries = new HashMap<Object, Object>();
-        for (Object entryObject : notes.entrySet()) {
+        for (Object entryObject : map.entrySet()) {
             Map.Entry entry = (Map.Entry) entryObject;
             Object key = entry.getKey();
             Object value = entry.getValue();
@@ -118,18 +123,24 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         this.isValid = objectDataInput.readBoolean();
         this.thisAccessedTime = objectDataInput.readLong();
         this.id = objectDataInput.readObject();
-        setAttributes(objectDataInput.readObject());
 
-        int notesSize = objectDataInput.readInt();
-        this.notes = MapUtil.createHashMap(notesSize);
-        for (int i = 0; i < notesSize; i++) {
-            //noinspection unchecked
-            this.notes.put(objectDataInput.readObject(), objectDataInput.readObject());
-        }
+        setAttributes(deserializeMap(objectDataInput, true));
+
+        this.notes = deserializeMap(objectDataInput, false);
 
         if (this.listeners == null) {
             this.listeners = new ArrayList();
         }
+    }
+
+    private Map deserializeMap(ObjectDataInput objectDataInput, boolean concurrent) throws IOException {
+        int mapSize = objectDataInput.readInt();
+        Map map = concurrent ? new ConcurrentHashMap() : MapUtil.createHashMap(mapSize);
+        for (int i = 0; i < mapSize; i++) {
+            //noinspection unchecked
+            map.put(objectDataInput.readObject(), objectDataInput.readObject());
+        }
+        return map;
     }
 
     public Map getAttributes() {
