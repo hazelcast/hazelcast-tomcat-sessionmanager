@@ -13,16 +13,14 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
     private Tomcat tomcat;
     private SessionManager manager;
 
-    private String p2pConfigLocation;
-    private String clientServerConfigLocation;
+    private String appName;
 
-    public Tomcat7Configurator(String p2pConfigLocation, String clientServerConfigLocation) {
-        super();
-        this.p2pConfigLocation = p2pConfigLocation;
-        this.clientServerConfigLocation = clientServerConfigLocation;
+    public Tomcat7Configurator(String appName) {
+        this.appName = appName;
     }
 
     public Tomcat7Configurator() {
+        this.appName = "defaultApp";
     }
 
     @Override
@@ -30,18 +28,13 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
         final URL root = new URL(TestServlet.class.getResource("/"), "../../../tomcat-core/target/test-classes");
         final String cleanedRoot = URLDecoder.decode(root.getFile(), "UTF-8");
 
-        final String fileSeparator = File.separator.equals("\\") ? "\\\\" : File.separator;
-        final String docBase = cleanedRoot + File.separator + TestServlet.class.getPackage().getName().replaceAll("\\.", fileSeparator);
+        final String docBase = cleanedRoot + File.separator + appName;
 
         Tomcat tomcat = new Tomcat();
         if (!clientOnly) {
-            P2PLifecycleListener p2PLifecycleListener = new P2PLifecycleListener();
-            p2PLifecycleListener.setConfigLocation(p2pConfigLocation);
-            tomcat.getServer().addLifecycleListener(p2PLifecycleListener);
+            tomcat.getServer().addLifecycleListener(new P2PLifecycleListener());
         } else {
-            ClientServerLifecycleListener clientServerLifecycleListener = new ClientServerLifecycleListener();
-            clientServerLifecycleListener.setConfigLocation(clientServerConfigLocation);
-            tomcat.getServer().addLifecycleListener(clientServerLifecycleListener);
+            tomcat.getServer().addLifecycleListener(new ClientServerLifecycleListener());
         }
         tomcat.getEngine().setJvmRoute("tomcat-" + port);
         tomcat.setBaseDir(docBase);
@@ -54,7 +47,7 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
 
         Context context;
         try {
-            context = tomcat.addWebapp(tomcat.getHost(), "/", docBase + fileSeparator + "webapp");
+            context = tomcat.addWebapp(tomcat.getHost(), "/", docBase);
         } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
