@@ -15,7 +15,7 @@
     <parent>
         <groupId>com.hazelcast</groupId>
         <artifactId>hazelcast-tomcat-sessionmanager</artifactId>
-        <version>1.0.3-SNAPSHOT</version>
+        <version>1.0.3</version>
     </parent>
 
     <build>
