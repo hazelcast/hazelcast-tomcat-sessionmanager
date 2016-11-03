@@ -32,7 +32,9 @@ public class Tomcat8Configurator extends WebContainerConfigurator<Tomcat> {
 
         Tomcat tomcat = new Tomcat();
         if (!clientOnly) {
-            tomcat.getServer().addLifecycleListener(new P2PLifecycleListener());
+            P2PLifecycleListener listener = new P2PLifecycleListener();
+            listener.setConfigLocation(configLocation);
+            tomcat.getServer().addLifecycleListener(listener);
         } else {
             tomcat.getServer().addLifecycleListener(new ClientServerLifecycleListener());
         }
@@ -73,7 +75,9 @@ public class Tomcat8Configurator extends WebContainerConfigurator<Tomcat> {
 
     @Override
     public void stop() throws Exception {
-        tomcat.stop();
+        if (tomcat.getServer().getState().isAvailable()) {
+            tomcat.stop();
+        }
     }
 
     @Override

@@ -13,23 +13,18 @@ import org.apache.catalina.LifecycleListener;
 
 import java.io.IOException;
 
-
 public class P2PLifecycleListener implements LifecycleListener {
-
-
     private static Config config;
     private String configLocation;
 
     @Override
     public void lifecycleEvent(LifecycleEvent event) {
-
         String shutdown = System.getProperty("hazelcast.tomcat.shutdown_hazelcast_instance");
         if (getConfigLocation() == null) {
             setConfigLocation("hazelcast-default.xml");
         }
 
         if ("start".equals(event.getType())) {
-
             try {
                 config = ConfigLoader.load(getConfigLocation());
             } catch (IOException e) {
@@ -39,7 +34,9 @@ public class P2PLifecycleListener implements LifecycleListener {
             if (config == null) {
                 throw new RuntimeException("failed to find configLocation:" + getConfigLocation());
             }
-            config.setInstanceName(SessionManager.DEFAULT_INSTANCE_NAME);
+            if (config.getInstanceName() == null) {
+                config.setInstanceName(SessionManager.DEFAULT_INSTANCE_NAME);
+            }
             Hazelcast.getOrCreateHazelcastInstance(config);
         } else if ("stop".equals(event.getType()) && !"false".equals(shutdown)) {
             HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(SessionManager.DEFAULT_INSTANCE_NAME);
@@ -47,7 +44,6 @@ public class P2PLifecycleListener implements LifecycleListener {
                 instance.shutdown();
             }
         }
-
     }
 
 
@@ -62,5 +58,4 @@ public class P2PLifecycleListener implements LifecycleListener {
     public static Config getConfig() {
         return config;
     }
-
 }
