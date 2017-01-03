@@ -5,6 +5,7 @@
 package com.hazelcast.session;
 
 import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.Hazelcast;
@@ -85,7 +86,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         if (isClientOnly()) {
             try {
-                instance = HazelcastClient.newHazelcastClient(ClientServerLifecycleListener.getConfig());
+                ClientConfig clientConfig = ClientServerLifecycleListener.getConfig();
+                clientConfig.setClassLoader(getContext().getLoader().getClassLoader());
+                instance = HazelcastClient.newHazelcastClient(clientConfig);
             } catch (Exception e) {
                 log.error("Hazelcast Client could not be created. ", e);
                 throw new LifecycleException(e.getMessage());
