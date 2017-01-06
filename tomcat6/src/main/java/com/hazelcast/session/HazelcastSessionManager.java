@@ -108,8 +108,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
                 ClientConfig clientConfig = ClientServerLifecycleListener.getConfig();
                 clientConfig.setClassLoader(getContainer().getLoader().getClassLoader());
                 instance = HazelcastClient.newHazelcastClient(clientConfig);
-
-                instance = HazelcastClient.newHazelcastClient(ClientServerLifecycleListener.getConfig());
             } catch (Exception e) {
                 log.error("Hazelcast Client could not be created.", e);
                 throw new LifecycleException(e.getMessage());
