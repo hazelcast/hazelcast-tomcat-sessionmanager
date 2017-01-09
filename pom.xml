@@ -37,7 +37,7 @@
         <timestamp>${maven.build.timestamp}</timestamp>
         <extraVmArgs/>
 
-        <hazelcast.version>3.6.2</hazelcast.version>
+        <hazelcast.version>3.7.4</hazelcast.version>
 
         <servlet.api.version>3.0.1</servlet.api.version>
         <junit.version>4.11</junit.version>

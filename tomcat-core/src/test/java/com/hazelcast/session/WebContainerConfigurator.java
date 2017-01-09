@@ -9,6 +9,7 @@ public abstract class WebContainerConfigurator<T> {
     protected String mapName = "default";
     protected int sessionTimeout;
     protected boolean deferredWrite;
+    protected String configLocation = "hazelcast.xml";
 
     public WebContainerConfigurator<T> port(int port) {
         this.port = port;
@@ -37,6 +38,11 @@ public abstract class WebContainerConfigurator<T> {
 
     public WebContainerConfigurator<T> deferredWrite(boolean deferredWrite) {
         this.deferredWrite = deferredWrite;
+        return this;
+    }
+
+    public WebContainerConfigurator<T> configLocation(String configLocation) {
+        this.configLocation = configLocation;
         return this;
     }
 

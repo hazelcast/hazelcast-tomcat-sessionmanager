@@ -3,10 +3,13 @@ package com.hazelcast.session;
 import org.apache.catalina.Context;
 import org.apache.catalina.Engine;
 import org.apache.catalina.Host;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.startup.Embedded;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -20,6 +23,8 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
     private static String DEFAULT_HOST = "localhost";
 
     private String appName;
+
+    private final Log log = LogFactory.getLog(Tomcat6Configurator.class);
 
     public Tomcat6Configurator(String appName) {
         this.appName = appName;
@@ -41,7 +46,9 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
 
         final Embedded catalina = new Embedded(memoryRealm);
         if (!clientOnly) {
-            catalina.addLifecycleListener(new P2PLifecycleListener());
+            P2PLifecycleListener listener = new P2PLifecycleListener();
+            listener.setConfigLocation(configLocation);
+            catalina.addLifecycleListener(listener);
         } else {
             catalina.addLifecycleListener(new ClientServerLifecycleListener());
         }
@@ -84,7 +91,11 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
 
     @Override
     public void stop() throws Exception {
-        tomcat.stop();
+        try {
+            tomcat.stop();
+        } catch (LifecycleException e) {
+            log.warn("Failed to stop Tomcat. May be already stopped.");
+        }
     }
 
     @Override
