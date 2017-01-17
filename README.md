@@ -208,3 +208,5 @@ When Tomcat Failure happens and Load Balancer cannot redirect the request to the
  <Engine name="Catalina" defaultHost="localhost" jvmRoute="tomcat-8080">
 ```
 
+# License
+Hazelcast Tomcat Session Manager is available under the Apache 2 License. 
