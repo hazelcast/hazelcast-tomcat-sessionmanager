@@ -1,7 +1,7 @@
 package com.hazelcast.session.nonsticky;
 
 import com.hazelcast.session.Java6ExcludeRule;
-import com.hazelcast.session.Tomcat8Configurator;
+import com.hazelcast.session.Tomcat85Configurator;
 import com.hazelcast.session.WebContainerConfigurator;
 import com.hazelcast.test.HazelcastSerialClassRunner;
 import com.hazelcast.test.annotation.QuickTest;
@@ -18,6 +18,6 @@ public class Tomcat8P2PNonStickySessionsTest extends AbstractP2PNonStickySession
 
     @Override
     protected WebContainerConfigurator<?> getWebContainerConfigurator() {
-        return new Tomcat8Configurator();
+        return new Tomcat85Configurator();
     }
 }

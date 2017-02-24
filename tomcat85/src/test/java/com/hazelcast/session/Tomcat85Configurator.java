@@ -8,17 +8,17 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
 
-public class Tomcat8Configurator extends WebContainerConfigurator<Tomcat> {
+public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
 
     private Tomcat tomcat;
     private SessionManager manager;
     private String appName;
 
-    public Tomcat8Configurator(String appName) {
+    public Tomcat85Configurator(String appName) {
         this.appName = appName;
     }
 
-    public Tomcat8Configurator() {
+    public Tomcat85Configurator() {
         this.appName = "defaultApp";
     }
 

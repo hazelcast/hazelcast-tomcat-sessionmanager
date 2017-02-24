@@ -3,6 +3,6 @@
  */
 
 /**
- * This package provides Filterless Session Replication for Tomcat 8
+ * This package provides Filterless Session Replication for Tomcat 8.5
  */
 package com.hazelcast.session;

@@ -7,9 +7,9 @@ import org.junit.runner.RunWith;
 
 @RunWith(HazelcastSerialClassRunner.class)
 @Category(QuickTest.class)
-public class Tomcat8SecurityTest extends AbstractTomcatSecurityTest {
+public class Tomcat85SecurityTest extends AbstractTomcatSecurityTest {
     @Override
     protected WebContainerConfigurator<?> getTomcatConfigurator(String appName) {
-        return new Tomcat8Configurator(appName);
+        return new Tomcat85Configurator(appName);
     }
 }
