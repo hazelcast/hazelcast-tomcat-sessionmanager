@@ -6,7 +6,6 @@ package com.hazelcast.session;
 
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
-import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.Hazelcast;
@@ -81,11 +80,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             }
         } else {
             instance = Hazelcast.getOrCreateHazelcastInstance(P2PLifecycleListener.getConfig());
-            log.info("HAZELCAST disco config: " + P2PLifecycleListener.getConfig().getNetworkConfig().getJoin().getDiscoveryConfig().getDiscoveryServiceProvider());
-            for (DiscoveryStrategyConfig c : P2PLifecycleListener.getConfig().getNetworkConfig().getJoin().getDiscoveryConfig().getDiscoveryStrategyConfigs()) {
-                log.info("DiscoveryStrategyConfig: " + c);
-                log.info("DiscoveryStrategyConfig ClassName: " + c.getClassName());
-            }
         }
         if (getMapName() == null || "default".equals(getMapName())) {
             Context ctx = getContext();
