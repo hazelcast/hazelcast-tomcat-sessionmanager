@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(HazelcastSerialClassRunner.class)
 @Category(QuickTest.class)
-public class Tomcat8ClientServerNonStickySessionsTest extends AbstractClientServerNonStickySessionsTest {
+public class Tomcat85P2PNonStickySessionsTest extends AbstractP2PNonStickySessionsTest {
 
     @Rule
     public Java6ExcludeRule java6ExcludeRule = new Java6ExcludeRule();

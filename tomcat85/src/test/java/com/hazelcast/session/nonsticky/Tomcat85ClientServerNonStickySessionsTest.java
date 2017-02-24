@@ -1,4 +1,4 @@
-package com.hazelcast.session.sticky;
+package com.hazelcast.session.nonsticky;
 
 import com.hazelcast.session.Java6ExcludeRule;
 import com.hazelcast.session.Tomcat85Configurator;
@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(HazelcastSerialClassRunner.class)
 @Category(QuickTest.class)
-public class Tomcat8ClientServerStickySessionsTest extends AbstractClientServerStickySessionsTest {
+public class Tomcat85ClientServerNonStickySessionsTest extends AbstractClientServerNonStickySessionsTest {
 
     @Rule
     public Java6ExcludeRule java6ExcludeRule = new Java6ExcludeRule();
