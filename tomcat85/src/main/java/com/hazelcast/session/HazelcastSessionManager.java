@@ -168,7 +168,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         session.setNew(true);
         session.setValid(true);
         session.setCreationTime(System.currentTimeMillis());
-        session.setMaxInactiveInterval(getContext().getSessionTimeout());
+        session.setMaxInactiveInterval(getContext().getSessionTimeout() * 60);
 
         String newSessionId = sessionId;
         if (newSessionId == null) {
