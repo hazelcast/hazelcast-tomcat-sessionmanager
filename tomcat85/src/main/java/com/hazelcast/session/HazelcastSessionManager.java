@@ -85,7 +85,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             Context ctx = getContext();
             String contextPath = ctx.getServletContext().getContextPath();
             log.info("contextPath:" + contextPath);
-            String mapName;
             if (contextPath == null || contextPath.equals("/") || contextPath.equals("")) {
                 mapName = "empty_session_replication";
             } else {
