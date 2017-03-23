@@ -31,6 +31,8 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private static final int DEFAULT_SESSION_TIMEOUT = 60;
 
+    private static final int SECONDS_IN_MINUTE = 60;
+
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);
 
     private IMap<String, HazelcastSession> sessionMap;
@@ -167,7 +169,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         session.setNew(true);
         session.setValid(true);
         session.setCreationTime(System.currentTimeMillis());
-        session.setMaxInactiveInterval(getContext().getSessionTimeout() * 60);
+        session.setMaxInactiveInterval(getContext().getSessionTimeout() * SECONDS_IN_MINUTE);
 
         String newSessionId = sessionId;
         if (newSessionId == null) {
