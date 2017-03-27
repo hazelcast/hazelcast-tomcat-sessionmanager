@@ -11,8 +11,12 @@ import org.apache.catalina.valves.ValveBase;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 public class HazelcastSessionChangeValve extends ValveBase {
 
+    private static final Log log = LogFactory.getLog(HazelcastSessionChangeValve.class);
     private SessionManager sessionManager;
 
     public HazelcastSessionChangeValve(SessionManager sessionManager) {
@@ -42,6 +46,8 @@ public class HazelcastSessionChangeValve extends ValveBase {
         }
 
         String newSessionId = sessionManager.updateJvmRouteForSession(currentSessionId, jvmRoute);
+		log.info("Invalidating session with ID: '" + request.getSession().getId() + "'");
+        request.getSession().invalidate();
         request.changeSessionId(newSessionId);
     }
 }
