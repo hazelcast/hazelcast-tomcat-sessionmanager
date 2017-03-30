@@ -212,9 +212,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             if (hazelcastSession == null) {
                 log.info("No Session found for:" + id);
                 return null;
-            } else {
-              log.debug("Session found for:" + id);
             }
+
+            log.info("Session found for:" + id);
 
             hazelcastSession.access();
             hazelcastSession.endAccess();
@@ -265,14 +265,13 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     @Override
     public void remove(Session session) {
-        log.debug("Removed session: " + session.getId());
         remove(session.getId());
+        log.info("Removed session: " + session.getId());
     }
 
     @Override
     public void remove(Session session, boolean update) {
-        log.debug("Removed session: " + session.getId());
-        remove(session.getId());
+       remove(session);
     }
 
     @Override
