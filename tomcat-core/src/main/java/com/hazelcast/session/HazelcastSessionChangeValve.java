@@ -16,7 +16,7 @@ import org.apache.juli.logging.LogFactory;
 
 public class HazelcastSessionChangeValve extends ValveBase {
 
-    private static final Log log = LogFactory.getLog(HazelcastSessionChangeValve.class);
+    private static final Log LOGGER = LogFactory.getLog(HazelcastSessionChangeValve.class);
     private SessionManager sessionManager;
 
     public HazelcastSessionChangeValve(SessionManager sessionManager) {
@@ -46,7 +46,7 @@ public class HazelcastSessionChangeValve extends ValveBase {
         }
 
         String newSessionId = sessionManager.updateJvmRouteForSession(currentSessionId, jvmRoute);
-		log.info("Invalidating session with ID: '" + request.getSession().getId() + "'");
+        LOGGER.info("Invalidating session with ID: '" + request.getSession().getId() + "'");
         request.getSession().invalidate();
         request.changeSessionId(newSessionId);
     }
