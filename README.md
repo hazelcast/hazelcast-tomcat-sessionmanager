@@ -142,6 +142,21 @@ The following steps configure a sample Client/Server for Hazelcast Session Repli
 
 Optionally, you can add `configLocation` attribute into the `<Listener>` element. If not provided, `hazelcast-client-default.xml` in `hazelcast-client-`<*version*>`.jar` file is used by default. Any client XML file in the classpath, URL or full filesystem path as a `configLocation` value is also supported.
 
+An example client config that connects directly (i.e. doesn't use multicast) to a specified cluster is:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast-client xsi:schemaLocation="http://www.hazelcast.com/schema/client-config hazelcast-client-config-3.9.xsd"
+                  xmlns="http://www.hazelcast.com/schema/client-config"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <network>
+      <cluster-members>
+        <address>HAZELCAST_MEMBER</address>
+      </cluster-members>
+    </network>
+</hazelcast-client>
+```
+
 # Configuring Manager Element for Tomcat
 
 `<Manager>` element is used both in P2P and Client/Server mode. You can use the following attributes to configure Tomcat Session Replication Module to better serve your needs.

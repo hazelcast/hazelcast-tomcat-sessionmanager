@@ -31,6 +31,8 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private static final int DEFAULT_SESSION_TIMEOUT = 60;
 
+    private static final int SECONDS_IN_MINUTE = 60;
+
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);
 
     private IMap<String, HazelcastSession> sessionMap;
@@ -85,7 +87,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             Context ctx = getContext();
             String contextPath = ctx.getServletContext().getContextPath();
             log.info("contextPath:" + contextPath);
-            String mapName;
             if (contextPath == null || contextPath.equals("/") || contextPath.equals("")) {
                 mapName = "empty_session_replication";
             } else {
@@ -168,7 +169,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         session.setNew(true);
         session.setValid(true);
         session.setCreationTime(System.currentTimeMillis());
-        session.setMaxInactiveInterval(getContext().getSessionTimeout());
+        session.setMaxInactiveInterval(getContext().getSessionTimeout() * SECONDS_IN_MINUTE);
 
         String newSessionId = sessionId;
         if (newSessionId == null) {
@@ -196,7 +197,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     @Override
     public Session findSession(String id) throws IOException {
-        log.debug("sessionId:" + id);
+        log.debug("Attempting to find sessionId:" + id);
         if (id == null) {
             return null;
         }
@@ -212,6 +213,8 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
                 log.info("No Session found for:" + id);
                 return null;
             }
+
+            log.info("Session found for:" + id);
 
             hazelcastSession.access();
             hazelcastSession.endAccess();
@@ -235,7 +238,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         if (hazelcastSession.isDirty()) {
             hazelcastSession.setDirty(false);
             sessionMap.set(session.getId(), hazelcastSession);
-            log.info("Thread name:" + Thread.currentThread().getName() + " commited key:" + hazelcastSession.getAttribute("key"));
+            log.info("Thread name:" + Thread.currentThread().getName() + " committed key:" + session.getId());
         }
     }
 
@@ -263,11 +266,12 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     @Override
     public void remove(Session session) {
         remove(session.getId());
+        log.info("Removed session: " + session.getId());
     }
 
     @Override
     public void remove(Session session, boolean update) {
-        remove(session.getId());
+       remove(session);
     }
 
     @Override
