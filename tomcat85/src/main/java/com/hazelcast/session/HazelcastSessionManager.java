@@ -130,11 +130,13 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     private void configureValves() {
         if (isSticky()) {
             HazelcastSessionChangeValve hazelcastSessionChangeValve = new HazelcastSessionChangeValve(this);
+            hazelcastSessionChangeValve.setAsyncSupported(true);
             getContext().getPipeline().addValve(hazelcastSessionChangeValve);
         }
 
         if (isDeferredEnabled()) {
             HazelcastSessionCommitValve hazelcastSessionCommitValve = new HazelcastSessionCommitValve(this);
+            hazelcastSessionCommitValve.setAsyncSupported(true);
             getContext().getPipeline().addValve(hazelcastSessionCommitValve);
         }
     }
