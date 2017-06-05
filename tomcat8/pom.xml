@@ -6,7 +6,7 @@
     <parent>
         <artifactId>hazelcast-tomcat-sessionmanager</artifactId>
         <groupId>com.hazelcast</groupId>
-        <version>1.1.1</version>
+        <version>1.1.2-SNAPSHOT</version>
     </parent>
 
     <properties>
