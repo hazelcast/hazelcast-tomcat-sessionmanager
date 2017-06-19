@@ -252,7 +252,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         if (hazelcastSession.isDirty()) {
             hazelcastSession.setDirty(false);
             sessionMap.set(session.getId(), hazelcastSession);
-            log.info("Thread name:" + Thread.currentThread().getName() + " commited key:" + hazelcastSession.getAttribute("key"));
+            log.info("Thread name:" + Thread.currentThread().getName() + " committed key:" + session.getId());
         }
     }
 
