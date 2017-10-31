@@ -90,7 +90,8 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         objectDataOutput.writeBoolean(isValid);
         objectDataOutput.writeLong(thisAccessedTime);
         objectDataOutput.writeObject(id);
-
+        objectDataOutput.writeObject(principal);
+        
         serializeMap(getAttributes(), objectDataOutput);
         serializeMap(notes, objectDataOutput);
     }
@@ -123,6 +124,7 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         this.isValid = objectDataInput.readBoolean();
         this.thisAccessedTime = objectDataInput.readLong();
         this.id = objectDataInput.readObject();
+        this.principal = objectDataInput.readObject();
 
         setAttributes(deserializeMap(objectDataInput, true));
 
