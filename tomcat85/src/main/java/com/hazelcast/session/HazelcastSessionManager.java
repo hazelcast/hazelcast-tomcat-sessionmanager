@@ -45,6 +45,8 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private boolean deferredWrite = true;
 
+    private String hazelcastInstanceName;
+
     private HazelcastInstance instance;
 
     public void setSessionTimeout(int t) {
@@ -80,6 +82,8 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
                 log.error("Hazelcast Client could not be created. ", e);
                 throw new LifecycleException(e.getMessage());
             }
+        } else if (getHazelcastInstanceName() != null) {
+            instance = Hazelcast.getHazelcastInstanceByName(getHazelcastInstanceName());
         } else {
             instance = Hazelcast.getOrCreateHazelcastInstance(P2PLifecycleListener.getConfig());
         }
@@ -329,6 +333,14 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     public void setMapName(String mapName) {
         this.mapName = mapName;
+    }
+
+    public String getHazelcastInstanceName() {
+        return hazelcastInstanceName;
+    }
+
+    public void setHazelcastInstanceName(String hazelcastInstanceName) {
+        this.hazelcastInstanceName = hazelcastInstanceName;
     }
 
     private void checkMaxActiveSessions() {
