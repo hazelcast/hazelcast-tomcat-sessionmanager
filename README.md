@@ -165,6 +165,7 @@ An example client config that connects directly (i.e. doesn't use multicast) to 
 - Add `sticky` attribute into `<Manager>` element. Its default value is *true*.
 - Add `processExpiresFrequency` attribute into `<Manager>` element. It specifies the frequency of session validity check, in seconds. Its default value is *6* and the minimum value that you can set is *1*.
 - Add `deferredWrite` attribute into `<Manager>` element. Its default value is *true*.
+- In P2P mode, add `hazelcastInstanceName` attribute into `<Manager>` element. It specifies an existing Hazelcast instance to use for session replication.
 
 <br></br>
 
