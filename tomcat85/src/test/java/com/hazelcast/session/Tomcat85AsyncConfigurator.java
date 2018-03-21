@@ -10,7 +10,7 @@ public class Tomcat85AsyncConfigurator extends WebContainerConfigurator<Tomcat> 
     private final String baseDir;
 
     private Tomcat tomcat;
-    private SessionManager manager;
+    private HazelcastSessionManager manager;
 
     public Tomcat85AsyncConfigurator(String baseDir) {
         this.baseDir = baseDir;
@@ -46,15 +46,15 @@ public class Tomcat85AsyncConfigurator extends WebContainerConfigurator<Tomcat> 
             asyncServlet.setAsyncSupported(true);
 
             context.addChild(asyncServlet);
-            context.addServletMapping("/*", "asyncServlet");
+            context.addServletMappingDecoded("/*", "asyncServlet");
 
         } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
 
         this.manager = new HazelcastSessionManager();
-        context.setManager((HazelcastSessionManager) manager);
-        updateManager((HazelcastSessionManager) manager);
+        context.setManager(manager);
+        updateManager(manager);
         context.setCookies(true);
         context.setBackgroundProcessorDelay(1);
         context.setReloadable(true);
@@ -66,6 +66,7 @@ public class Tomcat85AsyncConfigurator extends WebContainerConfigurator<Tomcat> 
     public void start() throws Exception {
         tomcat = configure();
         tomcat.start();
+        setSessionTimeout();
     }
 
     @Override
@@ -82,6 +83,7 @@ public class Tomcat85AsyncConfigurator extends WebContainerConfigurator<Tomcat> 
             context = (Context) tomcat.getHost().findChild("");
         }
         context.reload();
+        setSessionTimeout();
     }
 
     @Override
@@ -94,5 +96,10 @@ public class Tomcat85AsyncConfigurator extends WebContainerConfigurator<Tomcat> 
         manager.setClientOnly(clientOnly);
         manager.setMapName(mapName);
         manager.setDeferredWrite(deferredWrite);
+        manager.setProcessExpiresFrequency(1);
+    }
+
+    private void setSessionTimeout() {
+        manager.setSessionTimeout(sessionTimeout);
     }
 }

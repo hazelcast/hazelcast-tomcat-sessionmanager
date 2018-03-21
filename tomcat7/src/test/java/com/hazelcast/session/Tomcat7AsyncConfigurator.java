@@ -93,6 +93,8 @@ public class Tomcat7AsyncConfigurator extends WebContainerConfigurator<Tomcat> {
         manager.setSticky(sticky);
         manager.setClientOnly(clientOnly);
         manager.setMapName(mapName);
+        manager.setMaxInactiveInterval(sessionTimeout);
         manager.setDeferredWrite(deferredWrite);
+        manager.setProcessExpiresFrequency(1);
     }
 }

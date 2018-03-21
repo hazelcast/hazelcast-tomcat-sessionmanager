@@ -94,5 +94,6 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
         manager.setMapName(mapName);
         manager.setMaxInactiveInterval(sessionTimeout);
         manager.setDeferredWrite(deferredWrite);
+        manager.setProcessExpiresFrequency(1);
     }
 }

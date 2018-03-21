@@ -54,6 +54,10 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private HazelcastInstance instance;
 
+    public void setSessionTimeout(int t) {
+        getContext().setSessionTimeout(t);
+    }
+
     @Override
     public String getName() {
         return NAME;

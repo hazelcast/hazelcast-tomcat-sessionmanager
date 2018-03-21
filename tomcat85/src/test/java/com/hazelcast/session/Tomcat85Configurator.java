@@ -11,7 +11,7 @@ import java.net.URLDecoder;
 public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
 
     private Tomcat tomcat;
-    private SessionManager manager;
+    private HazelcastSessionManager manager;
     private String appName;
 
     public Tomcat85Configurator(String appName) {
@@ -58,8 +58,8 @@ public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
         }
 
         this.manager = new HazelcastSessionManager();
-        context.setManager((HazelcastSessionManager) manager);
-        updateManager((HazelcastSessionManager) manager);
+        context.setManager(manager);
+        updateManager(manager);
         context.setCookies(true);
         context.setBackgroundProcessorDelay(1);
         context.setReloadable(true);
@@ -71,6 +71,7 @@ public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
     public void start() throws Exception {
         tomcat = configure();
         tomcat.start();
+        setSessionTimeout();
     }
 
     @Override
@@ -88,6 +89,7 @@ public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
             context = (Context) tomcat.getHost().findChild("");
         }
         context.reload();
+        setSessionTimeout();
     }
 
     @Override
@@ -99,7 +101,11 @@ public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
         manager.setSticky(sticky);
         manager.setClientOnly(clientOnly);
         manager.setMapName(mapName);
-        manager.setSessionTimeout(sessionTimeout);
         manager.setDeferredWrite(deferredWrite);
+        manager.setProcessExpiresFrequency(1);
+    }
+
+    private void setSessionTimeout() {
+        manager.setSessionTimeout(sessionTimeout);
     }
 }
