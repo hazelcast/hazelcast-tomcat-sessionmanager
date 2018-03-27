@@ -25,6 +25,9 @@ import org.apache.juli.logging.LogFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class HazelcastSessionManager extends ManagerBase implements Lifecycle, PropertyChangeListener, SessionManager {
 
@@ -257,6 +260,31 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         } else {
             return sessions.get(id);
         }
+    }
+
+    @Override
+    public Session[] findSessions() {
+        // Get all local sessions
+        Set<Session> allSessions = new HashSet<Session>(sessions.values());
+
+        // Get all non-local sessions ids
+        Set<String> keys = new HashSet<String>(sessionMap.keySet());
+        keys.removeAll(sessions.keySet());
+
+        // Get all non-local sessions
+        final Collection<HazelcastSession> nonLocalSessions = sessionMap.getAll(keys).values();
+
+        // Set SessionManager since it's a transient field
+        for (HazelcastSession nonLocalSession : nonLocalSessions) {
+            if (nonLocalSession.getManager() == null) {
+                nonLocalSession.setSessionManager(this);
+            }
+        }
+
+        // Add all non-local sessions
+        allSessions.addAll(nonLocalSessions);
+
+        return allSessions.toArray(new Session[allSessions.size()]);
     }
 
     public void commit(Session session) {
