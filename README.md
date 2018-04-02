@@ -11,6 +11,7 @@
 * [Enabling Session Replication in Multi-App Environments](#enabling-session-replication-in-multi-app-environments)
 * [Sticky Sessions and Tomcat](#sticky-sessions-and-tomcat)
 * [Tomcat Failover and the jvmRoute Parameter](#tomcatfailover-and-the-jvmroute-parameter)
+* [Two Phase Transactional Commit Support](#Two-Phase-Transactional-Commit-Support)
 
 
 # Tomcat Based Web Session Replication
@@ -29,6 +30,7 @@
 - Support for sticky and non-sticky sessions.
 - Tomcat failover.
 - Deferred write for performance boost.
+- Transactional support for writing updates the distributed hazelcast session store.
 <br></br>
 
 ***Supported Containers***
@@ -223,6 +225,22 @@ When Tomcat Failure happens and Load Balancer cannot redirect the request to the
 ```xml
  <Engine name="Catalina" defaultHost="localhost" jvmRoute="tomcat-8080">
 ```
+
+
+# Two Phase Transactional Commit Support
+If it is crucial to ensure that each node in the cluster receives a consistent view of the distributed session map, you can enable the `twoPhaseCommit` write strategy. As with Non-Sticky Sessions, this may incur performance penalties across your replication cluster.
+
+Two Phase Commits can be enabled by adding `writeStrategy="twoPhaseCommit"` to the Manager attribute defined in [`<Manager>`](#configuring-manager-element-for-tomcat).
+
+An example of using non-sticky sessions, with deferredWrite and twoPhaseCommit support is as follows:
+
+```xml
+<Manager className="com.hazelcast.session.HazelcastSessionManager" sticky="false" deferredWrite="true" writeStrategy="twoPhaseCommit" />
+```
+
+Supported values for the `writeStrategy` attribute are:
+- `twoPhaseCommit` - Enables Two Phase Transactional support for cluster wide session updates.
+- `default` - Default non-transactional writes.
 
 # License
 Hazelcast Tomcat Session Manager is available under the Apache 2 License. 

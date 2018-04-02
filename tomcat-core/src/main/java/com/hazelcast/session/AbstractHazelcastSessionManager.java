@@ -44,7 +44,7 @@ public abstract class AbstractHazelcastSessionManager extends ManagerBase implem
      */
     void configureReadStrategy(String mapName, String readStrategy) {
         log.info(String.format("Configuring session map for '%1$s' read strategy", readStrategy));
-        if (!"default".equals(writeStrategy)) {
+        if (!"default".equals(readStrategy)) {
             log.info(String.format("'%1$s' readStrategy is not supported - using 'default'", readStrategy));
         }
         setMapQueryStrategy(new DefaultMapQueryStrategy(getDistributedMap()));
