@@ -120,5 +120,7 @@ public class Tomcat6Configurator extends WebContainerConfigurator<Embedded> {
         manager.setMaxInactiveInterval(sessionTimeout);
         manager.setDeferredWrite(deferredWrite);
         manager.setProcessExpiresFrequency(1);
+        manager.setReadStrategy(readStrategy);
+        manager.setWriteStrategy(writeStrategy);
     }
 }

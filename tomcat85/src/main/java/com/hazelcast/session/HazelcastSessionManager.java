@@ -4,20 +4,11 @@
 
 package com.hazelcast.session;
 
-import com.hazelcast.client.HazelcastClient;
-import com.hazelcast.client.config.ClientConfig;
-import com.hazelcast.core.EntryEvent;
-import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.MapEvent;
-import org.apache.catalina.Context;
+import com.hazelcast.core.*;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Session;
-import org.apache.catalina.session.ManagerBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
@@ -28,7 +19,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HazelcastSessionManager extends ManagerBase implements Lifecycle, PropertyChangeListener, SessionManager {
+import static com.hazelcast.session.config.ConfigurationSupport.getOrCreateHazelcastInstance;
+import static com.hazelcast.session.config.ConfigurationSupport.resolveSessionMapName;
+
+public class HazelcastSessionManager extends AbstractHazelcastSessionManager implements Lifecycle, PropertyChangeListener, SessionManager {
 
     private static final String NAME = "HazelcastSessionManager";
 
@@ -76,33 +70,12 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         configureValves();
 
-        if (isClientOnly()) {
-            try {
-                ClientConfig clientConfig = ClientServerLifecycleListener.getConfig();
-                clientConfig.setClassLoader(getContext().getLoader().getClassLoader());
-                instance = HazelcastClient.newHazelcastClient(clientConfig);
-            } catch (Exception e) {
-                log.error("Hazelcast Client could not be created.", e);
-                throw new LifecycleException(e.getMessage());
-            }
-        } else if (getHazelcastInstanceName() != null) {
-            instance = Hazelcast.getHazelcastInstanceByName(getHazelcastInstanceName());
-        } else {
-            instance = Hazelcast.getOrCreateHazelcastInstance(P2PLifecycleListener.getConfig());
-        }
-        if (getMapName() == null || "default".equals(getMapName())) {
-            Context ctx = getContext();
-            String contextPath = ctx.getServletContext().getContextPath();
-            log.debug("contextPath: " + contextPath);
-            if (contextPath == null || contextPath.equals("/") || contextPath.equals("")) {
-                mapName = "empty_session_replication";
-            } else {
-                mapName = contextPath.substring(1, contextPath.length()) + "_session_replication";
-            }
-            sessionMap = instance.getMap(mapName);
-        } else {
-            sessionMap = instance.getMap(getMapName());
-        }
+        instance = getOrCreateHazelcastInstance(isClientOnly(), getContext(), getHazelcastInstanceName());
+        final String mapName = resolveSessionMapName(getContext(), getMapName());
+        sessionMap = instance.getMap(mapName);
+
+        configureReadStrategy(mapName, readStrategy);
+        configureWriteStrategy(mapName, writeStrategy);
 
         if (!isSticky()) {
             sessionMap.addEntryListener(new EntryListener<String, HazelcastSession>() {
@@ -189,7 +162,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         session.tellNew();
 
         sessions.put(newSessionId, session);
-        sessionMap.set(newSessionId, session);
+        getMapWriteStrategy().setSession(newSessionId, session);
         return session;
     }
 
@@ -201,7 +174,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     @Override
     public void add(Session session) {
         sessions.put(session.getId(), (HazelcastSession) session);
-        sessionMap.set(session.getId(), (HazelcastSession) session);
+        getMapWriteStrategy().setSession(session.getId(), (HazelcastSession) session);
     }
 
     @Override
@@ -218,7 +191,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
                         + "Some failover occurred so reading session from Hazelcast map: " + getMapName());
             }
 
-            HazelcastSession hazelcastSession = sessionMap.get(id);
+            HazelcastSession hazelcastSession = getMapQueryStrategy().getSession(id);
             if (hazelcastSession == null) {
                 log.debug("No Session found for: " + id);
                 return null;
@@ -234,8 +207,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             sessions.put(id, hazelcastSession);
 
             // call remove method to trigger eviction Listener on each node to invalidate local sessions
-            sessionMap.remove(id);
-            sessionMap.set(id, hazelcastSession);
+            getMapWriteStrategy().removeAndSetSession(id, hazelcastSession);
 
             return hazelcastSession;
         } else {
@@ -272,16 +244,14 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         HazelcastSession hazelcastSession = (HazelcastSession) session;
         if (hazelcastSession.isDirty()) {
             hazelcastSession.setDirty(false);
-            sessionMap.set(session.getId(), hazelcastSession);
-            if (log.isDebugEnabled()) {
-                log.debug("Thread name: " + Thread.currentThread().getName() + " committed key: " + session.getId());
-            }
+            getMapWriteStrategy().setSession(session.getId(), hazelcastSession);
+            log.info("Thread name:" + Thread.currentThread().getName() + " committed key:" + session.getId());
         }
     }
 
     @Override
     public String updateJvmRouteForSession(String sessionId, String newJvmRoute) throws IOException {
-        HazelcastSession session = sessionMap.get(sessionId);
+        HazelcastSession session = getMapQueryStrategy().getSession(sessionId);
         if (session == null) {
             session = (HazelcastSession) createSession(null);
             return session.getId();
@@ -295,8 +265,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         String newSessionId = baseSessionId + "." + newJvmRoute;
         session.setId(newSessionId);
 
-        sessionMap.remove(sessionId);
-        sessionMap.set(newSessionId, session);
+        getMapWriteStrategy().removeAndSetSession(sessionId, newSessionId, session);
         return newSessionId;
     }
 
@@ -321,6 +290,11 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         return deferredWrite;
     }
 
+    @Override
+    public HazelcastInstance getHazelcastInstance() {
+        return instance;
+    }
+
     public boolean isClientOnly() {
         return clientOnly;
     }
@@ -342,7 +316,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private void remove(String id) {
         sessions.remove(id);
-        sessionMap.remove(id);
+        getMapWriteStrategy().removeSession(id);
     }
 
     @Override
@@ -395,4 +369,5 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     public void setDeferredWrite(boolean deferredWrite) {
         this.deferredWrite = deferredWrite;
     }
+
 }

@@ -10,6 +10,8 @@ public abstract class WebContainerConfigurator<T> {
     protected int sessionTimeout;
     protected boolean deferredWrite;
     protected String configLocation = "hazelcast.xml";
+    protected String readStrategy = "default";
+    protected String writeStrategy = "default";
 
     public WebContainerConfigurator<T> port(int port) {
         this.port = port;
@@ -44,6 +46,20 @@ public abstract class WebContainerConfigurator<T> {
     public WebContainerConfigurator<T> configLocation(String configLocation) {
         this.configLocation = configLocation;
         return this;
+    }
+
+    public WebContainerConfigurator readStrategy(String readStrategy) {
+        this.readStrategy = readStrategy;
+        return this;
+    }
+
+    public WebContainerConfigurator writeStrategy(String writeStrategy) {
+        this.writeStrategy = writeStrategy;
+        return this;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     public abstract T configure() throws Exception;

@@ -103,6 +103,8 @@ public class Tomcat8Configurator extends WebContainerConfigurator<Tomcat> {
         manager.setMapName(mapName);
         manager.setDeferredWrite(deferredWrite);
         manager.setProcessExpiresFrequency(1);
+        manager.setReadStrategy(readStrategy);
+        manager.setWriteStrategy(writeStrategy);
     }
 
     private void setSessionTimeout() {
