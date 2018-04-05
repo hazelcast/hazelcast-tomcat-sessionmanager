@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2008-2016, Hazelcast, Inc. All Rights Reserved.
+ */
+
 package com.hazelcast.session.config;
 
 import com.hazelcast.client.HazelcastClient;
@@ -14,9 +18,9 @@ import org.apache.juli.logging.LogFactory;
 /**
  * Utility class containing common configuration support methods.
  */
-public class ConfigurationSupport {
+public final class ConfigurationSupport {
 
-    private static final Log log = LogFactory.getLog(ConfigurationSupport.class);
+    private static final Log LOG = LogFactory.getLog(ConfigurationSupport.class);
 
     private ConfigurationSupport() { /* Intentionally Empty to prevent instantiation . */ }
 
@@ -31,7 +35,7 @@ public class ConfigurationSupport {
         final String mapName;
         if (configuredMapName == null || "default".equals(configuredMapName)) {
             String contextPath = context.getServletContext().getContextPath();
-            log.info("contextPath: " + contextPath);
+            LOG.info("contextPath: " + contextPath);
             if (contextPath == null || contextPath.equals("/") || contextPath.equals("")) {
                 mapName = "empty_session_replication";
             } else {
@@ -40,7 +44,7 @@ public class ConfigurationSupport {
         } else {
             mapName = configuredMapName;
         }
-        log.info("sessionMapName: " + mapName);
+        LOG.info("sessionMapName: " + mapName);
         return mapName;
     }
 
@@ -56,7 +60,8 @@ public class ConfigurationSupport {
      * @param hazelcastInstanceName the name of the hazelcast instance if it is to be instantiated by name.
      * @return the configured Hazelcast session instance.
      */
-    public static HazelcastInstance getOrCreateHazelcastInstance(boolean isClientOnly, Context context, String hazelcastInstanceName) throws LifecycleException {
+    public static HazelcastInstance getOrCreateHazelcastInstance(boolean isClientOnly, Context context,
+                                                                 String hazelcastInstanceName) throws LifecycleException {
         final HazelcastInstance instance;
         if (isClientOnly) {
             try {
@@ -64,7 +69,7 @@ public class ConfigurationSupport {
                 clientConfig.setClassLoader(context.getLoader().getClassLoader());
                 instance = HazelcastClient.newHazelcastClient(clientConfig);
             } catch (Exception e) {
-                log.error("Hazelcast Client could not be created.", e);
+                LOG.error("Hazelcast Client could not be created.", e);
                 throw new LifecycleException(e.getMessage());
             }
         } else if (hazelcastInstanceName != null) {

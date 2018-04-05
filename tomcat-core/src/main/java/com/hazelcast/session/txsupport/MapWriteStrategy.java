@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2008-2016, Hazelcast, Inc. All Rights Reserved.
+ */
+
 package com.hazelcast.session.txsupport;
 
 import com.hazelcast.session.HazelcastSession;
@@ -9,7 +13,7 @@ import com.hazelcast.session.HazelcastSession;
 public interface MapWriteStrategy {
 
     /**
-     * Sets the {@Link HazelcastSession} into the session map with the specified sessionId as the map key.
+     * Sets the {@link HazelcastSession} into the session map with the specified sessionId as the map key.
      * @see com.hazelcast.core.IMap#set(Object, Object)
      * @param sessionId the key of the {@link HazelcastSession}.
      * @param session the session to set into the map

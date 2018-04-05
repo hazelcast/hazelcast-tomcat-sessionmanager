@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2008-2016, Hazelcast, Inc. All Rights Reserved.
+ */
+
 package com.hazelcast.session.txsupport;
 
 import com.hazelcast.session.HazelcastSession;

@@ -6,6 +6,7 @@ import com.hazelcast.core.IMap;
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -14,14 +15,19 @@ import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractMapNameTest extends AbstractHazelcastSessionsTest {
 
+    private HazelcastInstance hz;
+
+    @Before
+    public void init() throws Exception {
+        hz = Hazelcast.newHazelcastInstance();
+        instance1 = getWebContainerConfigurator();
+        instance1.port(SERVER_PORT_1).sticky(true).clientOnly(true).mapName(SESSION_REPLICATION_MAP_NAME).writeStrategy(getWriteStrategy()).sessionTimeout(10).start();
+        instance2 = getWebContainerConfigurator();
+        instance2.port(SERVER_PORT_2).sticky(true).clientOnly(true).mapName(SESSION_REPLICATION_MAP_NAME).writeStrategy(getWriteStrategy()).sessionTimeout(10).start();
+    }
+
     @Test
     public void testMapName() throws Exception {
-        HazelcastInstance hz = Hazelcast.newHazelcastInstance();
-
-        instance1 = getWebContainerConfigurator();
-        instance1.port(SERVER_PORT_1).sticky(true).clientOnly(true).mapName(SESSION_REPLICATION_MAP_NAME).sessionTimeout(10).start();
-        instance2 = getWebContainerConfigurator();
-        instance2.port(SERVER_PORT_2).sticky(true).clientOnly(true).mapName(SESSION_REPLICATION_MAP_NAME).sessionTimeout(10).start();
 
         CookieStore cookieStore = new BasicCookieStore();
         executeRequest("write", SERVER_PORT_1, cookieStore);

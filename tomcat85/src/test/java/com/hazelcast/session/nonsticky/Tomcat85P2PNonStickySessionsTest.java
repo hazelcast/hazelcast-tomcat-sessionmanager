@@ -3,6 +3,7 @@ package com.hazelcast.session.nonsticky;
 import com.hazelcast.session.Java6ExcludeRule;
 import com.hazelcast.session.Tomcat85Configurator;
 import com.hazelcast.session.WebContainerConfigurator;
+import com.hazelcast.session.nonsticky.AbstractP2PNonStickySessionsTest;
 import com.hazelcast.test.HazelcastSerialClassRunner;
 import com.hazelcast.test.annotation.QuickTest;
 import org.junit.Rule;

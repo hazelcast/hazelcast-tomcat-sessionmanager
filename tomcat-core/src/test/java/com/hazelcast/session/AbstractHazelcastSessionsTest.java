@@ -1,6 +1,9 @@
 package com.hazelcast.session;
 
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.session.txsupport.DefaultMapWriteStrategy;
+import com.hazelcast.session.txsupport.OnePhaseCommitMapWriteStrategy;
+import com.hazelcast.session.txsupport.TwoPhaseCommitMapWriteStrategy;
 import com.hazelcast.test.HazelcastTestSupport;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -10,8 +13,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
+import org.junit.Test;
 
 import java.net.ServerSocket;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport {
 
@@ -50,6 +57,30 @@ public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport
             return localPort;
         } catch (Exception e) {
             throw new IllegalStateException("Could not find any available port", e);
+        }
+    }
+
+    public String getWriteStrategy() {
+        return "default";
+    }
+
+    @Test
+    public void givenWriteStrategyIsSet_thenVerifyCorrectImplementation() {
+        assertEquals(getWriteStrategy(), ((AbstractHazelcastSessionManager) instance1.getManager()).getWriteStrategy());
+        assertEquals(getWriteStrategy(), ((AbstractHazelcastSessionManager) instance2.getManager()).getWriteStrategy());
+
+        if ("default".equals(getWriteStrategy())) {
+            assertTrue(instance1.getManager().getMapWriteStrategy() instanceof DefaultMapWriteStrategy);
+            assertTrue(instance2.getManager().getMapWriteStrategy() instanceof DefaultMapWriteStrategy);
+        } else if ("onePhaseCommit".equals(getWriteStrategy())) {
+            assertTrue(instance1.getManager().getMapWriteStrategy() instanceof OnePhaseCommitMapWriteStrategy);
+            assertTrue(instance2.getManager().getMapWriteStrategy() instanceof OnePhaseCommitMapWriteStrategy);
+        } else if ("twoPhaseCommit".equals(getWriteStrategy())) {
+            assertTrue(instance1.getManager().getMapWriteStrategy() instanceof TwoPhaseCommitMapWriteStrategy);
+            assertTrue(instance2.getManager().getMapWriteStrategy() instanceof TwoPhaseCommitMapWriteStrategy);
+        } else {
+            assertTrue(instance1.getManager().getMapWriteStrategy() instanceof DefaultMapWriteStrategy);
+            assertTrue(instance2.getManager().getMapWriteStrategy() instanceof DefaultMapWriteStrategy);
         }
     }
 }

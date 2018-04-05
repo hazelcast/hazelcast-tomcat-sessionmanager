@@ -1,6 +1,15 @@
+/*
+ * Copyright (c) 2008-2016, Hazelcast, Inc. All Rights Reserved.
+ */
+
 package com.hazelcast.session;
 
-import com.hazelcast.session.txsupport.*;
+import com.hazelcast.session.txsupport.DefaultMapQueryStrategy;
+import com.hazelcast.session.txsupport.DefaultMapWriteStrategy;
+import com.hazelcast.session.txsupport.MapQueryStrategy;
+import com.hazelcast.session.txsupport.MapWriteStrategy;
+import com.hazelcast.session.txsupport.OnePhaseCommitMapWriteStrategy;
+import com.hazelcast.session.txsupport.TwoPhaseCommitMapWriteStrategy;
 import org.apache.catalina.session.ManagerBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
@@ -12,8 +21,8 @@ public abstract class AbstractHazelcastSessionManager extends ManagerBase implem
 
     private final Log log = LogFactory.getLog(this.getClass());
 
-    protected String readStrategy = "default";
-    protected String writeStrategy = "default";
+    private String readStrategy = "default";
+    private String writeStrategy = "default";
     private MapQueryStrategy mapQueryStrategy;
     private MapWriteStrategy mapWriteStrategy;
 
@@ -27,27 +36,28 @@ public abstract class AbstractHazelcastSessionManager extends ManagerBase implem
     void configureWriteStrategy(String mapName, String writeStrategy) {
         log.info(String.format("Configuring session map for '%1$s' write strategy", writeStrategy));
         if ("twoPhaseCommit".equals(writeStrategy)) {
-            setMapWriteStrategy(new TwoPhaseCommitMapWriteStrategy(getHazelcastInstance(), mapName));
+            this.mapWriteStrategy = new TwoPhaseCommitMapWriteStrategy(getHazelcastInstance(), mapName);
+        } else if ("onePhaseCommit".equals(writeStrategy)) {
+            this.mapWriteStrategy = new OnePhaseCommitMapWriteStrategy(getHazelcastInstance(), mapName);
         } else if ("default".equals(writeStrategy)) {
-            setMapWriteStrategy(new DefaultMapWriteStrategy(getDistributedMap()));
+            this.mapWriteStrategy = new DefaultMapWriteStrategy(getDistributedMap());
         } else {
             log.info(String.format("'%1$s' writeStrategy is not supported - using 'default'", writeStrategy));
-            setMapWriteStrategy(new DefaultMapWriteStrategy(getDistributedMap()));
+            this.mapWriteStrategy = new DefaultMapWriteStrategy(getDistributedMap());
         }
     }
 
     /**
      * Configures and sets the hazelcast session map read strategy based on 'readStrategy' setting
      *
-     * @param mapName      the name of the hazelcast tomcat session map.
      * @param readStrategy the readStrategy setting value.
      */
-    void configureReadStrategy(String mapName, String readStrategy) {
+    void configureReadStrategy(String readStrategy) {
         log.info(String.format("Configuring session map for '%1$s' read strategy", readStrategy));
         if (!"default".equals(readStrategy)) {
             log.info(String.format("'%1$s' readStrategy is not supported - using 'default'", readStrategy));
         }
-        setMapQueryStrategy(new DefaultMapQueryStrategy(getDistributedMap()));
+        this.mapQueryStrategy = new DefaultMapQueryStrategy(getDistributedMap());
     }
 
     public String getReadStrategy() {
@@ -76,11 +86,4 @@ public abstract class AbstractHazelcastSessionManager extends ManagerBase implem
         return mapWriteStrategy;
     }
 
-    public void setMapQueryStrategy(MapQueryStrategy mapQueryStrategy) {
-        this.mapQueryStrategy = mapQueryStrategy;
-    }
-
-    public void setMapWriteStrategy(MapWriteStrategy mapWriteStrategy) {
-        this.mapWriteStrategy = mapWriteStrategy;
-    }
 }

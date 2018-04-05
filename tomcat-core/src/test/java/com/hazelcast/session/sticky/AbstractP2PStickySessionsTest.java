@@ -12,6 +12,7 @@ public abstract class AbstractP2PStickySessionsTest extends AbstractStickySessio
                 .clientOnly(false)
                 .sessionTimeout(10)
                 .configLocation("hazelcast-1.xml")
+                .writeStrategy(getWriteStrategy())
                 .start();
 
         instance2 = getWebContainerConfigurator();
@@ -20,6 +21,7 @@ public abstract class AbstractP2PStickySessionsTest extends AbstractStickySessio
                 .clientOnly(false)
                 .sessionTimeout(10)
                 .configLocation("hazelcast-2.xml")
+                .writeStrategy(getWriteStrategy())
                 .start();
     }
 }

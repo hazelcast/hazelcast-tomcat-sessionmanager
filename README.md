@@ -11,7 +11,7 @@
 * [Enabling Session Replication in Multi-App Environments](#enabling-session-replication-in-multi-app-environments)
 * [Sticky Sessions and Tomcat](#sticky-sessions-and-tomcat)
 * [Tomcat Failover and the jvmRoute Parameter](#tomcatfailover-and-the-jvmroute-parameter)
-* [Two Phase Transactional Commit Support](#Two-Phase-Transactional-Commit-Support)
+* [Transactional Commit Support](#Transactional-Commit-Support)
 
 
 # Tomcat Based Web Session Replication
@@ -30,7 +30,7 @@
 - Support for sticky and non-sticky sessions.
 - Tomcat failover.
 - Deferred write for performance boost.
-- Transactional support for writing updates the distributed hazelcast session store.
+- Transactional support for writing updates to the distributed hazelcast session store.
 <br></br>
 
 ***Supported Containers***
@@ -227,10 +227,12 @@ When Tomcat Failure happens and Load Balancer cannot redirect the request to the
 ```
 
 
-# Two Phase Transactional Commit Support
-If it is crucial to ensure that each node in the cluster receives a consistent view of the distributed session map, you can enable the `twoPhaseCommit` write strategy. As with Non-Sticky Sessions, this may incur performance penalties across your replication cluster.
+# Transactional Commit Support
+If it is crucial to ensure that each node in the cluster receives a consistent view of the distributed session map, you can enable transactional write support. As with Non-Sticky Sessions, this may incur performance penalties across your replication cluster.
 
-Two Phase Commits can be enabled by adding `writeStrategy="twoPhaseCommit"` to the Manager attribute defined in [`<Manager>`](#configuring-manager-element-for-tomcat).
+Two Phase Commits can be enabled by adding `writeStrategy="twoPhaseCommit"` to the [`<Manager>`](#configuring-manager-element-for-tomcat) attribute.
+
+One Phase Commits can be enabled by adding `writeStrategy="onePhaseCommit"` to the [`<Manager>`](#configuring-manager-element-for-tomcat) attribute.
 
 An example of using non-sticky sessions, with deferredWrite and twoPhaseCommit support is as follows:
 
@@ -239,7 +241,8 @@ An example of using non-sticky sessions, with deferredWrite and twoPhaseCommit s
 ```
 
 Supported values for the `writeStrategy` attribute are:
-- `twoPhaseCommit` - Enables Two Phase Transactional support for cluster wide session updates.
+- `twoPhaseCommit` - Enables Two Phase Transactional write support.
+- `onePhaseCommit` - Enables One Phase Transactional write support.
 - `default` - Default non-transactional writes.
 
 # License
