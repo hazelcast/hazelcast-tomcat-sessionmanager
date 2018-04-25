@@ -303,7 +303,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     @Override
     public void remove(Session session) {
         remove(session.getId());
-        log.info("Removed session: " + session.getId());
+        log.debug("Removed session: " + session.getId());
     }
 
     @Override
