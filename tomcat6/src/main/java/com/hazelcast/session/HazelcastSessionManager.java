@@ -125,7 +125,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         if (getMapName() == null || "default".equals(getMapName())) {
             Context ctx = (Context) getContainer();
             String contextPath = ctx.getServletContext().getContextPath();
-            log.info("contextPath:" + contextPath);
+            log.debug("contextPath: " + contextPath);
             String mapName;
             if (contextPath == null || contextPath.equals("/") || contextPath.equals("")) {
                 mapName = "empty_session_replication";
@@ -227,20 +227,20 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     @Override
     public Session findSession(String id) throws IOException {
-        log.info("sessionId:" + id);
+        log.debug("sessionId: " + id);
         if (id == null) {
             return null;
         }
 
         if (!isSticky() || (isSticky() && !sessions.containsKey(id))) {
             if (isSticky()) {
-                log.info("Sticky Session is currently enabled."
-                        + "Some failover occured so reading session from Hazelcast map:" + getMapName());
+                log.debug("Sticky Session is currently enabled. "
+                        + "Some failover occurred so reading session from Hazelcast map: " + getMapName());
             }
 
             HazelcastSession hazelcastSession = sessionMap.get(id);
             if (hazelcastSession == null) {
-                log.info("No Session found for:" + id);
+                log.debug("No Session found for: " + id);
                 return null;
             }
 
@@ -292,7 +292,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         if (hazelcastSession.isDirty()) {
             hazelcastSession.setDirty(false);
             sessionMap.set(session.getId(), hazelcastSession);
-            log.info("Thread name:" + Thread.currentThread().getName() + " committed key:" + session.getId());
+            if (log.isDebugEnabled()) {
+                log.debug("Thread name: " + Thread.currentThread().getName() + " committed key: " + session.getId());
+            }
         }
     }
 
