@@ -64,6 +64,29 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         updateSession();
     }
 
+    @Override
+    public long getLastAccessedTime() {
+        refreshAccessTimestamps();
+        return super.getLastAccessedTime();
+    }
+
+    @Override
+    public boolean isValid() {
+        refreshAccessTimestamps();
+        return super.isValid();
+    }
+
+    private void refreshAccessTimestamps() {
+        if (this.sessionManager != null && !this.sessionManager.isSticky()) {
+            HazelcastSession distributedSession = this.sessionManager.getDistributedMap().get(this.getId());
+            if (distributedSession != null) {
+                this.lastAccessedTime = distributedSession.lastAccessedTime;
+                this.maxInactiveInterval = distributedSession.maxInactiveInterval;
+                this.thisAccessedTime = distributedSession.thisAccessedTime;
+            }
+        }
+    }
+
     public boolean isDirty() {
         return dirty;
     }

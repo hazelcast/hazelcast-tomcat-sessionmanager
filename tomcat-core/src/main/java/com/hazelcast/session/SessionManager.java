@@ -27,4 +27,9 @@ public interface SessionManager {
     IMap<String, HazelcastSession> getDistributedMap();
 
     boolean isDeferredEnabled();
+
+    /**
+     * @return true if this {@link SessionManager} has sticky sessions enabled, otherwise false.
+     */
+    boolean isSticky();
 }
