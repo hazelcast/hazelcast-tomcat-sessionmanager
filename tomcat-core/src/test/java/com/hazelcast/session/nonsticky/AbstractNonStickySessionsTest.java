@@ -4,13 +4,17 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.session.AbstractHazelcastSessionsTest;
 import com.hazelcast.session.HazelcastSession;
-import org.apache.catalina.session.ManagerBase;
+import com.hazelcast.session.WebContainerConfigurator;
+import org.apache.catalina.Manager;
+import org.apache.catalina.Session;
+import org.apache.catalina.session.StandardSession;
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSessionsTest {
 
@@ -127,38 +131,53 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
     }
 
     @Test
-    public void givenSessionIsValidCheck_whenSessionShouldBeValid_thenEnsureSessionIsValid_andAccessTimesAreEqualOnBothNodes() throws Exception {
-
+    public void givenValidSession_whenNonStickySessions_thenAccessTimesAreEqualOnAllNodes() throws Exception {
         CookieStore cookieStore = new BasicCookieStore();
-        executeRequest("write", SERVER_PORT_1, cookieStore);
-        String value = executeRequest("read", SERVER_PORT_1, cookieStore);
-        assertEquals("value", value);
+        assertEquals("true", executeRequest("isNew", SERVER_PORT_1, cookieStore));
+        String jSessionId = getJSessionId(cookieStore);
 
+        HazelcastSession session1 = getHazelcastSession(jSessionId, instance1);
+        HazelcastSession session2 = getHazelcastSession(jSessionId, instance2);
+
+        validateSessionAccessTime(session1, session2);
+    }
+
+    public abstract void validateSessionAccessTime(HazelcastSession session1, HazelcastSession session2);
+
+
+    /**
+     * Helper method to retrieve the JSESSIONID value from the {@link CookieStore}.
+     * @param cookieStore the cookie store containing sessions.
+     * @return the value of the JSESSIONID cookie if present, otherwise null.
+     */
+    private static String getJSessionId(CookieStore cookieStore) {
         String jSessionId = null;
         for (Cookie cookie : cookieStore.getCookies()) {
             if ("JSESSIONID".equalsIgnoreCase(cookie.getName())) {
                 jSessionId = cookie.getValue();
             }
         }
-        // Session timeout is 10
-        sleepSeconds(9);
-
-        executeRequest("write", SERVER_PORT_1, cookieStore);
-        value = executeRequest("read", SERVER_PORT_1, cookieStore);
-        assertEquals("value", value);
-
-        sleepSeconds(5);
-
-        HazelcastSession session1 = (HazelcastSession) ((ManagerBase) instance1.getManager()).findSession(jSessionId);
-        HazelcastSession session2 = (HazelcastSession) ((ManagerBase) instance2.getManager()).findSession(jSessionId);
-
-        assertNotNull("Session is present on Node 1", session1);
-        assertNotNull("Session is present on Node 2", session2);
-
-        assertTrue("Session is valid on Node 1", session1.isValid());
-        assertTrue("Session is valid on Node 2", session2.isValid());
-        validateSessionAccessTime(session1, session2);
+        return jSessionId;
     }
 
-    public abstract void validateSessionAccessTime(HazelcastSession session1, HazelcastSession session2);
+    /**
+     * Retrieves sessions using {@link Manager#findSessions()} in accordance with the {@link StandardSession#isValid()}
+     * method.
+     *
+     * @param jSessionId the session id.
+     * @param instance the tomcat instance.
+     * @return the instance of {@link HazelcastSession} if present, otherwise null.
+     */
+    private static HazelcastSession getHazelcastSession(String jSessionId, WebContainerConfigurator<?> instance) {
+        Session[] allSessions = ((Manager) instance.getManager()).findSessions();
+
+        HazelcastSession hzSession = null;
+        for (Session session : allSessions) {
+            if (jSessionId.equals(session.getId())) {
+                hzSession = (HazelcastSession) session;
+                break;
+            }
+        }
+        return hzSession;
+    }
 }

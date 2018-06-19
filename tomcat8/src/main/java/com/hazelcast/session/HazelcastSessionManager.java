@@ -343,6 +343,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         this.clientOnly = clientOnly;
     }
 
+    @Override
     public boolean isSticky() {
         return sticky;
     }

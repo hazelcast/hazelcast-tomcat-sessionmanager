@@ -26,7 +26,7 @@ public class Tomcat8ClientServerNonStickySessionsTest extends AbstractClientServ
 
     @Override
     public void validateSessionAccessTime(HazelcastSession session1, HazelcastSession session2) {
-        assertEquals("Session thisAccessedTime should be equal", session1.getThisAccessedTime(), session2.getThisAccessedTime());
         assertEquals("Session lastAccessTime should be equal", session1.getLastAccessedTime(), session2.getLastAccessedTime());
+        assertEquals("Session thisAccessedTime should be equal", session1.getThisAccessedTime(), session2.getThisAccessedTime());
     }
 }
