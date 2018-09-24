@@ -11,6 +11,8 @@ import com.hazelcast.util.ExceptionUtil;
 import com.hazelcast.util.MapUtil;
 import org.apache.catalina.Manager;
 import org.apache.catalina.session.StandardSession;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,10 +26,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HazelcastSession extends StandardSession implements DataSerializable {
 
     private static final Field ATTRIBUTES_FIELD;
+    private static final Log LOG = LogFactory.getLog(HazelcastSession.class);
 
     protected boolean dirty;
 
     private transient SessionManager sessionManager;
+
 
     static {
         ATTRIBUTES_FIELD = getAttributesField();
@@ -138,7 +142,11 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         Map map = concurrent ? new ConcurrentHashMap() : MapUtil.createHashMap(mapSize);
         for (int i = 0; i < mapSize; i++) {
             //noinspection unchecked
-            map.put(objectDataInput.readObject(), objectDataInput.readObject());
+            try {
+                map.put(objectDataInput.readObject(), objectDataInput.readObject());
+            } catch (Exception ex) {
+                LOG.warn("Unable to deserialize object in session", ex);
+            }
         }
         return map;
     }
