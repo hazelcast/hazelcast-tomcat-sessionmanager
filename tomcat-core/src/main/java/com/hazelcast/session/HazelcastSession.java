@@ -138,6 +138,7 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
     }
 
     private Map deserializeMap(ObjectDataInput objectDataInput, boolean concurrent) throws IOException {
+        LOG.info("ANTON - deserializing map with class loader: " + Thread.currentThread().getContextClassLoader());
         int mapSize = objectDataInput.readInt();
         Map map = concurrent ? new ConcurrentHashMap() : MapUtil.createHashMap(mapSize);
         for (int i = 0; i < mapSize; i++) {

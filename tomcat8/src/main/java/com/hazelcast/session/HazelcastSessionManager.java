@@ -105,7 +105,16 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         } else if (getHazelcastInstanceName() != null) {
             instance = Hazelcast.getHazelcastInstanceByName(getHazelcastInstanceName());
         } else {
-            instance = Hazelcast.getOrCreateHazelcastInstance(P2PLifecycleListener.getConfig());
+            ClassLoader classLoader = getContext().getLoader().getClassLoader();
+
+            log.info("ANTON - using P2P");
+            log.info("ANTON - context: " + getContext());
+            log.info("ANTON - contextPath: " + getContext().getServletContext().getContextPath());
+            log.info("ANTON - classLoader: " + classLoader);
+
+            Config config = P2PLifecycleListener.getConfig();
+            config.setClassLoader(classLoader);
+            instance = Hazelcast.getOrCreateHazelcastInstance(config);
         }
         if (getMapName() == null || "default".equals(getMapName())) {
             Context ctx = getContext();
