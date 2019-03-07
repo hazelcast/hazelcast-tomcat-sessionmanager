@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2008-2016, Hazelcast, Inc. All Rights Reserved.
+ */
+
 package com.hazelcast.session;
 
 import com.hazelcast.client.HazelcastClient;
@@ -12,8 +16,11 @@ import org.apache.juli.logging.LogFactory;
 /**
  * Factory for {@link HazelcastInstance}'s for session management
  */
-public class HazelcastInstanceFactory {
-    private static final Log log = LogFactory.getLog(HazelcastInstanceFactory.class);
+public final class HazelcastInstanceFactory {
+    private static final Log LOGGER = LogFactory.getLog(HazelcastInstanceFactory.class);
+
+    private HazelcastInstanceFactory() {
+    }
 
     /**
      * Gets a {@link HazelcastInstance} by creating a new one (or getting the existing one on P2P setup).
@@ -33,7 +40,7 @@ public class HazelcastInstanceFactory {
                 clientConfig.setClassLoader(classLoader);
                 instance = HazelcastClient.newHazelcastClient(clientConfig);
             } catch (Exception e) {
-                log.error("Hazelcast Client could not be created.", e);
+                LOGGER.error("Hazelcast Client could not be created.", e);
                 throw new LifecycleException(e.getMessage());
             }
         } else if (instanceName != null) {
