@@ -37,7 +37,6 @@ public class P2PLifecycleListener implements LifecycleListener {
             if (config.getInstanceName() == null) {
                 config.setInstanceName(SessionManager.DEFAULT_INSTANCE_NAME);
             }
-            Hazelcast.getOrCreateHazelcastInstance(config);
         } else if ("stop".equals(event.getType()) && !"false".equals(shutdown)) {
             HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(SessionManager.DEFAULT_INSTANCE_NAME);
             if (instance != null) {
