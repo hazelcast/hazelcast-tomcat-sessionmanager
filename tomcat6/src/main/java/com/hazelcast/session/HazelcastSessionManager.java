@@ -4,11 +4,8 @@
 
 package com.hazelcast.session;
 
-import com.hazelcast.client.HazelcastClient;
-import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.MapEvent;
@@ -108,20 +105,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         configureValves();
 
-        if (isClientOnly()) {
-            try {
-                ClientConfig clientConfig = ClientServerLifecycleListener.getConfig();
-                clientConfig.setClassLoader(getContainer().getLoader().getClassLoader());
-                instance = HazelcastClient.newHazelcastClient(clientConfig);
-            } catch (Exception e) {
-                log.error("Hazelcast Client could not be created.", e);
-                throw new LifecycleException(e.getMessage());
-            }
-        } else if (getHazelcastInstanceName() != null) {
-            instance = Hazelcast.getHazelcastInstanceByName(getHazelcastInstanceName());
-        } else {
-            instance = Hazelcast.getOrCreateHazelcastInstance(P2PLifecycleListener.getConfig());
-        }
+        instance = HazelcastInstanceFactory.
+                getHazelcastInstance(getContainer().getLoader().getClassLoader(), isClientOnly(), getHazelcastInstanceName());
+
         if (getMapName() == null || "default".equals(getMapName())) {
             Context ctx = (Context) getContainer();
             String contextPath = ctx.getServletContext().getContextPath();
