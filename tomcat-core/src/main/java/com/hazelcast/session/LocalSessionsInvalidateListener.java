@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2008-2019, Hazelcast, Inc. All Rights Reserved.
+ */
+
 package com.hazelcast.session;
 
 import com.hazelcast.core.EntryEvent;
