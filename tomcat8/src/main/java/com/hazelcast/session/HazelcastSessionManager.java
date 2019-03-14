@@ -5,10 +5,9 @@
 package com.hazelcast.session;
 
 import com.hazelcast.core.EntryEvent;
-import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.hazelcast.core.MapEvent;
+import com.hazelcast.map.listener.EntryRemovedListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
@@ -109,27 +108,12 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         }
 
         if (!isSticky()) {
-            sessionMap.addEntryListener(new EntryListener<String, HazelcastSession>() {
-                public void entryAdded(EntryEvent<String, HazelcastSession> event) {
-                }
-
+            sessionMap.addEntryListener(new EntryRemovedListener<String, HazelcastSession>() {
+                @Override
                 public void entryRemoved(EntryEvent<String, HazelcastSession> entryEvent) {
                     if (entryEvent.getMember() == null || !entryEvent.getMember().localMember()) {
                         sessions.remove(entryEvent.getKey());
                     }
-                }
-
-                public void entryUpdated(EntryEvent<String, HazelcastSession> event) {
-                }
-
-                public void entryEvicted(EntryEvent<String, HazelcastSession> entryEvent) {
-                    entryRemoved(entryEvent);
-                }
-
-                public void mapEvicted(MapEvent event) {
-                }
-
-                public void mapCleared(MapEvent event) {
                 }
             }, false);
         }
@@ -235,8 +219,14 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             sessions.put(id, hazelcastSession);
 
             // call remove method to trigger eviction Listener on each node to invalidate local sessions
-            sessionMap.remove(id);
-            sessionMap.set(id, hazelcastSession);
+            // the call are performed in a pessimistic lock block to prevent concurrency problems whilst finding sessions
+            sessionMap.lock(id);
+            try {
+                sessionMap.remove(id);
+                sessionMap.set(id, hazelcastSession);
+            } finally {
+                sessionMap.unlock(id);
+            }
 
             return hazelcastSession;
         } else {
