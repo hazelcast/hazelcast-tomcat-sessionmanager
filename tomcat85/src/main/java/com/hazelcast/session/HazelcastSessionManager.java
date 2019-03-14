@@ -90,14 +90,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         }
 
         if (!isSticky()) {
-            sessionMap.addEntryListener(new EntryRemovedListener<String, HazelcastSession>() {
-                @Override
-                public void entryRemoved(EntryEvent<String, HazelcastSession> entryEvent) {
-                    if (entryEvent.getMember() == null || !entryEvent.getMember().localMember()) {
-                        sessions.remove(entryEvent.getKey());
-                    }
-                }
-            }, false);
+            sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
         }
 
         log.info("HazelcastSessionManager started...");

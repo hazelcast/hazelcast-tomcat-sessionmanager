@@ -4,10 +4,8 @@
 
 package com.hazelcast.session;
 
-import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.hazelcast.map.listener.EntryRemovedListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
@@ -123,14 +121,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         }
 
         if (!isSticky()) {
-            sessionMap.addEntryListener(new EntryRemovedListener<String, HazelcastSession>() {
-                @Override
-                public void entryRemoved(EntryEvent<String, HazelcastSession> entryEvent) {
-                    if (entryEvent.getMember() == null || !entryEvent.getMember().localMember()) {
-                        sessions.remove(entryEvent.getKey());
-                    }
-                }
-            }, false);
+            sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
         }
 
         log.info("HazelcastSessionManager started...");
