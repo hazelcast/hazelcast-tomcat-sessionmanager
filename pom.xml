@@ -33,7 +33,7 @@
         <timestamp>${maven.build.timestamp}</timestamp>
         <extraVmArgs/>
 
-        <hazelcast.version>3.7.4</hazelcast.version>
+        <hazelcast.version>3.11.2</hazelcast.version>
 
         <servlet.api.version>3.0.1</servlet.api.version>
         <junit.version>4.11</junit.version>
@@ -135,6 +135,7 @@
                         -Dhazelcast.phone.home.enabled=false
                         -Dhazelcast.mancenter.enabled=false
                         -Dhazelcast.tomcat.shutdown_hazelcast_instance=false
+                        -Dhazelcast.graceful.shutdown.max.wait=10
                         ${extraVmArgs}
                     </argLine>
                     <excludedGroups>com.hazelcast.test.annotation.NightlyTest,com.hazelcast.test.annotation.SlowTest
@@ -383,6 +384,7 @@
                     -Dhazelcast.mancenter.enabled=false
                     -Dhazelcast.logging.type=none
                     -Dhazelcast.test.use.network=false
+                    -Dhazelcast.graceful.shutdown.max.wait=10
                 </argLine>
             </properties>
             <dependencies>
@@ -462,6 +464,7 @@
                                 -Dhazelcast.mancenter.enabled=false
                                 -Dhazelcast.logging.type=none
                                 -Dhazelcast.test.use.network=true
+                                -Dhazelcast.graceful.shutdown.max.wait=10
                             </argLine>
                         </configuration>
                     </plugin>
