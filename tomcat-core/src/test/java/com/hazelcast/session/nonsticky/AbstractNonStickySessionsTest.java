@@ -1,5 +1,6 @@
 package com.hazelcast.session.nonsticky;
 
+import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.session.AbstractHazelcastSessionsTest;
@@ -84,7 +85,7 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
         value = executeRequest("invalidate", SERVER_PORT_2, cookieStore);
         assertEquals("true", value);
 
-        HazelcastInstance instance = createHazelcastInstance();
+        HazelcastInstance instance = HazelcastClient.newHazelcastClient();
         IMap<Object, Object> map = instance.getMap("default");
         assertEquals(0, map.size());
     }

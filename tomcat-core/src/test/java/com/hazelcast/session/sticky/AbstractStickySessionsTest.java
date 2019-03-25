@@ -1,5 +1,6 @@
 package com.hazelcast.session.sticky;
 
+import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -87,7 +88,7 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
         value = executeRequest("invalidate", SERVER_PORT_1, cookieStore);
         assertEquals("true", value);
 
-        HazelcastInstance instance = createHazelcastInstance();
+        HazelcastInstance instance = HazelcastClient.newHazelcastClient();
         IMap<Object, Object> map = instance.getMap("default");
         assertEquals(0, map.size());
     }
