@@ -4,7 +4,7 @@
 
 package com.hazelcast.session;
 
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import org.apache.catalina.Session;
 
 import java.io.IOException;
