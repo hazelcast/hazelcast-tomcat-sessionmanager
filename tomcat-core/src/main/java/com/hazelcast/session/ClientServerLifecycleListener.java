@@ -24,7 +24,7 @@ public class ClientServerLifecycleListener implements LifecycleListener {
             setConfigLocation("hazelcast-client-default.xml");
         }
 
-        if ("start".equals(event.getType())) {
+        if ("before_start".equals(event.getType())) {
 
             try {
                 XmlClientConfigBuilder builder = new XmlClientConfigBuilder(getConfigLocation());

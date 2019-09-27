@@ -24,7 +24,7 @@ public class P2PLifecycleListener implements LifecycleListener {
             setConfigLocation("hazelcast-default.xml");
         }
 
-        if ("start".equals(event.getType())) {
+        if ("before_start".equals(event.getType())) {
             try {
                 config = ConfigLoader.load(getConfigLocation());
             } catch (IOException e) {
