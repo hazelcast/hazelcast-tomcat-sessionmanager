@@ -76,7 +76,7 @@ The following steps configure a sample P2P for Hazelcast Session Replication.
  ```xml
         <Server>
         	...
-            <Listener className="com.hazelcast.session.P2PLifecycleListener"/>
+            <Listener className="com.hazelcast.session.P2PLifecycleListener" configLocation="/path/to/hazelcast.xml"/>
             ...
         </Server>
 ```
@@ -124,7 +124,7 @@ The following steps configure a sample Client/Server for Hazelcast Session Repli
  ```xml
         <Server>
         	...
-            <Listener className="com.hazelcast.session.ClientServerLifecycleListener"/>
+            <Listener className="com.hazelcast.session.ClientServerLifecycleListener" configLocation="/path/to/hazelcast-client.xml"/>
             ...
         </Server>
  ```
