@@ -5,7 +5,7 @@
 package com.hazelcast.session;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.config.ConfigLoader;
+import com.hazelcast.internal.config.ConfigLoader;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.catalina.LifecycleEvent;
