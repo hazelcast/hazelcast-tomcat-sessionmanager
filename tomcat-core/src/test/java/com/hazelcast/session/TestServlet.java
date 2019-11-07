@@ -21,29 +21,23 @@ public class TestServlet extends HttpServlet {
         if (req.getRequestURI().endsWith("write")) {
             session.setAttribute("key", "value");
             resp.getWriter().write("true");
-
         } else if (req.getRequestURI().endsWith("read")) {
             Object value = session.getAttribute("key");
             resp.getWriter().write(value == null ? "null" : value.toString());
-
         } else if (req.getRequestURI().endsWith("remove")) {
             session.removeAttribute("key");
             resp.getWriter().write("true");
-
         } else if (req.getRequestURI().endsWith("invalidate")) {
             session.invalidate();
             resp.getWriter().write("true");
-
         } else if (req.getRequestURI().endsWith("update")) {
             session.setAttribute("key", "value-updated");
             resp.getWriter().write("true");
-
         } else if (req.getRequestURI().endsWith("names")) {
             List names = Collections.list(session.getAttributeNames());
             String nameList = names.toString();
             //return comma separated list of attribute names
             resp.getWriter().write(nameList.substring(1, nameList.length() - 1).replace(", ", ","));
-
         } else if (req.getRequestURI().endsWith("reload")) {
             session.invalidate();
             session = req.getSession();
@@ -56,8 +50,13 @@ public class TestServlet extends HttpServlet {
             resp.getWriter().write(String.valueOf(session.getLastAccessedTime()));
         } else if (req.getRequestURI().endsWith("nonserializable")) {
             session.setAttribute("key", new Object());
-
             resp.getWriter().write("true");
+        } else if (req.getRequestURI().endsWith("write-custom-attribute")) {
+            session.setAttribute("key", new CustomAttribute("value"));
+            resp.getWriter().write("true");
+        } else if (req.getRequestURI().endsWith("read-custom-attribute")) {
+            CustomAttribute value = (CustomAttribute) session.getAttribute("key");
+            resp.getWriter().write(value == null ? "null" : value.toString());
         }
     }
 }
