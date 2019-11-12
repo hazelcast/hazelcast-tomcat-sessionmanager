@@ -58,6 +58,7 @@
         <sonar.language>java</sonar.language>
         <sonar.verbose>true</sonar.verbose>
         <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
+        <kryo.version>5.0.0-RC4</kryo.version>
     </properties>
 
     <licenses>

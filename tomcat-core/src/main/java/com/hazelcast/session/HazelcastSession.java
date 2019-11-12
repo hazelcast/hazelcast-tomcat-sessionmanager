@@ -15,7 +15,6 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -128,16 +127,19 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
             Map.Entry entry = (Map.Entry) entryObject;
             Object key = entry.getKey();
             Object value = entry.getValue();
-            if (key != null && value != null && key instanceof Serializable && value instanceof Serializable) {
+            if (key != null && value != null) {
                 serializableEntries.put(key, value);
             }
         }
 
         objectDataOutput.writeInt(serializableEntries.size());
         for (Map.Entry<Object, Object> entryObject : serializableEntries.entrySet()) {
-            Map.Entry entry = (Map.Entry) entryObject;
-            objectDataOutput.writeObject(entry.getKey());
-            objectDataOutput.writeObject(entry.getValue());
+            try {
+                objectDataOutput.writeObject(entryObject.getKey());
+                objectDataOutput.writeObject(entryObject.getValue());
+            } catch (Exception e) {
+                LOG.warn("Unable to serialize object in session", e);
+            }
         }
     }
 

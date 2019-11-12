@@ -93,6 +93,12 @@
             <version>${tomcat-version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>${kryo.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

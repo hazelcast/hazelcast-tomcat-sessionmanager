@@ -14,22 +14,17 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config http://www.hazelcast.com/schema/client-config/hazelcast-config-3.11.xsd"
-           xmlns="http://www.hazelcast.com/schema/config"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <network>
-        <port auto-increment="true">5701</port>
-        <join>
-            <multicast enabled="false"/>
-            <tcp-ip enabled="true">
-                <interface>127.0.0.1</interface>
-            </tcp-ip>
-        </join>
-    </network>
+
+<!--suppress XmlDefaultAttributeValue -->
+<hazelcast-client xmlns="http://www.hazelcast.com/schema/client-config"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
+                  http://www.hazelcast.com/schema/client-config/hazelcast-client-config-3.11.xsd">
 
     <serialization>
         <serializers>
             <global-serializer>com.hazelcast.session.HazelcastGlobalKryoSerializer</global-serializer>
         </serializers>
     </serialization>
-</hazelcast>
+
+</hazelcast-client>

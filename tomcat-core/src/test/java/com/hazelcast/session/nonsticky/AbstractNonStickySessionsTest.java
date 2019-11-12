@@ -4,6 +4,7 @@ import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.session.AbstractHazelcastSessionsTest;
+import com.hazelcast.session.CustomAttribute;
 import com.hazelcast.session.HazelcastSession;
 import com.hazelcast.session.WebContainerConfigurator;
 import org.apache.catalina.Manager;
@@ -39,6 +40,20 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
 
         value = executeRequest("read", SERVER_PORT_2, cookieStore);
         assertEquals("value", value);
+    }
+
+    @Test
+    public void testReadWriteReadWithCustomSerialization() throws Exception {
+        CustomAttribute expected = new CustomAttribute("value");
+
+        CookieStore cookieStore = new BasicCookieStore();
+        String value = executeRequest("read-custom-attribute", SERVER_PORT_1, cookieStore);
+        assertEquals("null", value);
+
+        executeRequest("write-custom-attribute", SERVER_PORT_1, cookieStore);
+
+        value = executeRequest("read-custom-attribute", SERVER_PORT_2, cookieStore);
+        assertEquals(expected.toString(), value);
     }
 
     @Test(timeout = 60000)

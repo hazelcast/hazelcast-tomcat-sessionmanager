@@ -45,7 +45,7 @@ The latest tested versions are **6.0.39**, **7.0.40** and **8.0.36**.
 ***Requirements***
 
  - Tomcat instance must be running with Java 1.6 or higher.
- - Session objects that need to be clustered have to be Serializable.
+ - Session objects that need to be clustered have to be serializable on Hazelcast cluster. Please see <a href="https://docs.hazelcast.org/docs/latest/manual/html-single/#serialization" target="_blank">here</a> for how you can configure and implement serialization for Hazelcast.
 
 # How Tomcat Session Replication Works
 
