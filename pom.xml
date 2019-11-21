@@ -90,6 +90,7 @@
         <module>tomcat-core</module>
         <module>tomcat8</module>
         <module>tomcat85</module>
+        <module>tomcat9</module>
     </modules>
 
     <repositories>
