@@ -6,7 +6,7 @@
     <parent>
         <artifactId>hazelcast-tomcat-sessionmanager</artifactId>
         <groupId>com.hazelcast</groupId>
-        <version>1.1.4-SNAPSHOT</version>
+        <version>1.1.5-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -92,6 +92,12 @@
             <artifactId>tomcat-jasper</artifactId>
             <version>${tomcat-version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>${kryo.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
