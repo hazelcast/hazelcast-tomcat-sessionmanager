@@ -25,7 +25,7 @@
 
 ***Features***
 
-- Seamless Tomcat 6, 7 & 8 integration.
+- Seamless Tomcat 7, 8, 8.5 & 9 integration.
 - Support for sticky and non-sticky sessions.
 - Tomcat failover.
 - Deferred write for performance boost.
@@ -35,11 +35,11 @@
 
 Tomcat Web Session Replication Module has been tested against the following containers.
 
-- Tomcat 6.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-60.cgi" target="_blank">here</a>.
 - Tomcat 7.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-70.cgi" target="_blank">here</a>.
 - Tomcat 8.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-80.cgi" target="_blank">here</a>.
+- Tomcat 9.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-90.cgi" target="_blank">here</a>.
 
-The latest tested versions are **6.0.39**, **7.0.40** and **8.0.36**.
+The latest tested versions are **7.0.40**, **8.0.36**, **8.5.9**, and **9.0.27**.
 <br></br>
 
 ***Requirements***
