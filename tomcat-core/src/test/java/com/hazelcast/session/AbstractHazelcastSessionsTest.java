@@ -1,5 +1,6 @@
 package com.hazelcast.session;
 
+import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.test.HazelcastTestSupport;
 import org.apache.http.HttpEntity;
@@ -28,6 +29,7 @@ public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport
     public void cleanup() throws Exception {
         instance1.stop();
         instance2.stop();
+        HazelcastClient.shutdownAll();
         Hazelcast.shutdownAll();
     }
 
