@@ -59,13 +59,6 @@
         <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
     </properties>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
     <scm>
         <connection>scm:git:git://github.com/hazelcast/hazelcast-tomcat-sessionmanager.git</connection>
         <developerConnection>scm:git:git@github.com:hazelcast/hazelcast-tomcat-sessionmanager.git</developerConnection>

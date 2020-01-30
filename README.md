@@ -229,4 +229,4 @@ When Tomcat Failure happens and Load Balancer cannot redirect the request to the
 ```
 
 # License
-Hazelcast Tomcat Session Manager is available under the Apache 2 License. 
+Hazelcast Tomcat Session Manager is available under the Hazelcast Community License. 
