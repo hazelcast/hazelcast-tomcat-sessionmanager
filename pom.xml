@@ -59,6 +59,13 @@
         <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
     </properties>
 
+    <licenses>
+        <license>
+            <name>The Hazelcast Community License</name>
+            <url>http://hazelcast.com/hazelcast-community-license</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <scm>
         <connection>scm:git:git://github.com/hazelcast/hazelcast-tomcat-sessionmanager.git</connection>
         <developerConnection>scm:git:git@github.com:hazelcast/hazelcast-tomcat-sessionmanager.git</developerConnection>
