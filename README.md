@@ -110,6 +110,7 @@ In this deployment type, Tomcat instances work as clients on an existing Hazelca
 -	The existing Hazelcast cluster is used as the Session Replication Cluster.
 -	Offloading Session Cache from Tomcat to the Hazelcast Cluster.
 -	The architecture is completely independent. Complete reboot of Tomcat instances.
+- Hazelcast 4.0+ is supported by Hazelcast Tomcat Session Manager v2.0+.
 <br></br>
 
 The following steps configure a sample Client/Server for Hazelcast Session Replication.
@@ -148,17 +149,27 @@ Optionally, you can add `configLocation` attribute into the `<Listener>` element
 
 An example client config that connects directly (i.e. doesn't use multicast) to a specified cluster is:
 
-```
+#### XML Configuration
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<hazelcast-client xsi:schemaLocation="http://www.hazelcast.com/schema/client-config hazelcast-client-config-3.9.xsd"
-                  xmlns="http://www.hazelcast.com/schema/client-config"
-                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<hazelcast-client xmlns="http://www.hazelcast.com/schema/client-config"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
+                  http://www.hazelcast.com/schema/client-config/hazelcast-client-config-4.0.xsd">    
+
     <network>
       <cluster-members>
         <address>HAZELCAST_MEMBER</address>
       </cluster-members>
     </network>
 </hazelcast-client>
+```
+#### YAML Configuration
+```yaml
+hazelcast:
+  network:
+    cluster-members:
+      - HAZELCAST_MEMBER
 ```
 
 # Configuring Manager Element for Tomcat
