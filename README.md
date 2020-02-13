@@ -46,6 +46,7 @@ The latest tested versions are **7.0.40**, **8.0.36**, **8.5.9**, and **9.0.27**
 
  - Tomcat instance must be running with Java 1.6 or higher.
  - Session objects that need to be clustered have to be serializable on Hazelcast cluster. Please see <a href="https://docs.hazelcast.org/docs/latest/manual/html-single/#serialization" target="_blank">here</a> for how you can configure and implement serialization for Hazelcast.
+ - Hazelcast 4.0+ is supported by Hazelcast Tomcat Session Manager v2.0+.
 
 # How Tomcat Session Replication Works
 
@@ -110,7 +111,6 @@ In this deployment type, Tomcat instances work as clients on an existing Hazelca
 -	The existing Hazelcast cluster is used as the Session Replication Cluster.
 -	Offloading Session Cache from Tomcat to the Hazelcast Cluster.
 -	The architecture is completely independent. Complete reboot of Tomcat instances.
-- Hazelcast 4.0+ is supported by Hazelcast Tomcat Session Manager v2.0+.
 <br></br>
 
 The following steps configure a sample Client/Server for Hazelcast Session Replication.
