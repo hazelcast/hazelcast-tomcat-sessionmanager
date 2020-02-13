@@ -2,7 +2,7 @@ package com.hazelcast.session.nonsticky;
 
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import com.hazelcast.session.AbstractHazelcastSessionsTest;
 import com.hazelcast.session.CustomAttribute;
 import com.hazelcast.session.HazelcastSession;
