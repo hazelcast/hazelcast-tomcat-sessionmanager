@@ -95,11 +95,6 @@
 
     <repositories>
         <repository>
-            <id>backup-repository</id>
-            <name>Maven Central (Backup)</name>
-            <url>http://repo2.maven.org/maven2/</url>
-        </repository>
-        <repository>
             <id>snapshot-repository</id>
             <name>Maven2 Snapshot Repository</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
