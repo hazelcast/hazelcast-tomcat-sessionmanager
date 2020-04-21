@@ -23,7 +23,7 @@
                 <version>2.2</version>
 
                 <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <createDependencyReducedPom>true</createDependencyReducedPom>
                     <artifactSet>
                         <includes>
                             <include>com.hazelcast:tomcat-core</include>
