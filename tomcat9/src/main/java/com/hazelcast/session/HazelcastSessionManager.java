@@ -15,6 +15,8 @@
 
 package com.hazelcast.session;
 
+import com.hazelcast.config.InvalidConfigurationException;
+import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import org.apache.catalina.Context;
@@ -28,10 +30,6 @@ import org.apache.juli.logging.LogFactory;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 public class HazelcastSessionManager extends ManagerBase implements Lifecycle, PropertyChangeListener, SessionManager {
 
@@ -57,21 +55,17 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private HazelcastInstance instance;
 
-    public void setSessionTimeout(int t) {
-        getContext().setSessionTimeout(t);
-    }
-
     @Override
     public String getName() {
         return NAME;
     }
 
     @Override
-    public void load() throws ClassNotFoundException, IOException {
+    public void load() {
     }
 
     @Override
-    public void unload() throws IOException {
+    public void unload() {
     }
 
     @Override
@@ -91,13 +85,19 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             if (contextPath == null || contextPath.equals("/") || contextPath.equals("")) {
                 mapName = "empty_session_replication";
             } else {
-                mapName = contextPath.substring(1, contextPath.length()) + "_session_replication";
+                mapName = contextPath.substring(1) + "_session_replication";
             }
-            sessionMap = instance.getMap(mapName);
         } else {
-            sessionMap = instance.getMap(getMapName());
+            mapName = getMapName();
         }
 
+        try {
+            instance.getConfig().addMapConfig(new MapConfig(mapName).setMaxIdleSeconds(getSessionTimeoutInSeconds()));
+        } catch (InvalidConfigurationException e) {
+            log.info("Max idle seconds cannot be setup, \"" + mapName
+                    + "\" map is already configured in the Hazelcast cluster!");
+        }
+        sessionMap = instance.getMap(mapName);
         if (!isSticky()) {
             sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
         }
@@ -138,10 +138,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         return 0;
     }
 
-    public void setRejectedSessions(int i) {
-        // Do nothing.
-    }
-
     @Override
     public Session createSession(String sessionId) {
         checkMaxActiveSessions();
@@ -150,7 +146,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         session.setNew(true);
         session.setValid(true);
         session.setCreationTime(System.currentTimeMillis());
-        session.setMaxInactiveInterval(getContext().getSessionTimeout() * SECONDS_IN_MINUTE);
+        session.setMaxInactiveInterval(getSessionTimeoutInSeconds());
 
         String newSessionId = sessionId;
         if (newSessionId == null) {
@@ -165,6 +161,10 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         return session;
     }
 
+    private int getSessionTimeoutInSeconds() {
+        return getContext().getSessionTimeout() * SECONDS_IN_MINUTE;
+    }
+
     @Override
     public Session createEmptySession() {
         return new HazelcastSession(this);
@@ -172,12 +172,12 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     @Override
     public void add(Session session) {
-        sessions.put(session.getId(), (HazelcastSession) session);
+        sessions.put(session.getId(), session);
         sessionMap.set(session.getId(), (HazelcastSession) session);
     }
 
     @Override
-    public Session findSession(String id) throws IOException {
+    public Session findSession(String id) {
         log.debug("Attempting to find sessionId: " + id);
 
         if (id == null) {
@@ -221,31 +221,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         }
     }
 
-    @Override
-    public Session[] findSessions() {
-        // Get all local sessions
-        Set<Session> allSessions = new HashSet<Session>(sessions.values());
-
-        // Get all non-local sessions ids
-        Set<String> keys = new HashSet<String>(sessionMap.keySet());
-        keys.removeAll(sessions.keySet());
-
-        // Get all non-local sessions
-        final Collection<HazelcastSession> nonLocalSessions = sessionMap.getAll(keys).values();
-
-        // Set SessionManager since it's a transient field
-        for (HazelcastSession nonLocalSession : nonLocalSessions) {
-            if (nonLocalSession.getManager() == null) {
-                nonLocalSession.setSessionManager(this);
-            }
-        }
-
-        // Add all non-local sessions
-        allSessions.addAll(nonLocalSessions);
-
-        return allSessions.toArray(new Session[allSessions.size()]);
-    }
-
     public void commit(Session session) {
         HazelcastSession hazelcastSession = (HazelcastSession) session;
         if (hazelcastSession.isDirty()) {
@@ -258,7 +233,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     }
 
     @Override
-    public String updateJvmRouteForSession(String sessionId, String newJvmRoute) throws IOException {
+    public String updateJvmRouteForSession(String sessionId, String newJvmRoute) {
         HazelcastSession session = sessionMap.get(sessionId);
         if (session == null) {
             session = (HazelcastSession) createSession(null);
