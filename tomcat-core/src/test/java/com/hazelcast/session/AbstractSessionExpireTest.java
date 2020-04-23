@@ -12,26 +12,26 @@ public abstract class AbstractSessionExpireTest extends AbstractHazelcastSession
 
     @Test
     public void testSessionExpireAfterFailoverAndSessionTimeout() throws Exception {
+        testSessionExpireAfterFailover("hazelcast-1.xml", "hazelcast-2.xml", 0);
+    }
+
+    @Test
+    public void testSessionExpireAfterFailoverAndSessionTimeout_withDifferentHzExpirationConfiguration() throws Exception {
+        testSessionExpireAfterFailover("hazelcast-3.xml", "hazelcast-4.xml", 1);
+    }
+
+    private void testSessionExpireAfterFailover(String firstConfig, String secondConfig, int expectedSessionCount)
+            throws Exception {
         final int SESSION_TIMEOUT_IN_MINUTES = 1;
         final int EXTRA_DELAY_IN_SECONDS = 5;
 
         instance1 = getWebContainerConfigurator();
-        instance1.port(SERVER_PORT_1)
-                .sticky(true)
-                .clientOnly(false)
-                .mapName(SESSION_REPLICATION_MAP_NAME)
-                .sessionTimeout(SESSION_TIMEOUT_IN_MINUTES)
-                .configLocation("hazelcast-1.xml")
-                .start();
+        instance1.port(SERVER_PORT_1).sticky(true).clientOnly(false).mapName(SESSION_REPLICATION_MAP_NAME)
+                 .sessionTimeout(SESSION_TIMEOUT_IN_MINUTES).configLocation(firstConfig).start();
 
         instance2 = getWebContainerConfigurator();
-        instance2.port(SERVER_PORT_2)
-                .sticky(true)
-                .clientOnly(false)
-                .mapName(SESSION_REPLICATION_MAP_NAME)
-                .sessionTimeout(SESSION_TIMEOUT_IN_MINUTES)
-                .configLocation("hazelcast-2.xml")
-                .start();
+        instance2.port(SERVER_PORT_2).sticky(true).clientOnly(false).mapName(SESSION_REPLICATION_MAP_NAME)
+                 .sessionTimeout(SESSION_TIMEOUT_IN_MINUTES).configLocation(secondConfig).start();
 
         CookieStore cookieStore = new BasicCookieStore();
         executeRequest("write", SERVER_PORT_1, cookieStore);
@@ -45,10 +45,9 @@ public abstract class AbstractSessionExpireTest extends AbstractHazelcastSession
             hzInstance1.shutdown();
         }
 
-
         sleepSeconds(SESSION_TIMEOUT_IN_MINUTES * 60 + EXTRA_DELAY_IN_SECONDS);
 
-        assertEquals(0, instance2.getManager().getDistributedMap().size());
+        assertEquals(expectedSessionCount, instance2.getManager().getDistributedMap().size());
 
         instance2.stop();
     }
