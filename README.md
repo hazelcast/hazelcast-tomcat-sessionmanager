@@ -196,6 +196,9 @@ Based on Tomcat configuration or `sessionTimeout` setting in `web.xml`, sessions
 
 `processExpiresFrequency`, which is defined in [`<Manager>`](#configuring-manager-element-for-tomcat), is the only setting that controls the behavior of session expiry policy in the Tomcat Web Session Replication Module. By setting this, you can set the frequency of the session expiration checks in the Tomcat Instance.
 
+Starting with v2.1, the session expiration in Hazelcast cluster is separated from the Tomcat control. Instead, Hazelcast's own expiry mechanism (`max-idle-seconds` property) is used. By default, `sessionTimeout` value is configured as the `max-idle-seconds` for the session map in Hazelcast. So, the session expiry in Hazelcast cluster happens at the same time with Tomcat by default. However, if you would like to change the expiration setting on the Hazelcast cluster, you need to configure eviction for the related session map. Please see the Hazelcast's own eviction mechanism details [here](https://docs.hazelcast.org/docs/latest/manual/html-single/#map-eviction).
+Please note that if you change the Hazelcast's eviction configuration, the sessions might be kept alive longer than the `sessionTimeout` setting.         
+
 # Enabling Session Replication in Multi-App Environments
 
 Tomcat can be configured in two ways to enable Session Replication for deployed applications.
