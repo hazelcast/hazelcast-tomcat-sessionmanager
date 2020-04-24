@@ -6,15 +6,9 @@ import com.hazelcast.map.IMap;
 import com.hazelcast.session.AbstractHazelcastSessionsTest;
 import com.hazelcast.session.CustomAttribute;
 import com.hazelcast.session.HazelcastSession;
-import com.hazelcast.session.WebContainerConfigurator;
-import org.apache.catalina.Manager;
-import org.apache.catalina.session.StandardSession;
 import org.apache.http.client.CookieStore;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.junit.Test;
-
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -160,33 +154,4 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
     }
 
     public abstract void validateSessionAccessTime(HazelcastSession session1, HazelcastSession session2);
-
-
-    /**
-     * Helper method to retrieve the JSESSIONID value from the {@link CookieStore}.
-     * @param cookieStore the cookie store containing sessions.
-     * @return the value of the JSESSIONID cookie if present, otherwise null.
-     */
-    private static String getJSessionId(CookieStore cookieStore) {
-        String jSessionId = null;
-        for (Cookie cookie : cookieStore.getCookies()) {
-            if ("JSESSIONID".equalsIgnoreCase(cookie.getName())) {
-                jSessionId = cookie.getValue();
-            }
-        }
-        return jSessionId;
-    }
-
-    /**
-     * Retrieves sessions using {@link Manager#findSession(String)} in accordance with the {@link StandardSession#isValid()}
-     * method.
-     *
-     * @param jSessionId the session id.
-     * @param instance the tomcat instance.
-     * @return the instance of {@link HazelcastSession} if present, otherwise null.
-     */
-    private static HazelcastSession getHazelcastSession(String jSessionId, WebContainerConfigurator<?> instance)
-            throws IOException {
-        return (HazelcastSession) ((Manager) instance.getManager()).findSession(jSessionId);
-    }
 }
