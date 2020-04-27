@@ -113,12 +113,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             mapName = getMapName();
         }
 
-        try {
-            instance.getConfig().addMapConfig(new MapConfig(mapName).setMaxIdleSeconds(getMaxInactiveInterval()));
-        } catch (InvalidConfigurationException e) {
-            log.info("Max idle seconds cannot be setup, \"" + mapName
-                    + "\" map is already configured in the Hazelcast cluster!");
-        }
         sessionMap = instance.getMap(mapName);
         if (!isSticky()) {
             sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);

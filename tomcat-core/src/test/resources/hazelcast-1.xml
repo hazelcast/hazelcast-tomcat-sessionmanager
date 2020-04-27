@@ -26,4 +26,8 @@
             </tcp-ip>
         </join>
     </network>
+
+    <map name="session-replication-map">
+        <max-idle-seconds>60</max-idle-seconds>
+    </map>
 </hazelcast>
