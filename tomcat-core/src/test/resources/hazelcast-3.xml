@@ -16,7 +16,7 @@
 <hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config.xsd"
            xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <instance-name>hzInstance2</instance-name>
+    <instance-name>hzInstance1</instance-name>
     <network>
         <port auto-increment="true">5701</port>
         <join>
@@ -28,6 +28,6 @@
     </network>
 
     <map name="session-replication-map">
-        <max-idle-seconds>60</max-idle-seconds>
+        <max-idle-seconds>600</max-idle-seconds>
     </map>
 </hazelcast>
