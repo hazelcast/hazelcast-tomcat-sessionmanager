@@ -15,8 +15,6 @@
 
 package com.hazelcast.session;
 
-import com.hazelcast.config.InvalidConfigurationException;
-import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import org.apache.catalina.Context;
