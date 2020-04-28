@@ -1,6 +1,9 @@
 package com.hazelcast.session;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 
@@ -63,6 +66,14 @@ public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
         context.setCookies(true);
         context.setBackgroundProcessorDelay(1);
         context.setReloadable(true);
+        context.addLifecycleListener(new LifecycleListener() {
+            @Override
+            public void lifecycleEvent(LifecycleEvent event) {
+                if (Lifecycle.BEFORE_START_EVENT.equals(event.getType())) {
+                    ((Context) event.getLifecycle()).setSessionTimeout(sessionTimeout);
+                }
+            }
+        });
 
         return tomcat;
     }
@@ -71,7 +82,6 @@ public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
     public void start() throws Exception {
         tomcat = configure();
         tomcat.start();
-        setSessionTimeout();
     }
 
     @Override
@@ -89,7 +99,6 @@ public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
             context = (Context) tomcat.getHost().findChild("");
         }
         context.reload();
-        setSessionTimeout();
     }
 
     @Override
@@ -103,9 +112,5 @@ public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
         manager.setMapName(mapName);
         manager.setDeferredWrite(deferredWrite);
         manager.setProcessExpiresFrequency(1);
-    }
-
-    private void setSessionTimeout() {
-        manager.setSessionTimeout(sessionTimeout);
     }
 }

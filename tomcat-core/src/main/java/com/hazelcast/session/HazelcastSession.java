@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class HazelcastSession extends StandardSession implements DataSerializable {
 
@@ -84,6 +85,24 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
                 this.thisAccessedTime = distributedSession.thisAccessedTime;
             }
         }
+    }
+
+    @Override
+    public void setMaxInactiveInterval(int interval) {
+        super.setMaxInactiveInterval(interval);
+        updateSessionWithMaxIdleSeconds(interval);
+        if (LOG.isDebugEnabled()) {
+            LOG.info("Session 'maxInactiveInterval' updated on Hazelcast cluster.");
+        }
+    }
+
+    private void updateSessionWithMaxIdleSeconds(int interval) {
+        sessionManager.getDistributedMap()
+                      .set(id, this, -1, TimeUnit.MILLISECONDS, interval, TimeUnit.SECONDS);
+    }
+
+    void setMaxInactiveIntervalLocal(int interval) {
+        super.setMaxInactiveInterval(interval);
     }
 
     public boolean isDirty() {
