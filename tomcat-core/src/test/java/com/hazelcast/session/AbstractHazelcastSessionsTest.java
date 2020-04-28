@@ -2,15 +2,19 @@ package com.hazelcast.session;
 
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.test.HazelcastTestSupport;
+import org.apache.catalina.Manager;
+import org.apache.catalina.session.StandardSession;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 
 public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport {
@@ -37,6 +41,34 @@ public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport
         HttpResponse response = client.execute(request);
         HttpEntity entity = response.getEntity();
         return EntityUtils.toString(entity);
+    }
+
+    /**
+     * Helper method to retrieve the JSESSIONID value from the {@link CookieStore}.
+     * @param cookieStore the cookie store containing sessions.
+     * @return the value of the JSESSIONID cookie if present, otherwise null.
+     */
+    protected static String getJSessionId(CookieStore cookieStore) {
+        String jSessionId = null;
+        for (Cookie cookie : cookieStore.getCookies()) {
+            if ("JSESSIONID".equalsIgnoreCase(cookie.getName())) {
+                jSessionId = cookie.getValue();
+            }
+        }
+        return jSessionId;
+    }
+
+    /**
+     * Retrieves sessions using {@link Manager#findSession(String)} in accordance with the {@link StandardSession#isValid()}
+     * method.
+     *
+     * @param jSessionId the session id.
+     * @param instance the tomcat instance.
+     * @return the instance of {@link HazelcastSession} if present, otherwise null.
+     */
+    protected static HazelcastSession getHazelcastSession(String jSessionId, WebContainerConfigurator<?> instance)
+            throws IOException {
+        return (HazelcastSession) ((Manager) instance.getManager()).findSession(jSessionId);
     }
 
     /**

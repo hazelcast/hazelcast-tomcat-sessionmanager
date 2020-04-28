@@ -6,12 +6,7 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.session.AbstractHazelcastSessionsTest;
 import com.hazelcast.session.CustomAttribute;
 import com.hazelcast.session.HazelcastSession;
-import com.hazelcast.session.WebContainerConfigurator;
-import org.apache.catalina.Manager;
-import org.apache.catalina.Session;
-import org.apache.catalina.session.StandardSession;
 import org.apache.http.client.CookieStore;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.junit.Test;
 
@@ -159,41 +154,4 @@ public abstract class AbstractNonStickySessionsTest extends AbstractHazelcastSes
     }
 
     public abstract void validateSessionAccessTime(HazelcastSession session1, HazelcastSession session2);
-
-
-    /**
-     * Helper method to retrieve the JSESSIONID value from the {@link CookieStore}.
-     * @param cookieStore the cookie store containing sessions.
-     * @return the value of the JSESSIONID cookie if present, otherwise null.
-     */
-    private static String getJSessionId(CookieStore cookieStore) {
-        String jSessionId = null;
-        for (Cookie cookie : cookieStore.getCookies()) {
-            if ("JSESSIONID".equalsIgnoreCase(cookie.getName())) {
-                jSessionId = cookie.getValue();
-            }
-        }
-        return jSessionId;
-    }
-
-    /**
-     * Retrieves sessions using {@link Manager#findSessions()} in accordance with the {@link StandardSession#isValid()}
-     * method.
-     *
-     * @param jSessionId the session id.
-     * @param instance the tomcat instance.
-     * @return the instance of {@link HazelcastSession} if present, otherwise null.
-     */
-    private static HazelcastSession getHazelcastSession(String jSessionId, WebContainerConfigurator<?> instance) {
-        Session[] allSessions = ((Manager) instance.getManager()).findSessions();
-
-        HazelcastSession hzSession = null;
-        for (Session session : allSessions) {
-            if (jSessionId.equals(session.getId())) {
-                hzSession = (HazelcastSession) session;
-                break;
-            }
-        }
-        return hzSession;
-    }
 }
