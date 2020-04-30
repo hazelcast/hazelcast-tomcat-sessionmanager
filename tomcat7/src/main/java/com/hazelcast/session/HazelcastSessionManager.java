@@ -340,7 +340,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     private void checkMaxActiveSessions() {
         if (getMaxActiveSessions() >= 0 && sessionMap.size() >= getMaxActiveSessions()) {
             rejectedSessions++;
-            throw new IllegalStateException(sm.getString("standardManager.createSession.ise"));
+            throw new IllegalStateException(sm.getString("managerBase.createSession.ise"));
         }
     }
 
