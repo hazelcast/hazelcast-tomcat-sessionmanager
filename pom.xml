@@ -97,7 +97,7 @@
         <repository>
             <id>backup-repository</id>
             <name>Maven Central (Backup)</name>
-            <url>http://repo2.maven.org/maven2/</url>
+            <url>https://repo.maven.apache.org/maven2/</url>
         </repository>
         <repository>
             <id>snapshot-repository</id>
