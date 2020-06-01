@@ -17,7 +17,7 @@
     <groupId>com.hazelcast</groupId>
     <artifactId>hazelcast-tomcat-sessionmanager</artifactId>
     <packaging>pom</packaging>
-    <version>2.1</version>
+    <version>2.2-SNAPSHOT</version>
     <name>Hazelcast Tomcat Session Manager</name>
     <description>Tomcat Session Manager Module for Hazelcast</description>
     <url>http://www.hazelcast.com/</url>
