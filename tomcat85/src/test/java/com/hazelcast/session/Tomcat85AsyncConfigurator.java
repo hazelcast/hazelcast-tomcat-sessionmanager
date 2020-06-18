@@ -88,11 +88,18 @@ public class Tomcat85AsyncConfigurator extends WebContainerConfigurator<Tomcat> 
 
     @Override
     public void reload() {
+        getContext().reload();
+    }
+
+    @Override
+    public Context getContext() {
         Context context = (Context) tomcat.getHost().findChild("/");
         if (context == null) {
+            //Starting with Tomcat 8.0.35, child name is changed
             context = (Context) tomcat.getHost().findChild("");
         }
-        context.reload();
+
+        return context;
     }
 
     @Override

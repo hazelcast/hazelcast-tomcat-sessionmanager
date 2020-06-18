@@ -1,5 +1,7 @@
 package com.hazelcast.session;
 
+import org.apache.catalina.Context;
+
 @SuppressWarnings("unused")
 public abstract class WebContainerConfigurator<T> {
 
@@ -55,4 +57,6 @@ public abstract class WebContainerConfigurator<T> {
     public abstract void reload();
 
     public abstract SessionManager getManager();
+
+    public abstract Context getContext();
 }

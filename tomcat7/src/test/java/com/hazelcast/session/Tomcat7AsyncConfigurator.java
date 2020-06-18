@@ -88,11 +88,12 @@ public class Tomcat7AsyncConfigurator extends WebContainerConfigurator<Tomcat> {
 
     @Override
     public void reload() {
-        Context context = (Context) tomcat.getHost().findChild("/");
-        if (context == null) {
-            context = (Context) tomcat.getHost().findChild("");
-        }
-        context.reload();
+        getContext().reload();
+    }
+
+    @Override
+    public Context getContext() {
+        return (Context) tomcat.getHost().findChild("/");
     }
 
     @Override

@@ -71,6 +71,7 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
                 }
             }
         });
+        context.addApplicationListener("com.hazelcast.session.TomcatHttpSessionListener");
 
         return tomcat;
     }
@@ -90,8 +91,12 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
 
     @Override
     public void reload() {
-        Context context = (Context) tomcat.getHost().findChild("/");
-        context.reload();
+        getContext().reload();
+    }
+
+    @Override
+    public Context getContext() {
+        return (Context) tomcat.getHost().findChild("/");
     }
 
     @Override

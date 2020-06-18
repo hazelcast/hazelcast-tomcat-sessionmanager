@@ -74,6 +74,7 @@ public class Tomcat8Configurator extends WebContainerConfigurator<Tomcat> {
                 }
             }
         });
+        context.addApplicationListener("com.hazelcast.session.TomcatHttpSessionListener");
 
         return tomcat;
     }
@@ -93,12 +94,18 @@ public class Tomcat8Configurator extends WebContainerConfigurator<Tomcat> {
 
     @Override
     public void reload() {
+        getContext().reload();
+    }
+
+    @Override
+    public Context getContext() {
         Context context = (Context) tomcat.getHost().findChild("/");
         if (context == null) {
             //Starting with Tomcat 8.0.35, child name is changed
             context = (Context) tomcat.getHost().findChild("");
         }
-        context.reload();
+
+        return context;
     }
 
     @Override

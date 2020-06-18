@@ -117,6 +117,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         if (!isSticky()) {
             sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
         }
+        sessionMap.addEntryListener(new ExpireEvictedSessionsListener(this), true);
 
         log.info("HazelcastSessionManager started...");
         setState(LifecycleState.STARTING);

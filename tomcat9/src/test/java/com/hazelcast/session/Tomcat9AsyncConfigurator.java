@@ -89,11 +89,17 @@ public class Tomcat9AsyncConfigurator
 
     @Override
     public void reload() {
+        getContext().reload();
+    }
+
+    @Override
+    public Context getContext() {
         Context context = (Context) tomcat.getHost().findChild("/");
         if (context == null) {
             context = (Context) tomcat.getHost().findChild("");
         }
-        context.reload();
+
+        return context;
     }
 
     @Override
