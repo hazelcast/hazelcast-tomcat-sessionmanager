@@ -15,43 +15,34 @@
 
 package com.hazelcast.session;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.IMap;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Session;
-import org.apache.catalina.session.ManagerBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import com.hazelcast.map.IMap;
 
-public class HazelcastSessionManager extends ManagerBase implements Lifecycle, PropertyChangeListener, SessionManager {
+public class HazelcastSessionManager extends HazelcastSessionManagerBase implements Lifecycle, PropertyChangeListener, SessionManager {
 
     private static final String NAME = "HazelcastSessionManager";
 
     private static final int DEFAULT_SESSION_TIMEOUT = 60;
 
     private static final int SECONDS_IN_MINUTE = 60;
-
+    
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);
 
-    private IMap<String, HazelcastSession> sessionMap;
-
-    private boolean clientOnly;
+    IMap<String, HazelcastSession> sessionMap;
 
     private boolean sticky = true;
 
-    private String mapName;
-
     private boolean deferredWrite = true;
-
-    private String hazelcastInstanceName;
-
-    private HazelcastInstance instance;
 
     public void setSessionTimeout(int t) {
         getContext().setSessionTimeout(t);
@@ -77,9 +68,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         configureValves();
 
-        instance = HazelcastInstanceFactory.
-                getHazelcastInstance(getContext().getLoader().getClassLoader(), isClientOnly(), getHazelcastInstanceName());
-
+        startHZClient(getContext().getLoader().getClassLoader());
+        
+        String mapName;
         if (getMapName() == null || "default".equals(getMapName())) {
             Context ctx = getContext();
             String contextPath = ctx.getServletContext().getContextPath();
@@ -93,11 +84,11 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             mapName = getMapName();
         }
 
-        sessionMap = instance.getMap(mapName);
-        if (!isSticky()) {
-            sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
-        }
-
+	    sessionMap = getHZInstance().getMap(mapName);
+	    if (!isSticky()) {
+	        sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
+	    }
+	
         log.info("HazelcastSessionManager started...");
         setState(LifecycleState.STARTING);
     }
@@ -122,7 +113,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         setState(LifecycleState.STOPPING);
         if (isClientOnly()) {
-            instance.shutdown();
+            stopHZClient();
         }
         super.stopInternal();
         log.info("HazelcastSessionManager stopped...");
@@ -270,14 +261,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         return deferredWrite;
     }
 
-    public boolean isClientOnly() {
-        return clientOnly;
-    }
-
-    public void setClientOnly(boolean clientOnly) {
-        this.clientOnly = clientOnly;
-    }
-
     @Override
     public boolean isSticky() {
         return sticky;
@@ -306,22 +289,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         if (evt.getPropertyName().equals("sessionTimeout")) {
             getContext().setSessionTimeout((Integer) evt.getNewValue() * DEFAULT_SESSION_TIMEOUT);
         }
-    }
-
-    public String getMapName() {
-        return mapName;
-    }
-
-    public void setMapName(String mapName) {
-        this.mapName = mapName;
-    }
-
-    public String getHazelcastInstanceName() {
-        return hazelcastInstanceName;
-    }
-
-    public void setHazelcastInstanceName(String hazelcastInstanceName) {
-        this.hazelcastInstanceName = hazelcastInstanceName;
     }
 
     private void checkMaxActiveSessions() {

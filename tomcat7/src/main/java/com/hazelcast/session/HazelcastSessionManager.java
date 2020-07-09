@@ -15,23 +15,22 @@
 
 package com.hazelcast.session;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.IMap;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.Session;
-import org.apache.catalina.session.ManagerBase;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import com.hazelcast.map.IMap;
 
-public class HazelcastSessionManager extends ManagerBase implements Lifecycle, PropertyChangeListener, SessionManager {
+public class HazelcastSessionManager extends HazelcastSessionManagerBase implements Lifecycle, PropertyChangeListener, SessionManager {
 
     private static final String NAME = "HazelcastSessionManager";
     private static final String INFO = "HazelcastSessionManager/1.0";
@@ -44,17 +43,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private IMap<String, HazelcastSession> sessionMap;
 
-    private boolean clientOnly;
-
     private boolean sticky = true;
 
-    private String mapName;
-
     private boolean deferredWrite = true;
-
-    private String hazelcastInstanceName;
-
-    private HazelcastInstance instance;
 
     @Override
     public String getInfo() {
@@ -96,8 +87,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         configureValves();
 
-        instance = HazelcastInstanceFactory.
-                getHazelcastInstance(getContainer().getLoader().getClassLoader(), isClientOnly(), getHazelcastInstanceName());
+        startHZClient(getContainer().getLoader().getClassLoader());
 
         String mapName;
         if (getMapName() == null || "default".equals(getMapName())) {
@@ -113,7 +103,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             mapName = getMapName();
         }
 
-        sessionMap = instance.getMap(mapName);
+        sessionMap = getHZInstance().getMap(mapName);
         if (!isSticky()) {
             sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
         }
@@ -142,7 +132,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
         setState(LifecycleState.STOPPING);
         if (isClientOnly()) {
-            instance.shutdown();
+            stopHZClient();
         }
         super.stopInternal();
         log.info("HazelcastSessionManager stopped...");
@@ -283,14 +273,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         return deferredWrite;
     }
 
-    public boolean isClientOnly() {
-        return clientOnly;
-    }
-
-    public void setClientOnly(boolean clientOnly) {
-        this.clientOnly = clientOnly;
-    }
-
     @Override
     public boolean isSticky() {
         return sticky;
@@ -319,22 +301,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         if (evt.getPropertyName().equals("sessionTimeout")) {
             setMaxInactiveInterval((Integer) evt.getNewValue() * DEFAULT_SESSION_TIMEOUT);
         }
-    }
-
-    public String getMapName() {
-        return mapName;
-    }
-
-    public void setMapName(String mapName) {
-        this.mapName = mapName;
-    }
-
-    public String getHazelcastInstanceName() {
-        return hazelcastInstanceName;
-    }
-
-    public void setHazelcastInstanceName(String hazelcastInstanceName) {
-        this.hazelcastInstanceName = hazelcastInstanceName;
     }
 
     private void checkMaxActiveSessions() {
