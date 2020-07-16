@@ -6,6 +6,7 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.IMap;
 
 /**
  * The base class of all session managers that implements the Hazelcast client logic
@@ -13,7 +14,7 @@ import com.hazelcast.core.HazelcastInstance;
  * @author ycordier
  *
  */
-public abstract class HazelcastSessionManagerBase extends ManagerBase {
+public abstract class HazelcastSessionManagerBase extends ManagerBase implements SessionManager {
 
 	private static final int DEFAULT_MAX_CONNECT_ATTEMPTS = 60;
 	
@@ -27,6 +28,12 @@ public abstract class HazelcastSessionManagerBase extends ManagerBase {
     
     private String hazelcastInstanceName;
 
+    private IMap<String, HazelcastSession> sessionMap;
+    
+    private boolean sticky = true;
+
+    private boolean deferredWrite = true;
+
     private int maxConnectAttempts = DEFAULT_MAX_CONNECT_ATTEMPTS;
 	
 	private int waitBetweenConnectAttempts = DEFAULT_WAIT_BETWEEN_CONNECT_ATTEMPTS;
@@ -37,7 +44,7 @@ public abstract class HazelcastSessionManagerBase extends ManagerBase {
 		super();
 	}
 
-	public void startHZClient(final ClassLoader classLoader) throws LifecycleException {
+	public void startHZClient(final ClassLoader classLoader, final String mapNameToUse) throws LifecycleException {
 		int attempts=0;
 		boolean hzClientStarted = false;
 		while (!hzClientStarted) {
@@ -69,7 +76,7 @@ public abstract class HazelcastSessionManagerBase extends ManagerBase {
 	            if (com.hazelcast.core.LifecycleEvent.LifecycleState.SHUTDOWN.equals(event.getState())) {
 	            	try {
 	            		log.info("Detected Hazelcast client shutdown, restarting client...");
-	            		startHZClient(classLoader);
+	            		startHZClient(classLoader, mapNameToUse);
 					} catch (LifecycleException e) {
 				        log.fatal("Error while restarting Hazelcast client!", e);
 					}
@@ -77,6 +84,12 @@ public abstract class HazelcastSessionManagerBase extends ManagerBase {
 			}
 	    });
 	    log.info("Hazelcastclient connected.");
+	    
+        sessionMap = instance.getMap(mapNameToUse);
+	    if (!isSticky()) {
+	        sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
+	    }
+
 	}
 
 	public HazelcastInstance getHZInstance() {
@@ -127,5 +140,30 @@ public abstract class HazelcastSessionManagerBase extends ManagerBase {
         this.mapName = mapName;
     }
 
+    @Override
+    public IMap<String, HazelcastSession> getDistributedMap() {
+        return sessionMap;
+    }
+
+    @Override
+    public boolean isDeferredEnabled() {
+        return deferredWrite;
+    }
+
+    public void setDeferredWrite(boolean deferredWrite) {
+        this.deferredWrite = deferredWrite;
+    }
+
+    @Override
+    public boolean isSticky() {
+        return sticky;
+    }
+
+    public void setSticky(boolean sticky) {
+        if (!sticky && getJvmRoute() != null) {
+            log.warn("setting JvmRoute with non-sticky sessions is not recommended and might cause unstable behaivour");
+        }
+        this.sticky = sticky;
+    }
 
 }

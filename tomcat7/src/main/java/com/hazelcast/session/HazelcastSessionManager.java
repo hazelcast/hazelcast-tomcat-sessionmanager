@@ -30,7 +30,7 @@ import org.apache.juli.logging.LogFactory;
 
 import com.hazelcast.map.IMap;
 
-public class HazelcastSessionManager extends HazelcastSessionManagerBase implements Lifecycle, PropertyChangeListener, SessionManager {
+public class HazelcastSessionManager extends HazelcastSessionManagerBase implements Lifecycle, PropertyChangeListener {
 
     private static final String NAME = "HazelcastSessionManager";
     private static final String INFO = "HazelcastSessionManager/1.0";
@@ -40,12 +40,6 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
 
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);
-
-    private IMap<String, HazelcastSession> sessionMap;
-
-    private boolean sticky = true;
-
-    private boolean deferredWrite = true;
 
     @Override
     public String getInfo() {
@@ -87,26 +81,21 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
 
         configureValves();
 
-        startHZClient(getContainer().getLoader().getClassLoader());
-
-        String mapName;
+        String mapNameToUse;
         if (getMapName() == null || "default".equals(getMapName())) {
             Context ctx = (Context) getContainer();
             String contextPath = ctx.getServletContext().getContextPath();
             log.debug("contextPath: " + contextPath);
             if (contextPath == null || contextPath.equals("/") || contextPath.equals("")) {
-                mapName = "empty_session_replication";
+                mapNameToUse = "empty_session_replication";
             } else {
-                mapName = contextPath.substring(1) + "_session_replication";
+                mapNameToUse = contextPath.substring(1) + "_session_replication";
             }
         } else {
-            mapName = getMapName();
+            mapNameToUse = getMapName();
         }
 
-        sessionMap = getHZInstance().getMap(mapName);
-        if (!isSticky()) {
-            sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
-        }
+        startHZClient(getContainer().getLoader().getClassLoader(), mapNameToUse);
 
         log.info("HazelcastSessionManager started...");
         setState(LifecycleState.STARTING);
@@ -163,7 +152,7 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
         session.tellNew();
 
         sessions.put(newSessionId, session);
-        sessionMap.set(newSessionId, session);
+        getDistributedMap().set(newSessionId, session);
         return session;
     }
 
@@ -175,7 +164,7 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
     @Override
     public void add(Session session) {
         sessions.put(session.getId(), session);
-        sessionMap.set(session.getId(), (HazelcastSession) session);
+        getDistributedMap().set(session.getId(), (HazelcastSession) session);
     }
 
     @Override
@@ -191,7 +180,7 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
                         + "Some failover occurred so reading session from Hazelcast map: " + getMapName());
             }
 
-            HazelcastSession hazelcastSession = sessionMap.get(id);
+            HazelcastSession hazelcastSession = getDistributedMap().get(id);
             if (hazelcastSession == null) {
                 log.debug("No Session found for: " + id);
                 return null;
@@ -206,12 +195,12 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
 
             // call remove method to trigger eviction Listener on each node to invalidate local sessions
             // the call are performed in a pessimistic lock block to prevent concurrency problems whilst finding sessions
-            sessionMap.lock(id);
+            getDistributedMap().lock(id);
             try {
-                sessionMap.remove(id);
-                sessionMap.set(id, hazelcastSession);
+                getDistributedMap().remove(id);
+                getDistributedMap().set(id, hazelcastSession);
             } finally {
-                sessionMap.unlock(id);
+                getDistributedMap().unlock(id);
             }
 
             return hazelcastSession;
@@ -225,7 +214,7 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
         HazelcastSession hazelcastSession = (HazelcastSession) session;
         if (hazelcastSession.isDirty()) {
             hazelcastSession.setDirty(false);
-            sessionMap.set(session.getId(), hazelcastSession);
+            getDistributedMap().set(session.getId(), hazelcastSession);
             if (log.isDebugEnabled()) {
                 log.debug("Thread name: " + Thread.currentThread().getName() + " committed key: " + session.getId());
             }
@@ -234,7 +223,7 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
 
     @Override
     public String updateJvmRouteForSession(String sessionId, String newJvmRoute) {
-        HazelcastSession session = sessionMap.get(sessionId);
+        HazelcastSession session = getDistributedMap().get(sessionId);
         if (session == null) {
             session = (HazelcastSession) createSession(null);
             return session.getId();
@@ -248,8 +237,8 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
         String newSessionId = baseSessionId + "." + newJvmRoute;
         session.setId(newSessionId);
 
-        sessionMap.remove(sessionId);
-        sessionMap.set(newSessionId, session);
+        getDistributedMap().remove(sessionId);
+        getDistributedMap().set(newSessionId, session);
         return newSessionId;
     }
 
@@ -263,31 +252,9 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
         remove(session.getId());
     }
 
-    @Override
-    public IMap<String, HazelcastSession> getDistributedMap() {
-        return sessionMap;
-    }
-
-    @Override
-    public boolean isDeferredEnabled() {
-        return deferredWrite;
-    }
-
-    @Override
-    public boolean isSticky() {
-        return sticky;
-    }
-
-    public void setSticky(boolean sticky) {
-        if (!sticky && getJvmRoute() != null) {
-            log.warn("setting JvmRoute with non-sticky sessions is not recommended and might cause unstable behaivour");
-        }
-        this.sticky = sticky;
-    }
-
     private void remove(String id) {
         sessions.remove(id);
-        sessionMap.remove(id);
+        getDistributedMap().remove(id);
     }
 
     @Override
@@ -304,7 +271,7 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
     }
 
     private void checkMaxActiveSessions() {
-        if (getMaxActiveSessions() >= 0 && sessionMap.size() >= getMaxActiveSessions()) {
+        if (getMaxActiveSessions() >= 0 && getDistributedMap().size() >= getMaxActiveSessions()) {
             rejectedSessions++;
             throw new IllegalStateException(sm.getString("managerBase.createSession.ise"));
         }
@@ -321,7 +288,4 @@ public class HazelcastSessionManager extends HazelcastSessionManagerBase impleme
                 Integer.valueOf(this.maxActiveSessions));
     }
 
-    public void setDeferredWrite(boolean deferredWrite) {
-        this.deferredWrite = deferredWrite;
-    }
 }
