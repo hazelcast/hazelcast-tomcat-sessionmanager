@@ -17,6 +17,8 @@
 
 ***Sample Code:*** *Please see our <a href="https://github.com/hazelcast/hazelcast-code-samples/tree/master/hazelcast-integration/manager-based-session-replication" target="_blank">sample application</a> for Tomcat Based Web Session Replication.*
 
+*You can also check [Hazelcast Guides: Spring Boot Tomcat Session Replication using Hazelcast](https://guides.hazelcast.org/springboot-tomcat-session-replication/).*
+
 
 # Features and Requirements
 
