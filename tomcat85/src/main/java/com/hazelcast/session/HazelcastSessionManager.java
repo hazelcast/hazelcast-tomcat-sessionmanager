@@ -149,7 +149,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             newSessionId = generateSessionId();
         }
 
-        session.setId(newSessionId);
         session.tellNew();
 
         sessions.put(newSessionId, session);
