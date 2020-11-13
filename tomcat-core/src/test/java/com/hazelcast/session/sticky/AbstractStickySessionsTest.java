@@ -143,12 +143,13 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
     }
 
     @Test(timeout = 80000)
-    public void testFailover() throws Exception {
+    public void testFailoverWithNoStaleSession() throws Exception {
         CookieStore cookieStore = new BasicCookieStore();
         String value = executeRequest("read", SERVER_PORT_1, cookieStore);
         assertEquals("null", value);
 
         executeRequest("write", SERVER_PORT_1, cookieStore);
+        String oldSessionId = executeRequest("get-session-id", SERVER_PORT_1, cookieStore);
 
         instance1.stop();
 
@@ -157,8 +158,11 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
             hzInstance1.shutdown();
         }
 
+        String newSessionId = executeRequest("get-session-id", SERVER_PORT_2, cookieStore);
         value = executeRequest("read", SERVER_PORT_2, cookieStore);
         assertEquals("value", value);
+
+        assertNotEquals(oldSessionId, newSessionId);
     }
 
 //    @Test

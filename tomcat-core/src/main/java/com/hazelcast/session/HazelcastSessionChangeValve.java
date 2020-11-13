@@ -45,7 +45,7 @@ public class HazelcastSessionChangeValve extends ValveBase {
         int index = currentSessionId.indexOf(".");
         String requestedJvmRoute = null;
         if (index > 0) {
-            requestedJvmRoute = currentSessionId.substring(index + 1, currentSessionId.length());
+            requestedJvmRoute = currentSessionId.substring(index + 1);
         }
 
         if (requestedJvmRoute == null || requestedJvmRoute.equals(jvmRoute)) {
@@ -54,5 +54,6 @@ public class HazelcastSessionChangeValve extends ValveBase {
 
         String newSessionId = sessionManager.updateJvmRouteForSession(currentSessionId, jvmRoute);
         request.changeSessionId(newSessionId);
+        request.getSession().invalidate();
     }
 }

@@ -57,6 +57,8 @@ public class TestServlet extends HttpServlet {
         } else if (req.getRequestURI().endsWith("read-custom-attribute")) {
             CustomAttribute value = (CustomAttribute) session.getAttribute("key");
             resp.getWriter().write(value == null ? "null" : value.toString());
+        }  else if (req.getRequestURI().endsWith("get-session-id")) {
+            resp.getWriter().write(req.getSession().getId());
         }
     }
 }
