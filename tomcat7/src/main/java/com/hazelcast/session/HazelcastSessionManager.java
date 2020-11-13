@@ -200,7 +200,13 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
                         + "Some failover occurred so reading session from Hazelcast map: " + getMapName());
             }
 
-            HazelcastSession hazelcastSession = sessionMap.get(id);
+            HazelcastSession hazelcastSession;
+            sessionMap.lock(id);
+            try {
+                hazelcastSession = sessionMap.get(id);
+            } finally {
+                sessionMap.unlock(id);
+            }
             if (hazelcastSession == null) {
                 log.debug("No Session found for: " + id);
                 return null;
