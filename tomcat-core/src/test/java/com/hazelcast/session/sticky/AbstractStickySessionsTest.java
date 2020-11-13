@@ -159,10 +159,11 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
         }
 
         String newSessionId = executeRequest("get-session-id", SERVER_PORT_2, cookieStore);
+        //The session id should be different after failover because of the changed jvmRoute
+        assertNotEquals(oldSessionId, newSessionId);
         value = executeRequest("read", SERVER_PORT_2, cookieStore);
         assertEquals("value", value);
 
-        assertNotEquals(oldSessionId, newSessionId);
     }
 
 //    @Test
