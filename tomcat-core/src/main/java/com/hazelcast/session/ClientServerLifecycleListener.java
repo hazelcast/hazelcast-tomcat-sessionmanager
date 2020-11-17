@@ -17,11 +17,8 @@ package com.hazelcast.session;
 
 
 import com.hazelcast.client.config.ClientConfig;
-import com.hazelcast.client.config.XmlClientConfigBuilder;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
-
-import java.io.IOException;
 
 public class ClientServerLifecycleListener implements LifecycleListener {
 
@@ -38,9 +35,8 @@ public class ClientServerLifecycleListener implements LifecycleListener {
         if ("before_start".equals(event.getType())) {
 
             try {
-                XmlClientConfigBuilder builder = new XmlClientConfigBuilder(getConfigLocation());
-                config = builder.build();
-            } catch (IOException e) {
+                config = new ClientServerConfigLoader().load(getConfigLocation());
+            } catch (Exception e) {
                 throw new RuntimeException("failed to load Config:", e);
             }
 
