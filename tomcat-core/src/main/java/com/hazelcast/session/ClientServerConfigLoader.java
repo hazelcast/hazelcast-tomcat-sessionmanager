@@ -28,7 +28,7 @@ import java.net.URL;
 
 import static com.hazelcast.internal.config.ConfigLoader.locateConfig;
 
-public class ClientServerConfigLoader {
+class ClientServerConfigLoader {
     private ConfigRecognizer xmlConfigRecognizer;
     private ConfigRecognizer yamlConfigRecognizer;
 
@@ -37,8 +37,7 @@ public class ClientServerConfigLoader {
         yamlConfigRecognizer = new ClientYamlConfigRootTagRecognizer();
     }
 
-    public ClientConfig load(final String path)
-            throws Exception {
+    ClientConfig load(final String path) throws Exception {
         final URL url = locateConfig(path);
         if (url == null) {
             return null;
