@@ -16,13 +16,10 @@
 package com.hazelcast.session;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.internal.config.ConfigLoader;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
-
-import java.io.IOException;
 
 public class P2PLifecycleListener implements LifecycleListener {
     private static Config config;
@@ -37,8 +34,8 @@ public class P2PLifecycleListener implements LifecycleListener {
 
         if ("before_start".equals(event.getType())) {
             try {
-                config = ConfigLoader.load(getConfigLocation());
-            } catch (IOException e) {
+                config = new P2PConfigLoader().load(getConfigLocation());
+            } catch (Exception e) {
                 throw new RuntimeException("failed to load Config:", e);
             }
 
