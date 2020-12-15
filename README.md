@@ -11,6 +11,7 @@
 * [Enabling Session Replication in Multi-App Environments](#enabling-session-replication-in-multi-app-environments)
 * [Sticky Sessions and Tomcat](#sticky-sessions-and-tomcat)
 * [Tomcat Failover and the jvmRoute Parameter](#tomcatfailover-and-the-jvmroute-parameter)
+* [Spring Boot Auto-configuration](#spring-boot-auto-configuration)
 
 
 # Tomcat Based Web Session Replication
