@@ -49,7 +49,7 @@ public class HazelcastSessionManagerConfiguration {
     @Value("${tsm.map.name:default}")
     private String mapName;
     @Value("${tsm.sticky:true}")
-    private boolean isSticky;
+    private boolean sticky;
     @Value("${tsm.process.expires.frequency:6}")
     private int processExpiresFrequency;
     @Value("${tsm.deferred.write:true}")
@@ -88,7 +88,7 @@ public class HazelcastSessionManagerConfiguration {
                         HazelcastSessionManager manager = new HazelcastSessionManager();
                         manager.setClientOnly(clientOnly);
                         manager.setMapName(mapName);
-                        manager.setSticky(isSticky);
+                        manager.setSticky(sticky);
                         manager.setProcessExpiresFrequency(processExpiresFrequency);
                         manager.setDeferredWrite(deferredWrite);
                         manager.setHazelcastInstanceName(hazelcastInstanceName);
@@ -97,7 +97,7 @@ public class HazelcastSessionManagerConfiguration {
                                 "Tomcat context is configured with HazelcastSessionManager => clientOnly: %s, mapName: %s, "
                                         + "isSticky: %s, processExpiresFrequency: %d, deferredWrite: %s, "
                                         + "hazelcastInstanceName: %s",
-                                clientOnly, mapName, isSticky, processExpiresFrequency, deferredWrite, hazelcastInstanceName));
+                                clientOnly, mapName, sticky, processExpiresFrequency, deferredWrite, hazelcastInstanceName));
                     }
                 });
             }
