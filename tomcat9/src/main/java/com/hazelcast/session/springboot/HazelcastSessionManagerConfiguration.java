@@ -33,8 +33,9 @@ import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@org.springframework.context.annotation.Configuration
+@Configuration
 @ConditionalOnClass(HazelcastSessionManager.class)
 public class HazelcastSessionManagerConfiguration {
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);
