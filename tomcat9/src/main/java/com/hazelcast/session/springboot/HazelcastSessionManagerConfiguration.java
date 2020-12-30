@@ -19,7 +19,6 @@ import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.session.ClientServerConfigLoader;
-import com.hazelcast.session.ClientServerLifecycleListener;
 import com.hazelcast.session.HazelcastSessionManager;
 import com.hazelcast.session.P2PConfigLoader;
 import com.hazelcast.session.SessionManager;
@@ -73,7 +72,9 @@ public class HazelcastSessionManagerConfiguration {
     @ConditionalOnProperty(name = "tsm.client.only", havingValue = "true")
     public ClientConfig hazelcastClientConfig() throws Exception {
         ClientConfig clientConfig = new ClientServerConfigLoader().load(clientConfigLocation);
-        ClientServerLifecycleListener.setConfig(clientConfig);
+        if (clientConfig.getInstanceName() == null) {
+            clientConfig.setInstanceName(SessionManager.DEFAULT_INSTANCE_NAME);
+        }
         return clientConfig;
     }
 

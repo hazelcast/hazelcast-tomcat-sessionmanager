@@ -45,7 +45,13 @@ public final class HazelcastInstanceFactory {
     public static HazelcastInstance getHazelcastInstance(ClassLoader classLoader, boolean clientOnly, String instanceName)
             throws LifecycleException {
         HazelcastInstance instance;
-        if (clientOnly) {
+        if (instanceName != null) {
+            if (clientOnly) {
+                instance = HazelcastClient.getHazelcastClientByName(instanceName);
+            } else {
+                instance = Hazelcast.getHazelcastInstanceByName(instanceName);
+            }
+        } else if (clientOnly) {
             try {
                 ClientConfig clientConfig = ClientServerLifecycleListener.getConfig();
                 clientConfig.setClassLoader(classLoader);
@@ -54,8 +60,6 @@ public final class HazelcastInstanceFactory {
                 LOGGER.error("Hazelcast Client could not be created.", e);
                 throw new LifecycleException(e.getMessage());
             }
-        } else if (instanceName != null) {
-            instance = Hazelcast.getHazelcastInstanceByName(instanceName);
         } else {
             /*
              Note that Hazelcast instance can only set a classloader during the initialization. If the context classloader

@@ -246,7 +246,7 @@ When Tomcat Failure happens and Load Balancer cannot redirect the request to the
 
 # Spring Boot Auto-configuration
 
-Starting with v2.2, Hazelcast Tomcat Session Manager supports auto-configuration when used with Spring Boot. The only thing you need to do is to add Hazelcast Tomcat Session Manager (for Tomcat 9) library to the classpath. This will set Hazelcast Session Manager as the session manager of the Tomcat. If you would like to configure the session manager properties, you can setup the following properties in your `application.properties` file:
+Starting with v2.2, Hazelcast Tomcat Session Manager supports auto-configuration when used with Spring Boot. The only thing you need to do is to add Hazelcast Tomcat Session Manager (for Tomcat 9) and Hazelcast IMDG libraries to the classpath. This will set Hazelcast Session Manager as the session manager of the Tomcat. If you would like to configure the session manager properties, you can setup the following properties in your `application.properties` file:
 
 - `tsm.hazelcast.config.location`: Allows to provide Hazelcast member configuration. If not provided, `hazelcast.xml` in the classpath is used by default. Only works if `tsm.client.only` is **not** to set true. 
 - `tsm.hazelcast.client.config.location`: Allows to provide Hazelcast client configuration. If not provided, `hazelcast-client.xml` in the classpath is used by default. Only works if `tsm.client.only` is to set true.
@@ -259,8 +259,8 @@ Starting with v2.2, Hazelcast Tomcat Session Manager supports auto-configuration
 
 ## Notes about Spring Boot Auto-configuration
 
-- If a `com.hazelcast.client.config.ClientConfig` bean is configured explicitly, then `ClientServerLifecycleListener.setConfig(clientConfig);` should be called to enable this configuration to be used in Hazelcast Session Manager.
-- If a `com.hazelcast.config.Config` bean is configured explicitly, then both `hazelcastInstance` configuration and `tsm.hazelcast.instance.name` property should be set. 
+- If a `com.hazelcast.client.config.ClientConfig` bean is configured explicitly, then both `instanceName` setting in the `ClientConfig` bean and `tsm.hazelcast.instance.name` property should be set.
+- If a `com.hazelcast.config.Config` bean is configured explicitly, then both `instanceName` setting in the `Config` bean and `tsm.hazelcast.instance.name` property should be set. 
 
 # License
 Hazelcast Tomcat Session Manager is available under the Hazelcast Community License. 
