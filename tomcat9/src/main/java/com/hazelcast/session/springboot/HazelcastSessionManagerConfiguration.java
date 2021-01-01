@@ -62,7 +62,7 @@ public class HazelcastSessionManagerConfiguration {
     @Bean
     @ConditionalOnMissingBean(Config.class)
     @Conditional(HazelcastConfigAvailableCondition.class)
-    public Config hazelcastConfig() throws Exception {
+    public Config hazelcastConfigForTomcatSessionManager() throws Exception {
         Config config = new P2PConfigLoader().load(configLocation);
         if (config.getInstanceName() == null) {
             config.setInstanceName(SessionManager.DEFAULT_INSTANCE_NAME);
@@ -73,7 +73,7 @@ public class HazelcastSessionManagerConfiguration {
     @Bean
     @ConditionalOnMissingBean(ClientConfig.class)
     @Conditional(HazelcastClientConfigAvailableCondition.class)
-    public ClientConfig hazelcastClientConfig() throws Exception {
+    public ClientConfig hazelcastClientConfigForTomcatSessionManager() throws Exception {
         clientOnly = true;
         ClientConfig clientConfig = new ClientServerConfigLoader().load(configLocation);
         if (clientConfig.getInstanceName() == null) {
