@@ -26,26 +26,27 @@ import org.apache.catalina.Context;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
 @Configuration
 @ConditionalOnClass(HazelcastSessionManager.class)
 public class HazelcastSessionManagerConfiguration {
+    private static final String TSM_HAZELCAST_CONFIG_LOCATION = "tsm.hazelcast.config.location";
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);
 
-    @Value("${tsm.hazelcast.config.location:hazelcast-default.xml}")
+    @Value("${" + TSM_HAZELCAST_CONFIG_LOCATION + ":hazelcast-default.xml}")
     private String configLocation;
-    @Value("${tsm.hazelcast.client.config.location:hazelcast-client-default.xml}")
-    private String clientConfigLocation;
-    @Value("${tsm.client.only:false}")
-    private boolean clientOnly;
     @Value("${tsm.map.name:default}")
     private String mapName;
     @Value("${tsm.sticky:true}")
@@ -56,10 +57,11 @@ public class HazelcastSessionManagerConfiguration {
     private boolean deferredWrite;
     @Value("${tsm.hazelcast.instance.name:" + SessionManager.DEFAULT_INSTANCE_NAME + "}")
     private String hazelcastInstanceName;
+    private boolean clientOnly;
 
     @Bean
-    @ConditionalOnMissingBean(type = "com.hazelcast.config.Config")
-    @ConditionalOnProperty(name = "tsm.client.only", havingValue = "false", matchIfMissing = true)
+    @ConditionalOnMissingBean(Config.class)
+    @Conditional(HazelcastConfigAvailableCondition.class)
     public Config hazelcastConfig() throws Exception {
         Config config = new P2PConfigLoader().load(configLocation);
         if (config.getInstanceName() == null) {
@@ -69,10 +71,11 @@ public class HazelcastSessionManagerConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(type = "com.hazelcast.client.config.ClientConfig")
-    @ConditionalOnProperty(name = "tsm.client.only", havingValue = "true")
+    @ConditionalOnMissingBean(ClientConfig.class)
+    @Conditional(HazelcastClientConfigAvailableCondition.class)
     public ClientConfig hazelcastClientConfig() throws Exception {
-        ClientConfig clientConfig = new ClientServerConfigLoader().load(clientConfigLocation);
+        clientOnly = true;
+        ClientConfig clientConfig = new ClientServerConfigLoader().load(configLocation);
         if (clientConfig.getInstanceName() == null) {
             clientConfig.setInstanceName(SessionManager.DEFAULT_INSTANCE_NAME);
         }
@@ -104,5 +107,41 @@ public class HazelcastSessionManagerConfiguration {
                 });
             }
         };
+    }
+
+    private static ConditionOutcome getConditionOutcome(ConditionContext context, boolean forClient) {
+        String message = "No explicit config provided using " + TSM_HAZELCAST_CONFIG_LOCATION;
+        if (!context.getEnvironment().containsProperty(TSM_HAZELCAST_CONFIG_LOCATION)) {
+            if (forClient) {
+                return ConditionOutcome.noMatch(message);
+            }
+            return ConditionOutcome.match(message);
+        }
+        String configLocation = context.getEnvironment().getProperty(TSM_HAZELCAST_CONFIG_LOCATION);
+        try {
+            if (!forClient) {
+                new P2PConfigLoader().load(configLocation);
+            } else {
+                new ClientServerConfigLoader().load(configLocation);
+            }
+            return ConditionOutcome.match("Found proper config at " + TSM_HAZELCAST_CONFIG_LOCATION);
+        } catch (Exception e) {
+            return ConditionOutcome.noMatch("No proper config at " + TSM_HAZELCAST_CONFIG_LOCATION
+                    + ", Reason: " + e.getMessage());
+        }
+    }
+
+    private static class HazelcastConfigAvailableCondition extends SpringBootCondition {
+        @Override
+        public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            return getConditionOutcome(context, false);
+        }
+    }
+
+    private static class HazelcastClientConfigAvailableCondition extends SpringBootCondition {
+        @Override
+        public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            return getConditionOutcome(context, true);
+        }
     }
 }
