@@ -13,15 +13,11 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.hazelcast.session.springboot;
+package com.hazelcast.session;
 
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.session.ClientServerConfigLoader;
-import com.hazelcast.session.HazelcastSessionManager;
-import com.hazelcast.session.P2PConfigLoader;
-import com.hazelcast.session.SessionManager;
 import org.apache.catalina.Context;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
@@ -42,7 +38,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @Configuration
 @ConditionalOnClass(HazelcastSessionManager.class)
 public class HazelcastSessionManagerConfiguration {
-    private static final String TSM_HAZELCAST_CONFIG_LOCATION = "tsm.hazelcast.config.location";
+    private static final String TSM_HAZELCAST_CONFIG_LOCATION = "tsm.config.location";
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);
 
     @Value("${" + TSM_HAZELCAST_CONFIG_LOCATION + ":hazelcast-default.xml}")

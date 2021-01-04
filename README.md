@@ -248,7 +248,7 @@ When Tomcat Failure happens and Load Balancer cannot redirect the request to the
 
 Starting with v2.2, Hazelcast Tomcat Session Manager supports auto-configuration when used with Spring Boot. The only thing you need to do is to add Hazelcast Tomcat Session Manager (for Tomcat 9) and Hazelcast IMDG libraries to the classpath. This will set Hazelcast Session Manager as the session manager of the Tomcat. If you would like to configure the session manager properties, you can setup the following properties in your `application.properties` file:
 
-- `tsm.hazelcast.config.location`: Allows to provide Hazelcast member or client configuration. If not provided, `hazelcast.xml` in the classpath is used by default. 
+- `tsm.config.location`: Allows to provide Hazelcast member or client configuration. If not provided, `hazelcast.xml` in the classpath is used by default. 
 - `tsm.map.name`: Use this property if you have a specially configured map for special cases like WAN Replication, Eviction, MapStore, etc.
 - `tsm.sticky`: Allows to set sticky mode. Its default value is `true`.
 - `tsm.process.expires.frequency`: It specifies the frequency of session validity check, in seconds. Its default value is 6 and the minimum value that you can set is 1.
@@ -257,7 +257,7 @@ Starting with v2.2, Hazelcast Tomcat Session Manager supports auto-configuration
 
 ## Notes about Spring Boot Auto-configuration
 
-- By default, a Hazelcast member instance is initialized when starting Hazelcast Tomcat Session Manager with Spring Boot. If you would like to initialize a client instance instead, then you need to provide a Hazelcast client configuration with `tsm.hazelcast.config.location` or initialize a `ClientConfig` bean in Spring Boot. 
+- By default, a Hazelcast member instance is initialized when starting Hazelcast Tomcat Session Manager with Spring Boot. If you would like to initialize a client instance instead, then you need to provide a Hazelcast client configuration with `tsm.config.location` or initialize a `ClientConfig` bean in Spring Boot. 
 - If a `com.hazelcast.client.config.ClientConfig` bean is configured explicitly, then both `instanceName` setting in the `ClientConfig` bean and `tsm.hazelcast.instance.name` property should be set.
 - If a `com.hazelcast.config.Config` bean is configured explicitly, then both `instanceName` setting in the `Config` bean and `tsm.hazelcast.instance.name` property should be set. 
 

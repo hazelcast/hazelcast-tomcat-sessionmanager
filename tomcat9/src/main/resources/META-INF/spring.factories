@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration= \
- com.hazelcast.session.springboot.HazelcastSessionManagerConfiguration
+ com.hazelcast.session.HazelcastSessionManagerConfiguration
