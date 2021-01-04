@@ -55,6 +55,10 @@ public class ClientServerLifecycleListener implements LifecycleListener {
         this.configLocation = configLocation;
     }
 
+    public static void setConfig(ClientConfig config) {
+        ClientServerLifecycleListener.config = config;
+    }
+
     public static ClientConfig getConfig() {
         return config;
     }

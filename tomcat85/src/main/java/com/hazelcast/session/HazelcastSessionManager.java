@@ -80,6 +80,11 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         instance = HazelcastInstanceFactory.
                 getHazelcastInstance(getContext().getLoader().getClassLoader(), isClientOnly(), getHazelcastInstanceName());
 
+        if (instance == null) {
+            throw new RuntimeException("No Hazelcast instance is initiated within Hazelcast Tomcat Session Manager. "
+                    + "Please check your configuration.");
+        }
+
         if (getMapName() == null || "default".equals(getMapName())) {
             Context ctx = getContext();
             String contextPath = ctx.getServletContext().getContextPath();
