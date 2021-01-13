@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -37,6 +38,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 @Configuration
 @ConditionalOnClass(HazelcastSessionManager.class)
+@ConditionalOnProperty(name = "tsm.autoconfig.enabled", havingValue = "true", matchIfMissing = true)
 public class HazelcastSessionManagerConfiguration {
     private static final String TSM_HAZELCAST_CONFIG_LOCATION = "tsm.config.location";
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);

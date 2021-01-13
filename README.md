@@ -248,6 +248,7 @@ When Tomcat Failure happens and Load Balancer cannot redirect the request to the
 
 Starting with v2.2, Hazelcast Tomcat Session Manager supports auto-configuration when used with Spring Boot. The only thing you need to do is to add Hazelcast Tomcat Session Manager (for Tomcat 9) and Hazelcast IMDG libraries to the classpath. This will set Hazelcast Session Manager as the session manager of the Tomcat. If you would like to configure the session manager properties, you can setup the following properties in your `application.properties` file:
 
+- `tsm.autoconfig.enabled`: Allows to enable/disable Spring Boot Auto-configuration for Hazelcast Tomcat Session Manager. Default is `true`, you need to set it to `false` if you would like to configure Hazelcast Tomcat Session Manager manually with Spring Boot.
 - `tsm.config.location`: Allows to provide Hazelcast member or client configuration. If not provided, `hazelcast.xml` in the classpath is used by default. 
 - `tsm.map.name`: Use this property if you have a specially configured map for special cases like WAN Replication, Eviction, MapStore, etc.
 - `tsm.sticky`: Allows to set sticky mode. Its default value is `true`.
