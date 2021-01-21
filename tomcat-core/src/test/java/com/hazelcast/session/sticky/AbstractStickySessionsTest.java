@@ -9,6 +9,9 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -164,6 +167,49 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
         value = executeRequest("read", SERVER_PORT_2, cookieStore);
         assertEquals("value", value);
 
+    }
+
+    @Test(timeout = 80000)
+    public void testFailoverWithNoNewSession() throws Exception {
+        //given
+        final CookieStore cookieStore = new BasicCookieStore();
+        final CookieStore cookieStore2 = new BasicCookieStore();
+        String value = executeRequest("read", SERVER_PORT_1, cookieStore);
+        String value2 = executeRequest("read", SERVER_PORT_1, cookieStore2);
+        assertEquals("null", value);
+        assertEquals("null", value2);
+        executeRequest("write", SERVER_PORT_1, cookieStore);
+        executeRequest("write", SERVER_PORT_1, cookieStore2);
+
+        //when
+        instance1.stop();
+        HazelcastInstance hzInstance1 = Hazelcast.getHazelcastInstanceByName("hzInstance1");
+        if (hzInstance1 != null) {
+            hzInstance1.shutdown();
+        }
+
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    executeRequest("read", SERVER_PORT_2, cookieStore);
+                    executeRequest("read", SERVER_PORT_2, cookieStore2);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        for (int i = 0; i < 2; i++) {
+            executorService.execute(runnable);
+        }
+
+        //then
+        value = executeRequest("read", SERVER_PORT_2, cookieStore);
+        assertEquals("value", value);
+        value2 = executeRequest("read", SERVER_PORT_2, cookieStore2);
+        assertEquals("value", value2);
     }
 
 //    @Test

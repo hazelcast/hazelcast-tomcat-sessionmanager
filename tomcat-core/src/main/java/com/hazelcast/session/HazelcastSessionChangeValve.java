@@ -18,13 +18,21 @@ package com.hazelcast.session;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HazelcastSessionChangeValve extends ValveBase {
 
+    private final Log log = LogFactory.getLog(HazelcastSessionChangeValve.class);
+
     private SessionManager sessionManager;
+
+    private Map<String, String> handledSessions = new HashMap<String, String>();
 
     public HazelcastSessionChangeValve(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
@@ -52,8 +60,19 @@ public class HazelcastSessionChangeValve extends ValveBase {
             return;
         }
 
-        String newSessionId = sessionManager.updateJvmRouteForSession(currentSessionId, jvmRoute);
-        request.changeSessionId(newSessionId);
+        log.debug("Thread name: " + Thread.currentThread().getName() + ", Handling session id = " + currentSessionId);
+
+        String handledSessionId;
+        synchronized (this) {
+            if (!handledSessions.containsKey(currentSessionId)) {
+                handledSessions.put(currentSessionId, sessionManager.updateJvmRouteForSession(currentSessionId, jvmRoute));
+            }
+            handledSessionId = handledSessions.get(currentSessionId);
+        }
+
+        log.info("Thread name: " + Thread.currentThread().getName()
+                + ", Handled session id from " + currentSessionId + " to " + handledSessionId);
+        request.changeSessionId(handledSessionId);
         request.getSession().invalidate();
     }
 }

@@ -255,21 +255,30 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     @Override
     public String updateJvmRouteForSession(String sessionId, String newJvmRoute) {
-        HazelcastSession session = sessionMap.get(sessionId);
-        if (session == null) {
-            session = (HazelcastSession) createSession(null);
-            return session.getId();
-        }
+        HazelcastSession session;
+        String newSessionId;
+        sessionMap.lock(sessionId);
+        try {
+            session = sessionMap.get(sessionId);
+            if (session == null) {
+                session = (HazelcastSession) createSession(null);
+                log.debug("Thread name: " + Thread.currentThread().getName()
+                        + ", New session created when updating jvm route: " + session.getId());
+                return session.getId();
+            }
 
-        if (session.getManager() == null) {
-            session.setSessionManager(this);
-        }
-        int index = sessionId.indexOf(".");
-        String baseSessionId = sessionId.substring(0, index);
-        String newSessionId = baseSessionId + "." + newJvmRoute;
-        session.setId(newSessionId);
+            if (session.getManager() == null) {
+                session.setSessionManager(this);
+            }
+            int index = sessionId.indexOf(".");
+            String baseSessionId = sessionId.substring(0, index);
+            newSessionId = baseSessionId + "." + newJvmRoute;
+            session.setId(newSessionId);
 
-        sessionMap.remove(sessionId);
+            sessionMap.remove(sessionId);
+        } finally {
+            sessionMap.unlock(sessionId);
+        }
         sessionMap.set(newSessionId, session);
         return newSessionId;
     }
