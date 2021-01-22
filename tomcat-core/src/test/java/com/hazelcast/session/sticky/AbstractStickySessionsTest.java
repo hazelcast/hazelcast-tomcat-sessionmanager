@@ -174,10 +174,6 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
         //given
         final CookieStore cookieStore = new BasicCookieStore();
         final CookieStore cookieStore2 = new BasicCookieStore();
-        String value = executeRequest("read", SERVER_PORT_1, cookieStore);
-        String value2 = executeRequest("read", SERVER_PORT_1, cookieStore2);
-        assertEquals("null", value);
-        assertEquals("null", value2);
         executeRequest("write", SERVER_PORT_1, cookieStore);
         executeRequest("write", SERVER_PORT_1, cookieStore2);
 
@@ -206,9 +202,9 @@ public abstract class AbstractStickySessionsTest extends AbstractHazelcastSessio
         }
 
         //then
-        value = executeRequest("read", SERVER_PORT_2, cookieStore);
+        String value = executeRequest("read", SERVER_PORT_2, cookieStore);
         assertEquals("value", value);
-        value2 = executeRequest("read", SERVER_PORT_2, cookieStore2);
+        String value2 = executeRequest("read", SERVER_PORT_2, cookieStore2);
         assertEquals("value", value2);
     }
 

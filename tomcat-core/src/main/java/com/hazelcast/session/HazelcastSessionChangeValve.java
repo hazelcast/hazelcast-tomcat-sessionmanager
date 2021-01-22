@@ -60,8 +60,13 @@ public class HazelcastSessionChangeValve extends ValveBase {
             return;
         }
 
-        log.debug("Thread name: " + Thread.currentThread().getName() + ", Handling session id = " + currentSessionId);
+        request.changeSessionId(getOrCreateHandledSessionId(currentSessionId, jvmRoute));
+        request.getSession().invalidate();
+    }
 
+    private String getOrCreateHandledSessionId(String currentSessionId, String jvmRoute)
+            throws IOException {
+        log.debug(String.format("Thread name: %s, Handling session id: %s", Thread.currentThread().getName(), currentSessionId));
         String handledSessionId;
         synchronized (this) {
             if (!handledSessions.containsKey(currentSessionId)) {
@@ -70,9 +75,8 @@ public class HazelcastSessionChangeValve extends ValveBase {
             handledSessionId = handledSessions.get(currentSessionId);
         }
 
-        log.info("Thread name: " + Thread.currentThread().getName()
-                + ", Handled session id from " + currentSessionId + " to " + handledSessionId);
-        request.changeSessionId(handledSessionId);
-        request.getSession().invalidate();
+        log.info(String.format("Thread name: %s, Handled session id from %s to %s",
+                Thread.currentThread().getName(), currentSessionId, handledSessionId));
+        return handledSessionId;
     }
 }
