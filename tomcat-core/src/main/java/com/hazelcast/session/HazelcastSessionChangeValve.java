@@ -72,8 +72,8 @@ public class HazelcastSessionChangeValve extends ValveBase {
             if (!handledSessions.containsKey(currentSessionId)) {
                 handledSessions.put(currentSessionId, sessionManager.updateJvmRouteForSession(currentSessionId, jvmRoute));
             }
-            handledSessionId = handledSessions.get(currentSessionId);
         }
+        handledSessionId = handledSessions.get(currentSessionId);
 
         log.info(String.format("Thread name: %s, Handled session id from %s to %s",
                 Thread.currentThread().getName(), currentSessionId, handledSessionId));
