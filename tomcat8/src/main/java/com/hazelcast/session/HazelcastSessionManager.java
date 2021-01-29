@@ -393,7 +393,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         this.support.firePropertyChange("maxActiveSessions", Integer.valueOf(oldMaxActiveSessions),
                 Integer.valueOf(this.maxActiveSessions));
     }
-    
+
     PhoneHomeService getPhoneHomeService() {
         return phoneHomeService;
     }
