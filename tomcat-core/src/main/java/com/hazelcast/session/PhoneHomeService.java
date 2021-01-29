@@ -67,7 +67,6 @@ class PhoneHomeService {
 
     PhoneHomeService(PhoneHomeInfo phoneHomeInfo) {
         this.baseUrl = "http://phonehome.hazelcast.com/pingIntegrations/hazelcast-tomcat-sessionmanager";
-//        this.baseUrl = "http://127.0.0.1:8080/callhome/pingIntegrations/hazelcast-tomcat-sessionmanager";
         this.phoneHomeInfo = phoneHomeInfo;
     }
 

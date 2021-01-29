@@ -18,6 +18,7 @@ public class PhoneHomeTest {
         //when
         PhoneHomeService phoneHomeService = new PhoneHomeService(phoneHomeInfo);
 
+        //then
         assertEquals(expectedUrl, phoneHomeService.getBaseUrl());
     }
 
