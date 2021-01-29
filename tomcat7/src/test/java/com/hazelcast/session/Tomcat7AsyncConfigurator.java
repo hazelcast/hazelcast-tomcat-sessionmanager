@@ -8,12 +8,14 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 
+import static org.mockito.Mockito.mock;
+
 public class Tomcat7AsyncConfigurator extends WebContainerConfigurator<Tomcat> {
 
     private final String baseDir;
 
     private Tomcat tomcat;
-    private SessionManager manager;
+    private HazelcastSessionManager manager;
 
     public Tomcat7AsyncConfigurator(String baseDir) {
         this.baseDir = baseDir;
@@ -55,9 +57,12 @@ public class Tomcat7AsyncConfigurator extends WebContainerConfigurator<Tomcat> {
             throw new IllegalStateException(e);
         }
 
-        this.manager = new HazelcastSessionManager();
-        context.setManager((HazelcastSessionManager) manager);
-        updateManager((HazelcastSessionManager) manager);
+        if(phoneHomeService == null) {
+            phoneHomeService = mock(PhoneHomeService.class);
+        }
+        manager = new HazelcastSessionManager(phoneHomeService);
+        context.setManager(manager);
+        updateManager(manager);
         context.setCookies(true);
         context.setBackgroundProcessorDelay(1);
         context.setReloadable(true);
