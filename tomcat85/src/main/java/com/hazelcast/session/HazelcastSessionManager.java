@@ -53,10 +53,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private HazelcastInstance instance;
 
-    private PhoneHomeService phoneHomeService;
+    private final PhoneHomeService phoneHomeService;
 
     public HazelcastSessionManager() {
-        super();
         phoneHomeService = new PhoneHomeService(new PhoneHomeInfo("85", clientOnly, sticky, deferredWrite,
                 SessionManager.DEFAULT_INSTANCE_NAME.equals(hazelcastInstanceName)));
     }

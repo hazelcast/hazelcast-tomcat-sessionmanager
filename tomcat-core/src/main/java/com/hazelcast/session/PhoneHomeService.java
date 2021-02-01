@@ -43,10 +43,10 @@ class PhoneHomeService {
     private static final int TIMEOUT_IN_MS = 3000;
     private static final int RETRY_COUNT = 5;
     private static final boolean PHONE_HOME_ENABLED = isPhoneHomeEnabled();
+    private static final AtomicBoolean STARTED = new AtomicBoolean();
     private static ScheduledThreadPoolExecutor executor;
 
     private final ILogger logger = Logger.getLogger(PhoneHomeService.class);
-    private final AtomicBoolean started = new AtomicBoolean();
 
     private final String baseUrl;
     private final PhoneHomeInfo phoneHomeInfo;
@@ -66,7 +66,11 @@ class PhoneHomeService {
     }
 
     PhoneHomeService(PhoneHomeInfo phoneHomeInfo) {
-        this.baseUrl = "http://phonehome.hazelcast.com/pingIntegrations/hazelcast-tomcat-sessionmanager";
+        this("http://phonehome.hazelcast.com/pingIntegrations/hazelcast-tomcat-sessionmanager", phoneHomeInfo);
+    }
+
+    PhoneHomeService(String baseUrl, PhoneHomeInfo phoneHomeInfo) {
+        this.baseUrl = baseUrl;
         this.phoneHomeInfo = phoneHomeInfo;
     }
 
@@ -82,7 +86,7 @@ class PhoneHomeService {
     }
 
     void start() {
-        if (PHONE_HOME_ENABLED && started.compareAndSet(false, true)) {
+        if (PHONE_HOME_ENABLED && STARTED.compareAndSet(false, true)) {
             sendFuture = executor.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
@@ -90,6 +94,10 @@ class PhoneHomeService {
                 }
             }, 0, 1, TimeUnit.DAYS);
         }
+    }
+
+    boolean isStarted() {
+        return STARTED.get();
     }
 
     private void send() {
@@ -116,11 +124,10 @@ class PhoneHomeService {
     }
 
     void shutdown() {
-        if (PHONE_HOME_ENABLED && started.compareAndSet(true, false)) {
+        if (PHONE_HOME_ENABLED && STARTED.compareAndSet(true, false)) {
             if (sendFuture != null) {
                 sendFuture.cancel(false);
             }
-            executor.shutdown();
         }
     }
 }

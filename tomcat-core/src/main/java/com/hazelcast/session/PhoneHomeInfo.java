@@ -33,8 +33,8 @@ class PhoneHomeInfo {
 
     private static final String PROPERTIES_RESOURCE = "/phone.home.properties";
 
-    private String version;
-    private String queryString;
+    private final String version;
+    private final String queryString;
 
     PhoneHomeInfo(String tomcatVersion, boolean clientOnly, boolean sticky, boolean deferredWrite, boolean instanceNameDefault) {
         this.version = resolveVersion();
