@@ -53,6 +53,16 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private HazelcastInstance instance;
 
+    private final PhoneHomeService phoneHomeService;
+
+    public HazelcastSessionManager() {
+        phoneHomeService = new PhoneHomeService();
+    }
+
+    HazelcastSessionManager(PhoneHomeService phoneHomeService) {
+        this.phoneHomeService = phoneHomeService;
+    }
+
     public void setSessionTimeout(int t) {
         getContext().setSessionTimeout(t);
     }
@@ -103,6 +113,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
         }
 
+        phoneHomeService.start(new PhoneHomeInfo("85", clientOnly, sticky, deferredWrite,
+                SessionManager.DEFAULT_INSTANCE_NAME.equals(hazelcastInstanceName)));
+
         log.info("HazelcastSessionManager started...");
         setState(LifecycleState.STARTING);
     }
@@ -129,6 +142,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         if (isClientOnly()) {
             instance.shutdown();
         }
+        phoneHomeService.shutdown();
         super.stopInternal();
         log.info("HazelcastSessionManager stopped...");
     }
@@ -159,6 +173,13 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         sessions.put(newSessionId, session);
         sessionMap.set(newSessionId, session);
         return session;
+    }
+
+    private void checkMaxActiveSessions() {
+        if (getMaxActiveSessions() >= 0 && sessionMap.size() >= getMaxActiveSessions()) {
+            rejectedSessions++;
+            throw new IllegalStateException(sm.getString("managerBase.createSession.ise"));
+        }
     }
 
     private int getSessionTimeoutInSeconds() {
@@ -269,14 +290,32 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     }
 
     @Override
+    public void expireSession(String sessionId) {
+        super.expireSession(sessionId);
+        remove(sessionId);
+    }
+
+    @Override
+    public void remove(Session session, boolean update) {
+        remove(session);
+    }
+
+    @Override
     public void remove(Session session) {
         remove(session.getId());
         log.debug("Removed session: " + session.getId());
     }
 
+    private void remove(String id) {
+        sessions.remove(id);
+        sessionMap.remove(id);
+    }
+
     @Override
-    public void remove(Session session, boolean update) {
-       remove(session);
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("sessionTimeout")) {
+            getContext().setSessionTimeout((Integer) evt.getNewValue() * DEFAULT_SESSION_TIMEOUT);
+        }
     }
 
     @Override
@@ -287,6 +326,10 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     @Override
     public boolean isDeferredEnabled() {
         return deferredWrite;
+    }
+
+    public void setDeferredWrite(boolean deferredWrite) {
+        this.deferredWrite = deferredWrite;
     }
 
     public boolean isClientOnly() {
@@ -309,24 +352,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         this.sticky = sticky;
     }
 
-    private void remove(String id) {
-        sessions.remove(id);
-        sessionMap.remove(id);
-    }
-
-    @Override
-    public void expireSession(String sessionId) {
-        super.expireSession(sessionId);
-        remove(sessionId);
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("sessionTimeout")) {
-            getContext().setSessionTimeout((Integer) evt.getNewValue() * DEFAULT_SESSION_TIMEOUT);
-        }
-    }
-
     public String getMapName() {
         return mapName;
     }
@@ -343,13 +368,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         this.hazelcastInstanceName = hazelcastInstanceName;
     }
 
-    private void checkMaxActiveSessions() {
-        if (getMaxActiveSessions() >= 0 && sessionMap.size() >= getMaxActiveSessions()) {
-            rejectedSessions++;
-            throw new IllegalStateException(sm.getString("managerBase.createSession.ise"));
-        }
-    }
-
     public int getMaxActiveSessions() {
         return this.maxActiveSessions;
     }
@@ -361,7 +379,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
                 Integer.valueOf(this.maxActiveSessions));
     }
 
-    public void setDeferredWrite(boolean deferredWrite) {
-        this.deferredWrite = deferredWrite;
+    PhoneHomeService getPhoneHomeService() {
+        return phoneHomeService;
     }
 }

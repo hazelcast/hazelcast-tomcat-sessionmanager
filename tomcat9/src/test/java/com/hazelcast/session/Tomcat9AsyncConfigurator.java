@@ -8,6 +8,8 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 
+import static org.mockito.Mockito.mock;
+
 public class Tomcat9AsyncConfigurator
         extends WebContainerConfigurator<Tomcat> {
 
@@ -56,7 +58,10 @@ public class Tomcat9AsyncConfigurator
             throw new IllegalStateException(e);
         }
 
-        this.manager = new HazelcastSessionManager();
+        if(phoneHomeService == null) {
+            phoneHomeService = mock(PhoneHomeService.class);
+        }
+        this.manager = new HazelcastSessionManager(phoneHomeService);
         context.setManager(manager);
         updateManager(manager);
         context.setCookies(true);

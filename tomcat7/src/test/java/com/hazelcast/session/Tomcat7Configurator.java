@@ -11,10 +11,12 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
 
+import static org.mockito.Mockito.mock;
+
 public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
 
     private Tomcat tomcat;
-    private SessionManager manager;
+    private HazelcastSessionManager manager;
 
     private String appName;
 
@@ -57,9 +59,12 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
             throw new IllegalStateException(e);
         }
 
-        this.manager = new HazelcastSessionManager();
-        context.setManager((HazelcastSessionManager) manager);
-        updateManager((HazelcastSessionManager) manager);
+        if(phoneHomeService == null) {
+            phoneHomeService = mock(PhoneHomeService.class);
+        }
+        this.manager = new HazelcastSessionManager(phoneHomeService);
+        context.setManager(manager);
+        updateManager(manager);
         context.setCookies(true);
         context.setBackgroundProcessorDelay(1);
         context.setReloadable(true);
@@ -91,6 +96,9 @@ public class Tomcat7Configurator extends WebContainerConfigurator<Tomcat> {
     @Override
     public void reload() {
         Context context = (Context) tomcat.getHost().findChild("/");
+        if (context == null) {
+            context = (Context) tomcat.getHost().findChild("");
+        }
         context.reload();
     }
 

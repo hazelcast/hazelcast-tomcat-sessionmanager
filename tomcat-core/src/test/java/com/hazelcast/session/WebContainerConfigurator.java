@@ -10,6 +10,7 @@ public abstract class WebContainerConfigurator<T> {
     protected int sessionTimeout;
     protected boolean deferredWrite;
     protected String configLocation = "hazelcast.xml";
+    PhoneHomeService phoneHomeService;
 
     public WebContainerConfigurator<T> port(int port) {
         this.port = port;
@@ -43,6 +44,11 @@ public abstract class WebContainerConfigurator<T> {
 
     public WebContainerConfigurator<T> configLocation(String configLocation) {
         this.configLocation = configLocation;
+        return this;
+    }
+
+    public WebContainerConfigurator<T> phoneHomeService(PhoneHomeService phoneHomeService) {
+        this.phoneHomeService = phoneHomeService;
         return this;
     }
 

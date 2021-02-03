@@ -42,7 +42,7 @@ Tomcat Web Session Replication Module has been tested against the following cont
 - Tomcat 8.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-80.cgi" target="_blank">here</a>.
 - Tomcat 9.0.x - It can be downloaded <a href="http://tomcat.apache.org/download-90.cgi" target="_blank">here</a>.
 
-The latest tested versions are **7.0.40**, **8.0.36**, **8.5.9**, and **9.0.27**.
+The latest tested versions are **7.0.76**, **8.0.42**, **8.5.12**, and **9.0.27**.
 <br></br>
 
 ***Requirements***

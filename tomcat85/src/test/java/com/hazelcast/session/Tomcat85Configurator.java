@@ -11,6 +11,8 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
 
+import static org.mockito.Mockito.mock;
+
 public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
 
     private Tomcat tomcat;
@@ -60,7 +62,10 @@ public class Tomcat85Configurator extends WebContainerConfigurator<Tomcat> {
             throw new IllegalStateException(e);
         }
 
-        this.manager = new HazelcastSessionManager();
+        if(phoneHomeService == null) {
+            phoneHomeService = mock(PhoneHomeService.class);
+        }
+        this.manager = new HazelcastSessionManager(phoneHomeService);
         context.setManager(manager);
         updateManager(manager);
         context.setCookies(true);
