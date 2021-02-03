@@ -43,13 +43,13 @@ class PhoneHomeService {
     private static final int TIMEOUT_IN_MS = 3000;
     private static final int RETRY_COUNT = 5;
     private static final boolean PHONE_HOME_ENABLED = isPhoneHomeEnabled();
-    private static final AtomicBoolean STARTED = new AtomicBoolean();
     private static ScheduledThreadPoolExecutor executor;
 
     private final ILogger logger = Logger.getLogger(PhoneHomeService.class);
 
     private final String baseUrl;
-    private final PhoneHomeInfo phoneHomeInfo;
+    private final AtomicBoolean started = new AtomicBoolean();
+    private PhoneHomeInfo phoneHomeInfo;
     private ScheduledFuture<?> sendFuture;
 
     static {
@@ -65,13 +65,12 @@ class PhoneHomeService {
         }
     }
 
-    PhoneHomeService(PhoneHomeInfo phoneHomeInfo) {
-        this("http://phonehome.hazelcast.com/pingIntegrations/hazelcast-tomcat-sessionmanager", phoneHomeInfo);
+    PhoneHomeService() {
+        this("http://phonehome.hazelcast.com/pingIntegrations/hazelcast-tomcat-sessionmanager");
     }
 
-    PhoneHomeService(String baseUrl, PhoneHomeInfo phoneHomeInfo) {
+    PhoneHomeService(String baseUrl) {
         this.baseUrl = baseUrl;
-        this.phoneHomeInfo = phoneHomeInfo;
     }
 
     String getBaseUrl() {
@@ -85,8 +84,9 @@ class PhoneHomeService {
         return !FALSE.toString().equalsIgnoreCase(getenv(ENV_PHONE_HOME_ENABLED));
     }
 
-    void start() {
-        if (PHONE_HOME_ENABLED && STARTED.compareAndSet(false, true)) {
+    void start(PhoneHomeInfo phoneHomeInfo) {
+        this.phoneHomeInfo = phoneHomeInfo;
+        if (PHONE_HOME_ENABLED && started.compareAndSet(false, true)) {
             sendFuture = executor.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
@@ -94,10 +94,6 @@ class PhoneHomeService {
                 }
             }, 0, 1, TimeUnit.DAYS);
         }
-    }
-
-    boolean isStarted() {
-        return STARTED.get();
     }
 
     private void send() {
@@ -124,7 +120,7 @@ class PhoneHomeService {
     }
 
     void shutdown() {
-        if (PHONE_HOME_ENABLED && STARTED.compareAndSet(true, false)) {
+        if (PHONE_HOME_ENABLED && started.compareAndSet(true, false)) {
             if (sendFuture != null) {
                 sendFuture.cancel(false);
             }

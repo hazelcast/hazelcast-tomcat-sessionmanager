@@ -56,8 +56,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     private final PhoneHomeService phoneHomeService;
 
     public HazelcastSessionManager() {
-        phoneHomeService = new PhoneHomeService(new PhoneHomeInfo("9", clientOnly, sticky, deferredWrite,
-                SessionManager.DEFAULT_INSTANCE_NAME.equals(hazelcastInstanceName)));
+        phoneHomeService = new PhoneHomeService();
     }
 
     HazelcastSessionManager(PhoneHomeService phoneHomeService) {
@@ -110,7 +109,9 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
             sessionMap.addEntryListener(new LocalSessionsInvalidateListener(sessions), false);
         }
 
-        phoneHomeService.start();
+        // TODO send hash of getContext().getCatalinaBase().getName() together with phone home
+        phoneHomeService.start(new PhoneHomeInfo("9", isClientOnly(), isSticky(), isDeferredEnabled(),
+                SessionManager.DEFAULT_INSTANCE_NAME.equals(hazelcastInstanceName)));
 
         log.info("HazelcastSessionManager started...");
         setState(LifecycleState.STARTING);

@@ -12,11 +12,10 @@ public class PhoneHomeTest {
     @Test
     public void phoneHomeServiceUrlTest() {
         //given
-        PhoneHomeInfo phoneHomeInfo = new PhoneHomeInfo("9", false, false, false, false);
         String expectedUrl = "http://phonehome.hazelcast.com/pingIntegrations/hazelcast-tomcat-sessionmanager";
 
         //when
-        PhoneHomeService phoneHomeService = new PhoneHomeService(phoneHomeInfo);
+        PhoneHomeService phoneHomeService = new PhoneHomeService();
 
         //then
         assertEquals(expectedUrl, phoneHomeService.getBaseUrl());
