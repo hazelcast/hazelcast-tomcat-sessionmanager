@@ -1,0 +1,46 @@
+{
+  "properties": [
+    {
+      "name": "tsm.sticky",
+      "type": "java.lang.Boolean",
+      "description": "Whether sessions are configured to be sticky. More information at https://github.com/hazelcast/hazelcast-tomcat-sessionmanager#sticky-sessions-and-tomcat.",
+      "defaultValue": true
+    },
+    {
+      "name": "tsm.hazelcast.instance.name",
+      "type": "java.lang.String",
+      "description": "Name of the Hazelcast instance used to store session data.",
+      "defaultValue": "SESSION-REPLICATION-INSTANCE"
+    },
+    {
+      "name": "tsm.map.name",
+      "type": "java.lang.String",
+      "description": "Name of the Hazelcast map used to store session data.",
+      "defaultValue": "default"
+    },
+    {
+      "name": "tsm.deferred.write",
+      "type": "java.lang.Boolean",
+      "description": "Whether writes to the cluster are cached. More information at https://github.com/hazelcast/hazelcast-tomcat-sessionmanager#controlling-session-caching-with-deferredWrite.",
+      "defaultValue": true
+    },
+    {
+      "name": "tsm.config.location",
+      "type": "java.lang.String",
+      "description": "Location of the Hazelcast configuration file location.",
+      "defaultValue": "hazelcast-default.xml"
+    },
+    {
+      "name": "tsm.autoconfig.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Set to false to disable auto-configuration.",
+      "defaultValue": true
+    },
+    {
+      "name": "tsm.process.expires.frequency",
+      "type": "java.lang.Integer",
+      "description": "Frequency of the session expiration, and related manager operations. More information at https://tomcat.apache.org/tomcat-9.0-doc/config/cluster-manager.html#Common_Attributes.",
+      "defaultValue": 6
+    }
+  ]
+}
