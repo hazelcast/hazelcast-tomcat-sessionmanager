@@ -23,7 +23,7 @@
     </parent>
 
     <properties>
-        <tomcat-version>8.5.9</tomcat-version>
+        <tomcat-version>8.5.60</tomcat-version>
         <!-- needed for checkstyle/findbugs -->
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
