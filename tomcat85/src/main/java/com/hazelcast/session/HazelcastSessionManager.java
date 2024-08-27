@@ -53,10 +53,6 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private HazelcastInstance instance;
 
-    public void setSessionTimeout(int t) {
-        getContext().setSessionTimeout(t);
-    }
-
     @Override
     public String getName() {
         return NAME;
@@ -85,6 +81,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
                     + "Please check your configuration.");
         }
 
+        String mapName;
         if (getMapName() == null || "default".equals(getMapName())) {
             Context ctx = getContext();
             String contextPath = ctx.getServletContext().getContextPath();

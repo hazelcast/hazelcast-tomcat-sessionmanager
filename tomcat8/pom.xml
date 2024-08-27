@@ -13,27 +13,55 @@
   ~ specific language governing permissions and limitations under the License.
   --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <name>Hazelcast Tomcat Session Manager(Tomcat8)</name>
+    <name>Hazelcast Tomcat Session Manager (Tomcat8)</name>
     <artifactId>hazelcast-tomcat8-sessionmanager</artifactId>
     <packaging>jar</packaging>
     <parent>
-        <artifactId>hazelcast-tomcat-sessionmanager</artifactId>
         <groupId>com.hazelcast</groupId>
+        <artifactId>hazelcast-tomcat-sessionmanager</artifactId>
         <version>2.3-SNAPSHOT</version>
     </parent>
 
     <properties>
-        <tomcat-version>8.0.36</tomcat-version>
+        <jdk.version>1.7</jdk.version>
+        <jdk.versionRange>[1.7,12)</jdk.versionRange>
+        <tomcat.version>8.0.36</tomcat.version>
         <!-- needed for checkstyle/findbugs -->
         <main.basedir>${project.parent.basedir}</main.basedir>
+
+        <extraVmArgs>-XX:MaxPermSize=256M</extraVmArgs>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>tomcat-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-catalina</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-coyote</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jasper</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.2</version>
 
                 <configuration>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
@@ -67,8 +95,7 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>tomcat-core</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
+            <classifier>tests</classifier>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -80,7 +107,6 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>tomcat-core</artifactId>
-            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.tomcat</groupId>
@@ -91,26 +117,17 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina</artifactId>
-            <version>${tomcat-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-coyote</artifactId>
-            <version>${tomcat-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jasper</artifactId>
-            <version>${tomcat-version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.esotericsoftware</groupId>
-            <artifactId>kryo</artifactId>
-            <version>${kryo.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

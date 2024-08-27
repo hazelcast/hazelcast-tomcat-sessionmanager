@@ -27,37 +27,20 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <jdk.version>1.6</jdk.version>
+        <jdk.versionRange>[1.6,)</jdk.versionRange>
+        <jdk.memory>256M</jdk.memory>
         <target.dir>target</target.dir>
         <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
         <timestamp>${maven.build.timestamp}</timestamp>
         <extraVmArgs/>
 
-        <hazelcast.version>4.0.2</hazelcast.version>
-
-        <servlet.api.version>3.0.1</servlet.api.version>
-        <junit.version>4.11</junit.version>
-        <log4j.version>1.2.12</log4j.version>
-
-        <!-- Not using 3.1 at the moment since it recompiles all classes every time -->
-        <!-- https://jira.codehaus.org/browse/MCOMPILER-205 -->
-        <!--<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>-->
-        <maven.compiler.plugin.version>2.5.1</maven.compiler.plugin.version>
-        <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
-        <maven.gpg.plugin.version>1.4</maven.gpg.plugin.version>
-
-        <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
-        <maven.checkstyle.plugin.version>2.15</maven.checkstyle.plugin.version>
-        <maven.findbugs.plugin.version>3.0.5</maven.findbugs.plugin.version>
-        <maven.sonar.plugin.version>3.3.0.603</maven.sonar.plugin.version>
-        <maven.jacoco.plugin.version>0.7.9</maven.jacoco.plugin.version>
-        <bytebuddy.version>1.6.12</bytebuddy.version>
+        <hazelcast.version>4.2.8</hazelcast.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
         
         <sonar.jacoco.jar>${basedir}/lib/jacocoagent.jar</sonar.jacoco.jar>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.language>java</sonar.language>
         <sonar.verbose>true</sonar.verbose>
-        <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
-        <kryo.version>5.0.0-RC4</kryo.version>
     </properties>
 
     <licenses>
@@ -91,6 +74,7 @@
         <module>tomcat8</module>
         <module>tomcat85</module>
         <module>tomcat9</module>
+        <module>tomcat10</module>
     </modules>
 
     <repositories>
@@ -111,12 +95,164 @@
         </repository>
     </repositories>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.14</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>${hazelcast.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <classifier>tests</classifier>
+                <version>${hazelcast.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>2.23.1</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.13.2</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>1.15.0</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>1.15.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.esotericsoftware</groupId>
+                <artifactId>kryo</artifactId>
+                <version>5.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>tomcat-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>tomcat-core</artifactId>
+                <classifier>tests</classifier>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-toolchains-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.4.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.6.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.2.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.8.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>3.0.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.12</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>4.0.0.4121</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.7.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-toolchains-plugin</artifactId>
+				<configuration>
+					<toolchains>
+						<jdk>
+							<version>${jdk.versionRange}</version>
+						</jdk>
+					</toolchains>
+				</configuration>
+				<executions>
+					<execution>
+						<goals><goal>toolchain</goal></goals>
+					</execution>
+				</executions>
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
@@ -126,11 +262,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.plugin.version}</version>
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <argLine>
-                        -Xms1g -Xmx1g -XX:MaxPermSize=1024M
+                        -Xms${jdk.memory} -Xmx${jdk.memory}
                         -Dhazelcast.hidensity.check.freememory=false
                         -Dhazelcast.phone.home.enabled=false
                         -Dhazelcast.mancenter.enabled=false
@@ -145,7 +280,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -162,51 +296,44 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.3.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet.api.version}</version>
-            <scope>provided</scope>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>${hazelcast.version}</version>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast</artifactId>
-            <version>${hazelcast.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
             <scope>test</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>${bytebuddy.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-agent</artifactId>
-            <version>${bytebuddy.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -219,7 +346,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>${maven.checkstyle.plugin.version}</version>
                         <executions>
                             <execution>
                                 <phase>validate</phase>
@@ -253,7 +379,6 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>${maven.findbugs.plugin.version}</version>
                         <executions>
                             <execution>
                                 <phase>compile</phase>
@@ -282,7 +407,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven.gpg.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -297,7 +421,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven.javadoc.plugin.version}</version>
                         <configuration>
                             <javaApiLinks>
                                 <property>
@@ -323,7 +446,6 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.3</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>release-repository</serverId>
@@ -346,7 +468,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven.javadoc.plugin.version}</version>
                         <configuration>
                             <javaApiLinks>
                                 <property>
@@ -379,7 +500,7 @@
             <properties>
                 <argLine>
                     ${extraVmArgs}
-                    -Xms1g -Xmx1g -XX:MaxPermSize=1024M
+                    -Xms${jdk.memory} -Xmx${jdk.memory}
                     -Dhazelcast.hidensity.check.freememory=false
                     -Dhazelcast.phone.home.enabled=false
                     -Dhazelcast.mancenter.enabled=false
@@ -401,12 +522,10 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>${maven.jacoco.plugin.version}</version>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven.surefire.plugin.version}</version>
                         <configuration combine.self="override">
                             <!-- disable parallel execution so that JaCoCo listener can properly work -->
                             <parallel>none</parallel>
@@ -426,30 +545,17 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
-                        <version>${maven.sonar.plugin.version}</version>
                     </plugin>
                 </plugins>
             </build>
         </profile>
         <profile>
             <id>master</id>
-            <properties>
-                <hazelcast.version>5.0-SNAPSHOT</hazelcast.version>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>com.hazelcast</groupId>
-                    <artifactId>hazelcast</artifactId>
-                    <version>${hazelcast.version}</version>
-                    <type>test-jar</type>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven.surefire.plugin.version}</version>
                         <configuration combine.self="override">
                             <parallel>none</parallel>
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
@@ -466,6 +572,7 @@
             </build>
         </profile>
     </profiles>
+    
     <distributionManagement>
         <repository>
             <id>release-repository</id>

@@ -37,6 +37,8 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     private static final int DEFAULT_SESSION_TIMEOUT = 60;
 
+    private static final int SECONDS_IN_MINUTE = 60;
+
     protected LifecycleSupport lifecycle = new LifecycleSupport(this);
 
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);
@@ -169,7 +171,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         session.setNew(true);
         session.setValid(true);
         session.setCreationTime(System.currentTimeMillis());
-        session.setMaxInactiveIntervalLocal(getMaxInactiveInterval());
+        session.setMaxInactiveIntervalLocal(getSessionTimeoutInSeconds());
 
         String newSessionId = sessionId;
         if (newSessionId == null) {
@@ -181,6 +183,10 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
         sessions.put(newSessionId, session);
         sessionMap.set(newSessionId, session);
         return session;
+    }
+
+    private int getSessionTimeoutInSeconds() {
+        return getContext().getSessionTimeout() * SECONDS_IN_MINUTE;
     }
 
     @Override
@@ -196,7 +202,8 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
 
     @Override
     public Session findSession(String id) {
-        log.debug("sessionId: " + id);
+        log.debug("Attempting to find sessionId: " + id);
+
         if (id == null) {
             return null;
         }
@@ -218,6 +225,8 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
                 log.debug("No Session found for: " + id);
                 return null;
             }
+
+            log.debug("Session found for: " + id);
 
             hazelcastSession.access();
             hazelcastSession.endAccess();
@@ -286,11 +295,12 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     @Override
     public void remove(Session session) {
         remove(session.getId());
+        log.debug("Removed session: " + session.getId());
     }
 
     @Override
     public void remove(Session session, boolean update) {
-        remove(session.getId());
+       remove(session);
     }
 
     @Override
@@ -337,7 +347,7 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("sessionTimeout")) {
-            setMaxInactiveInterval((Integer) evt.getNewValue() * DEFAULT_SESSION_TIMEOUT);
+            getContext().setSessionTimeout((Integer) evt.getNewValue() * DEFAULT_SESSION_TIMEOUT);
         }
     }
 
