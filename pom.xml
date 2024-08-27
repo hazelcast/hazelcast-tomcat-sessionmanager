@@ -70,6 +70,8 @@
 
     <modules>
         <module>tomcat-core</module>
+        <module>tomcat-core-javax</module>
+        <module>tomcat-core-jakarta</module>
         <module>tomcat7</module>
         <module>tomcat8</module>
         <module>tomcat85</module>
@@ -150,13 +152,35 @@
             </dependency>
 
             <dependency>
-                <groupId>com.hazelcast</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>tomcat-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.hazelcast</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>tomcat-core</artifactId>
+                <classifier>tests</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tomcat-core-javax</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tomcat-core-javax</artifactId>
+                <classifier>tests</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tomcat-core-jakarta</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tomcat-core-jakarta</artifactId>
                 <classifier>tests</classifier>
                 <version>${project.version}</version>
             </dependency>
@@ -215,6 +239,11 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
                     <version>3.0.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>

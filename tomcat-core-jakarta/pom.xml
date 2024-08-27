@@ -19,12 +19,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Hazelcast Tomcat Session Manager (Tomcat-Core)</name>
+    <name>Hazelcast Tomcat Session Manager (Tomcat-Core for Jakarta)</name>
     <groupId>com.hazelcast</groupId>
-    <artifactId>tomcat-core</artifactId>
+    <artifactId>tomcat-core-jakarta</artifactId>
     <packaging>jar</packaging>
     <properties>
-        <tomcat.version>7.0.54</tomcat.version>
+        <jdk.version>11</jdk.version>
+        <jdk.versionRange>[11,)</jdk.versionRange>
+        <tomcat.version>10.1.28</tomcat.version>
+
         <!-- needed for checkstyle/findbugs -->
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
@@ -40,6 +43,16 @@
     </dependencyManagement>
     
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>tomcat-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>tomcat-core</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina</artifactId>

@@ -22,8 +22,9 @@ import org.apache.catalina.valves.ValveBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
+
+import jakarta.servlet.ServletException;
 
 public class HazelcastSessionCommitValve extends ValveBase {
 

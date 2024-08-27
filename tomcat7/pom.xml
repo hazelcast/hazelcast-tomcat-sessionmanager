@@ -62,6 +62,7 @@
                     <createDependencyReducedPom>true</createDependencyReducedPom>
                     <artifactSet>
                         <includes>
+                            <include>com.hazelcast:tomcat-core-javax</include>
                             <include>com.hazelcast:tomcat-core</include>
                         </includes>
                     </artifactSet>
@@ -69,6 +70,7 @@
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
+                                <exclude>META-INF/maven/com.hazelcast/tomcat-core-javax/*</exclude>
                                 <exclude>META-INF/maven/com.hazelcast/tomcat-core/*</exclude>
                             </excludes>
                         </filter>
@@ -89,25 +91,19 @@
     <dependencies>
         <dependency>
             <groupId>com.hazelcast</groupId>
-            <artifactId>tomcat-core</artifactId>
+            <artifactId>tomcat-core-javax</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>catalina</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>tomcat-core</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>catalina</artifactId>
-                </exclusion>
-            </exclusions>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>tomcat-core-javax</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>

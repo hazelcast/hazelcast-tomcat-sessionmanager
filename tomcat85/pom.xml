@@ -33,11 +33,6 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.hazelcast</groupId>
-                <artifactId>tomcat-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-catalina</artifactId>
                 <version>${tomcat.version}</version>
@@ -66,6 +61,7 @@
                     <artifactSet>
                         <includes>
                             <include>com.hazelcast:tomcat-core</include>
+                            <include>com.hazelcast:tomcat-core-javax</include>
                         </includes>
                     </artifactSet>
                     <filters>
@@ -73,6 +69,7 @@
                             <artifact>*:*</artifact>
                             <excludes>
                                 <exclude>META-INF/maven/com.hazelcast/tomcat-core/*</exclude>
+                                <exclude>META-INF/maven/com.hazelcast/tomcat-core-javax/*</exclude>
                             </excludes>
                         </filter>
                     </filters>
@@ -92,25 +89,19 @@
     <dependencies>
         <dependency>
             <groupId>com.hazelcast</groupId>
-            <artifactId>tomcat-core</artifactId>
+            <artifactId>tomcat-core-javax</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>catalina</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>tomcat-core</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>catalina</artifactId>
-                </exclusion>
-            </exclusions>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>tomcat-core-javax</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
