@@ -1,8 +1,18 @@
+# Maven
 target/
+
+# Eclipse
 .project
 .classpath
 .settings/
+
+# IDEA
 .idea/
+
+# VS Code
+.vscode/
+
+# Misc
 .patch
 *.iml
 .DS_Store
