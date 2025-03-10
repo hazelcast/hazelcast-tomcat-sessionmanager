@@ -1,0 +1,60 @@
+name: PR builder is just a magic
+
+on:
+  pull_request_target:
+    branches:
+      - 'master'
+
+jobs:
+  check_for_membership:
+    runs-on: ubuntu-latest
+    name: Check PR author membership
+    outputs:
+      check-result: ${{ steps.composite.outputs.check-result }}
+    steps:
+      - name: Action for membership check
+        id: composite
+        uses: hazelcast/hazelcast-tpm/membership@main
+        with:
+          organization-name: 'hazelcast'
+          member-name: ${{ github.actor }}
+          token: ${{ secrets.GH_TOKEN }}
+
+  build:
+    # using ubicloud instead of "standard" ubuntu-latest fixes issue with members not being able to connect via multicast
+    runs-on: ubicloud-standard-8
+    needs: check_for_membership
+
+    steps:
+      - name: Detect untrusted community PR
+        if: ${{ needs.check_for_membership.outputs.check-result == 'false' }}
+        run: |
+          echo "::error::ERROR: Untrusted external PR. Must be reviewed and executed by Hazelcast" 1>&2;
+          exit 1
+
+      - name: Checkout the merge commit
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+
+      - name: Setup JDK
+        uses: ./.github/actions/setup-jdk
+
+      - name: Build
+        run: |
+          mvn clean install -DskipTests -B -P checkstyle -U
+
+      - name: Findbugs
+        run: |
+          mvn compile -Pfindbugs -B
+
+      - name: Verify
+        run: |
+          mvn verify -B -Dmaven.test.failure.ignore=false
+
+      - name: Publish Test results
+        uses: EnricoMi/publish-unit-test-result-action@567cc7f8dcea3eba5da355f6ebc95663310d8a07
+        if: ${{ !cancelled() }}
+        with:
+          files: "**/TEST-*.xml"
+          large_files: true
