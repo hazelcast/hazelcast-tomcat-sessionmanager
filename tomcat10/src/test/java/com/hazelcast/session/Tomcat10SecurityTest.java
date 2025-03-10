@@ -7,10 +7,10 @@ import org.junit.runner.RunWith;
 
 @RunWith(HazelcastSerialClassRunner.class)
 @Category(QuickTest.class)
-public class Tomcat85MapNameTest extends AbstractMapNameTest {
-
+public class Tomcat10SecurityTest
+        extends AbstractTomcatSecurityTest {
     @Override
-    protected WebContainerConfigurator<?> getWebContainerConfigurator() {
-        return new Tomcat85Configurator();
+    protected WebContainerConfigurator<?> getTomcatConfigurator(String appName) {
+        return new Tomcat10Configurator(appName);
     }
 }

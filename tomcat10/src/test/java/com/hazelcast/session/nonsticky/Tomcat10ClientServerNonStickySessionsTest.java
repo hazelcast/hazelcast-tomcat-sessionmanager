@@ -1,7 +1,7 @@
 package com.hazelcast.session.nonsticky;
 
 import com.hazelcast.session.HazelcastSession;
-import com.hazelcast.session.Tomcat9Configurator;
+import com.hazelcast.session.Tomcat10Configurator;
 import com.hazelcast.session.WebContainerConfigurator;
 import com.hazelcast.test.HazelcastSerialClassRunner;
 import com.hazelcast.test.annotation.QuickTest;
@@ -12,12 +12,12 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(HazelcastSerialClassRunner.class)
 @Category(QuickTest.class)
-public class Tomcat9ClientServerNonStickySessionsTest
+public class Tomcat10ClientServerNonStickySessionsTest
         extends AbstractClientServerNonStickySessionsTest {
 
     @Override
     protected WebContainerConfigurator<?> getWebContainerConfigurator() {
-        return new Tomcat9Configurator();
+        return new Tomcat10Configurator();
     }
 
     @Override
