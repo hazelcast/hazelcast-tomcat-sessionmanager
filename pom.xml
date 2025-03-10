@@ -24,7 +24,7 @@
     <version>2.3-SNAPSHOT</version>
     <name>Hazelcast Tomcat Session Manager</name>
     <description>Tomcat Session Manager Module for Hazelcast</description>
-    <url>http://www.hazelcast.com/</url>
+    <url>https://www.hazelcast.com/</url>
 
     <properties>
         <main.basedir>${project.basedir}</main.basedir>
@@ -64,7 +64,7 @@
     <licenses>
         <license>
             <name>The Hazelcast Community License</name>
-            <url>http://hazelcast.com/hazelcast-community-license</url>
+            <url>https://hazelcast.com/hazelcast-community-license</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -83,13 +83,13 @@
 
     <organization>
         <name>Hazelcast, Inc.</name>
-        <url>http://www.hazelcast.com/</url>
+        <url>https://www.hazelcast.com/</url>
     </organization>
 
     <modules>
         <module>tomcat-core</module>
-<!--        <module>tomcat9</module>-->
         <module>tomcat10</module>
+        <module>tomcat11</module>
     </modules>
 
     <repositories>
