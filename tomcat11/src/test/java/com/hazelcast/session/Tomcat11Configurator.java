@@ -4,6 +4,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.StandardRoot;
 
 import java.io.File;
 import java.net.URL;
@@ -57,6 +58,10 @@ public class Tomcat11Configurator
         Context context;
         try {
             context = tomcat.addWebapp(tomcat.getHost(), "/", docBase);
+            if (context.getResources() == null) {
+                context.setResources(new StandardRoot());
+            }
+            context.getResources().setReadOnly(true);
         } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
