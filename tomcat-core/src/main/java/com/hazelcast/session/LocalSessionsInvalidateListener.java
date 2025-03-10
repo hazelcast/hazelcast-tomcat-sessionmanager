@@ -25,7 +25,7 @@ import java.util.Map;
 public class LocalSessionsInvalidateListener implements EntryEvictedListener<String, HazelcastSession>,
         EntryRemovedListener<String, HazelcastSession> {
 
-    private Map<String, Session> sessions;
+    private final Map<String, Session> sessions;
 
     public LocalSessionsInvalidateListener(Map<String, Session> sessions) {
         this.sessions = sessions;

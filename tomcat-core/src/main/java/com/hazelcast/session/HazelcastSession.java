@@ -151,10 +151,9 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         serializeMap(notes, objectDataOutput);
     }
 
-    private void serializeMap(Map map, ObjectDataOutput objectDataOutput) throws IOException {
-        HashMap<Object, Object> serializableEntries = new HashMap<Object, Object>();
-        for (Object entryObject : map.entrySet()) {
-            Map.Entry entry = (Map.Entry) entryObject;
+    private <K, V>void serializeMap(Map<K, V> map, ObjectDataOutput objectDataOutput) throws IOException {
+        HashMap<Object, Object> serializableEntries = new HashMap<>();
+        for (Map.Entry<K, V> entry : map.entrySet()) {
             Object key = entry.getKey();
             Object value = entry.getValue();
             if (key != null && value != null) {
@@ -188,15 +187,14 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         this.notes = deserializeMap(objectDataInput, false);
 
         if (this.listeners == null) {
-            this.listeners = new ArrayList();
+            this.listeners = new ArrayList<>();
         }
     }
 
-    private Map deserializeMap(ObjectDataInput objectDataInput, boolean concurrent) throws IOException {
+    private <K, V> Map<K, V> deserializeMap(ObjectDataInput objectDataInput, boolean concurrent) throws IOException {
         int mapSize = objectDataInput.readInt();
-        Map map = concurrent ? new ConcurrentHashMap() : MapUtil.createHashMap(mapSize);
+        Map<K, V> map = concurrent ? new ConcurrentHashMap<>() : MapUtil.createHashMap(mapSize);
         for (int i = 0; i < mapSize; i++) {
-            //noinspection unchecked
             try {
                 map.put(objectDataInput.readObject(), objectDataInput.readObject());
             } catch (Exception ex) {

@@ -15,13 +15,13 @@
 
 package com.hazelcast.session;
 
+import jakarta.servlet.ServletException;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +30,9 @@ public class HazelcastSessionChangeValve extends ValveBase {
 
     private final Log log = LogFactory.getLog(HazelcastSessionChangeValve.class);
 
-    private SessionManager sessionManager;
+    private final SessionManager sessionManager;
 
-    private Map<String, String> handledSessions = new HashMap<String, String>();
+    private final Map<String, String> handledSessions = new HashMap<>();
 
     public HazelcastSessionChangeValve(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
