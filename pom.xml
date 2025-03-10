@@ -43,12 +43,9 @@
         <spring.boot.version>3.4.3</spring.boot.version>
 
         <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
-        <maven.gpg.plugin.version>1.4</maven.gpg.plugin.version>
 
         <maven.surefire.plugin.version>3.5.2</maven.surefire.plugin.version>
         <maven.checkstyle.plugin.version>2.15</maven.checkstyle.plugin.version>
-        <maven.sonar.plugin.version>5.0.0.4389</maven.sonar.plugin.version>
-        <maven.jacoco.plugin.version>0.8.12</maven.jacoco.plugin.version>
         <bytebuddy.version>1.17.4</bytebuddy.version>
         
         <sonar.jacoco.jar>${basedir}/lib/jacocoagent.jar</sonar.jacoco.jar>
@@ -82,13 +79,6 @@
         <developerConnection>scm:git:git@github.com:hazelcast/hazelcast-tomcat-sessionmanager.git</developerConnection>
         <url>https://github.com/hazelcast/hazelcast-tomcat-sessionmanager/</url>
     </scm>
-    <developers>
-        <developer>
-            <id>mesutcelik</id>
-            <name>Mesut Celik</name>
-            <email>mesut@hazelcast.com</email>
-        </developer>
-    </developers>
 
     <organization>
         <name>Hazelcast, Inc.</name>
@@ -224,13 +214,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
@@ -329,7 +312,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven.gpg.plugin.version}</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -439,7 +422,7 @@
                 <dependency>
                     <groupId>org.sonarsource.java</groupId>
                     <artifactId>sonar-jacoco-listeners</artifactId>
-                    <version>3.10</version>
+                    <version>5.14.0.18788</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -448,7 +431,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>${maven.jacoco.plugin.version}</version>
+                        <version>0.8.12</version>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -473,7 +456,7 @@
                     <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
-                        <version>${maven.sonar.plugin.version}</version>
+                        <version>5.0.0.4389</version>
                     </plugin>
                 </plugins>
             </build>
@@ -481,7 +464,7 @@
         <profile>
             <id>master</id>
             <properties>
-                <hazelcast.version>5.0-SNAPSHOT</hazelcast.version>
+                <hazelcast.version>6.0-SNAPSHOT</hazelcast.version>
             </properties>
             <dependencies>
                 <dependency>
