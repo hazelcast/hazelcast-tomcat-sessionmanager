@@ -2,11 +2,10 @@ package com.hazelcast.session;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
-import org.apache.catalina.LifecycleEvent;
-import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.StandardRoot;
 
 public class Tomcat10AsyncConfigurator
         extends WebContainerConfigurator<Tomcat> {
@@ -21,7 +20,7 @@ public class Tomcat10AsyncConfigurator
     }
 
     @Override
-    public Tomcat configure() throws Exception {
+    public Tomcat configure() {
         Tomcat tomcat = new Tomcat();
         if (!clientOnly) {
             P2PLifecycleListener listener = new P2PLifecycleListener();
@@ -51,6 +50,10 @@ public class Tomcat10AsyncConfigurator
 
             context.addChild(asyncServlet);
             context.addServletMappingDecoded("/*", "asyncServlet");
+            if (context.getResources() == null) {
+                context.setResources(new StandardRoot());
+            }
+            context.getResources().setReadOnly(true);
 
         } catch (final Exception e) {
             throw new IllegalStateException(e);
@@ -62,12 +65,9 @@ public class Tomcat10AsyncConfigurator
         context.setCookies(true);
         context.setBackgroundProcessorDelay(1);
         context.setReloadable(true);
-        context.addLifecycleListener(new LifecycleListener() {
-            @Override
-            public void lifecycleEvent(LifecycleEvent event) {
-                if (Lifecycle.BEFORE_START_EVENT.equals(event.getType())) {
-                    ((Context) event.getLifecycle()).setSessionTimeout(sessionTimeout);
-                }
+        context.addLifecycleListener(event -> {
+            if (Lifecycle.BEFORE_START_EVENT.equals(event.getType())) {
+                ((Context) event.getLifecycle()).setSessionTimeout(sessionTimeout);
             }
         });
 

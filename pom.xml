@@ -489,6 +489,7 @@
                                 -Dhazelcast.logging.type=none
                                 -Dhazelcast.test.use.network=true
                                 -Dhazelcast.graceful.shutdown.max.wait=10
+                                -Djava.net.preferIPv4Stack=true
                             </argLine>
                         </configuration>
                     </plugin>
