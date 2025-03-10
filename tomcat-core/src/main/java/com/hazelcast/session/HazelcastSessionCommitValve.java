@@ -22,7 +22,6 @@ import org.apache.catalina.valves.ValveBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class HazelcastSessionCommitValve extends ValveBase {
@@ -36,7 +35,7 @@ public class HazelcastSessionCommitValve extends ValveBase {
     }
 
     @Override
-    public void invoke(Request request, Response response) throws IOException, ServletException {
+    public void invoke(Request request, Response response) throws IOException {
         try {
             getNext().invoke(request, response);
         } catch (Exception e) {

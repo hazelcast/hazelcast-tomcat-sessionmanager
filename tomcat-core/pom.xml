@@ -11,7 +11,11 @@
   ~ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
   ~ WARRANTIES OF ANY KIND, either express or implied. See the License for the
   ~ specific language governing permissions and limitations under the License.
-  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>hazelcast-tomcat-sessionmanager</artifactId>
         <groupId>com.hazelcast</groupId>
@@ -20,11 +24,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Hazelcast Tomcat Session Manager(Tomcat-Core)</name>
-    <groupId>com.hazelcast</groupId>
     <artifactId>tomcat-core</artifactId>
     <packaging>jar</packaging>
     <properties>
-        <tomcat-version>6.0.41</tomcat-version>
+        <tomcat-version>10.1.36</tomcat-version>
         <!-- needed for checkstyle/findbugs -->
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
@@ -32,7 +35,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
-            <artifactId>catalina</artifactId>
+            <artifactId>tomcat-catalina</artifactId>
             <version>${tomcat-version}</version>
             <scope>provided</scope>
         </dependency>
@@ -48,7 +51,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.2</version>
+                <version>3.4.2</version>
                 <executions>
                     <execution>
                         <goals>
