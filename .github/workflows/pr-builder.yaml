@@ -20,12 +20,12 @@ jobs:
 
       - name: Build
         run: |
-          mvn install -DskipTests -B -P checkstyle -U
+          mvn install -DskipTests --batch-mode --update-snapshots -Pcheckstyle
 
       - name: Findbugs
         run: |
-          mvn compile -Pfindbugs -B
+          mvn compile -Pfindbugs --batch-mode
 
       - name: Verify
         run: |
-          mvn verify -B -Dmaven.test.failure.ignore=false
+          mvn verify --batch-mode -Dmaven.test.failure.ignore=false
