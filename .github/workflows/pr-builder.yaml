@@ -7,8 +7,7 @@ on:
 
 jobs:
   build:
-    # using ubicloud instead of "standard" ubuntu-latest fixes issue with members not being able to connect via multicast
-    runs-on: ubicloud-standard-8
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout the merge commit
