@@ -20,11 +20,11 @@ jobs:
 
       - name: Build
         run: |
-          mvn install -DskipTests --batch-mode --update-snapshots -Pcheckstyle
+          mvn install -DskipTests --no-transfer-progress --batch-mode --update-snapshots --activate-profiles checkstyle
 
       - name: Findbugs
         run: |
-          mvn compile -Pfindbugs --batch-mode
+          mvn compile --activate-profiles findbugs --batch-mode
 
       - name: Verify
         run: |
