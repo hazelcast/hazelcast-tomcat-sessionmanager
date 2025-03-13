@@ -18,14 +18,18 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
+      - name: Override MAVEN_OPTS
+        run: |-
+          export MAVEN_ARGS="--batch-mode --quiet --no-transfer-progress"
+
       - name: Build
         run: |
-          mvn install -DskipTests --no-transfer-progress --batch-mode --update-snapshots --activate-profiles checkstyle
+          mvn install -DskipTests --update-snapshots --activate-profiles checkstyle
 
       - name: SpotBugs
         run: |
-          mvn compile --activate-profiles spotbugs --batch-mode
+          mvn compile --activate-profiles spotbugs
 
       - name: Verify
         run: |
-          mvn verify --batch-mode -Dmaven.test.failure.ignore=false
+          mvn verify -Dmaven.test.failure.ignore=false
