@@ -35,7 +35,7 @@ public class ClientServerLifecycleListener implements LifecycleListener {
         if ("before_start".equals(event.getType())) {
 
             try {
-                config = new ClientServerConfigLoader().load(getConfigLocation());
+                ClientServerLifecycleListener.config = new ClientServerConfigLoader().load(getConfigLocation());
             } catch (Exception e) {
                 throw new RuntimeException("failed to load Config:", e);
             }

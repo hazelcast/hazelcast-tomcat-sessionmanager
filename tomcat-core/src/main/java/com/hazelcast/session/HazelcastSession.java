@@ -26,6 +26,7 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.lang.reflect.Field;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ import java.util.concurrent.TimeUnit;
 
 public class HazelcastSession extends StandardSession implements DataSerializable {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
     private static final Field ATTRIBUTES_FIELD;
     private static final Log LOG = LogFactory.getLog(HazelcastSession.class);
 

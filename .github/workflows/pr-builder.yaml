@@ -22,9 +22,9 @@ jobs:
         run: |
           mvn install -DskipTests --no-transfer-progress --batch-mode --update-snapshots --activate-profiles checkstyle
 
-      - name: Findbugs
+      - name: SpotBugs
         run: |
-          mvn compile --activate-profiles findbugs --batch-mode
+          mvn compile --activate-profiles spotbugs --batch-mode
 
       - name: Verify
         run: |

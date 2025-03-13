@@ -43,7 +43,6 @@
 
         <maven.surefire.plugin.version>3.5.2</maven.surefire.plugin.version>
         <maven.checkstyle.plugin.version>2.15</maven.checkstyle.plugin.version>
-        <maven.findbugs.plugin.version>3.0.5</maven.findbugs.plugin.version>
         <maven.sonar.plugin.version>3.3.0.603</maven.sonar.plugin.version>
         <maven.jacoco.plugin.version>0.7.9</maven.jacoco.plugin.version>
         <bytebuddy.version>1.6.12</bytebuddy.version>
@@ -262,9 +261,9 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>${maven.findbugs.plugin.version}</version>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <version>4.8.6.6</version>
                         <executions>
                             <execution>
                                 <phase>compile</phase>
@@ -274,8 +273,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <failOnError>true</failOnError>
-                            <excludeFilterFile>${main.basedir}/findbugs/findbugs-exclude.xml</excludeFilterFile>
+                            <excludeFilterFile>${main.basedir}/spotbugs/spotbugs-excludes.xml</excludeFilterFile>
                         </configuration>
                     </plugin>
 
