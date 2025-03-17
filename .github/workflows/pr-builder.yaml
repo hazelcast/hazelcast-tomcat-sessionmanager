@@ -20,7 +20,7 @@ jobs:
 
       - name: Override MAVEN_OPTS
         run: |-
-          export MAVEN_ARGS="--batch-mode --quiet --no-transfer-progress"
+          echo 'MAVEN_ARGS="--batch-mode --quiet --no-transfer-progress"' >> "$GITHUB_ENV"
 
       - name: Build
         run: |
