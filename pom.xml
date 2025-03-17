@@ -135,7 +135,7 @@
                 <configuration>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <argLine>
-                        -Xms2g -Xmx2g
+                        -Xms1g -Xmx1g
                         -Dhazelcast.hidensity.check.freememory=false
                         -Dhazelcast.phone.home.enabled=false
                         -Dhazelcast.mancenter.enabled=false
