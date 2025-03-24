@@ -30,9 +30,9 @@ public class HazelcastSessionChangeValve extends ValveBase {
 
     private final Log log = LogFactory.getLog(HazelcastSessionChangeValve.class);
 
-    private SessionManager sessionManager;
+    private final SessionManager sessionManager;
 
-    private Map<String, String> handledSessions = new HashMap<String, String>();
+    private final Map<String, String> handledSessions = new HashMap<String, String>();
 
     public HazelcastSessionChangeValve(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
