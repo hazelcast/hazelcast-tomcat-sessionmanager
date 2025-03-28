@@ -10,7 +10,7 @@
     </parent>
 
     <properties>
-        <tomcat-version>9.0.27</tomcat-version>
+        <tomcat-version>9.0.90</tomcat-version>
         <!-- needed for checkstyle/findbugs -->
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
