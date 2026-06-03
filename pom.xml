@@ -51,7 +51,7 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.language>java</sonar.language>
         <sonar.verbose>true</sonar.verbose>
-        <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
+        <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
         <kryo.version>5.0.0-RC4</kryo.version>
         <javaModuleArgs>
             --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
