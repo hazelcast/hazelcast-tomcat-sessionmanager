@@ -154,7 +154,7 @@ public class HazelcastSession extends StandardSession implements DataSerializabl
         serializeMap(notes, objectDataOutput);
     }
 
-    private <K, V>void serializeMap(Map<K, V> map, ObjectDataOutput objectDataOutput) throws IOException {
+    private <K, V> void serializeMap(Map<K, V> map, ObjectDataOutput objectDataOutput) throws IOException {
         HashMap<Object, Object> serializableEntries = new HashMap<>();
         for (Map.Entry<K, V> entry : map.entrySet()) {
             Object key = entry.getKey();
