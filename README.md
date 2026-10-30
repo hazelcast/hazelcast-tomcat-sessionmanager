@@ -28,7 +28,7 @@
 
 ***Features***
 
-- Seamless Tomcat 10.1 & 11 integration.
+- Seamless Tomcat 9, 10.1 & 11 integration.
 - Support for sticky and non-sticky sessions.
 - Tomcat failover.
 - Deferred write for performance boost.
@@ -38,12 +38,13 @@
 
 Tomcat Web Session Replication Module has been tested against the following containers.
 
+- Tomcat 9.0.x - It can be downloaded <a href="https://tomcat.apache.org/download-90.cgi" target="_blank">here</a>.
 - Tomcat 10.1.x - It can be downloaded <a href="https://tomcat.apache.org/download-10.cgi" target="_blank">here</a>.
 - Tomcat 11.0.x - It can be downloaded <a href="https://tomcat.apache.org/download-11.cgi" target="_blank">here</a>.
 
-The latest tested versions are **10.1.36** and **11.0.5**.
+The latest tested versions are **9.0.123**, **10.1.61** and **11.0.27**.
 
-Tomcat 10.1 and 11 use the `jakarta.servlet` namespace, and so does Hazelcast Tomcat Session Manager 2.3 and later. If you run Tomcat 8.5 or 9 (`javax.servlet`), stay on Hazelcast Tomcat Session Manager 2.2.
+Tomcat 10.1 and 11 use the `jakarta.servlet` namespace and Tomcat 9 uses `javax.servlet`. The three artifacts are built from the same sources: `hazelcast-tomcat9-sessionmanager` is the `javax.servlet` build, produced with the <a href="https://projects.eclipse.org/projects/technology.transformer" target="_blank">Eclipse Transformer</a>, for installations that cannot move to Tomcat 10.1 or 11 yet. Tomcat 9.0 support ends on 31 March 2027; the Tomcat team plans a 9.1 branch with support until 31 December 2030. Tomcat 7, 8 and 8.5 users stay on Hazelcast Tomcat Session Manager 2.2.
 <br></br>
 
 ***Requirements***
@@ -74,7 +75,7 @@ The following steps configure a sample P2P for Hazelcast Session Replication.
 1. Go to <a href="http://www.hazelcast.org/" target="_blank">hazelcast.org</a> and download the latest Hazelcast.
 2. Unzip the Hazelcast zip file into the folder `$HAZELCAST_ROOT`.
 3. Go to <a href="https://github.com/hazelcast/hazelcast-tomcat-sessionmanager/releases" target="_blank">hazelcast-tomcat-sessionmanager</a> repository and download the latest version.
-4. Put `$HAZELCAST_ROOT/lib/hazelcast-`<*version*>`.jar`, `hazelcast-tomcat`<*tomcatversion*>`-sessionmanager-`<*version*>`.jar` (`tomcat10` for Tomcat 10.1, `tomcat11` for Tomcat 11) and `hazelcast.xml` (if you want to change defaults) in the folder `$CATALINA_HOME/lib/`.
+4. Put `$HAZELCAST_ROOT/lib/hazelcast-`<*version*>`.jar`, `hazelcast-tomcat`<*tomcatversion*>`-sessionmanager-`<*version*>`.jar` (`tomcat9`, `tomcat10` or `tomcat11` to match your Tomcat version) and `hazelcast.xml` (if you want to change defaults) in the folder `$CATALINA_HOME/lib/`.
 
 5. Put a `<Listener>` element into the file `$CATALINA_HOME$/conf/server.xml` as shown below.
 
@@ -122,7 +123,7 @@ The following steps configure a sample Client/Server for Hazelcast Session Repli
 1. Go to <a href="http://www.hazelcast.org/" target="_blank">hazelcast.org</a> and download the latest Hazelcast.
 2. Unzip the Hazelcast zip file into the folder `$HAZELCAST_ROOT`.
 3. Go to <a href="https://github.com/hazelcast/hazelcast-tomcat-sessionmanager/releases" target="_blank">hazelcast-tomcat-sessionmanager</a> repository and download the latest version.
-4. Put `$HAZELCAST_ROOT/lib/hazelcast-`<*version*>`.jar`, `hazelcast-tomcat`<*tomcatversion*>`-sessionmanager-`<*version*>`.jar` (`tomcat10` for Tomcat 10.1, `tomcat11` for Tomcat 11) and `hazelcast.xml` (if you want to change defaults) in the folder `$CATALINA_HOME/lib/`.
+4. Put `$HAZELCAST_ROOT/lib/hazelcast-`<*version*>`.jar`, `hazelcast-tomcat`<*tomcatversion*>`-sessionmanager-`<*version*>`.jar` (`tomcat9`, `tomcat10` or `tomcat11` to match your Tomcat version) and `hazelcast.xml` (if you want to change defaults) in the folder `$CATALINA_HOME/lib/`.
 
 5. Put a `<Listener>` element into the `$CATALINA_HOME$/conf/server.xml` as shown below.
 
@@ -247,7 +248,7 @@ When Tomcat Failure happens and Load Balancer cannot redirect the request to the
 
 # Spring Boot Auto-configuration
 
-Starting with v2.2, Hazelcast Tomcat Session Manager supports auto-configuration when used with Spring Boot. The only thing you need to do is to add Hazelcast Tomcat Session Manager (`hazelcast-tomcat10-sessionmanager` for Spring Boot 3.x, which embeds Tomcat 10.1) and Hazelcast libraries to the classpath. This will set Hazelcast Session Manager as the session manager of the Tomcat. If you would like to configure the session manager properties, you can setup the following properties in your `application.properties` file:
+Starting with v2.2, Hazelcast Tomcat Session Manager supports auto-configuration when used with Spring Boot. The only thing you need to do is to add Hazelcast Tomcat Session Manager and Hazelcast libraries to the classpath: `hazelcast-tomcat10-sessionmanager` for Spring Boot 3.5, which embeds Tomcat 10.1, or `hazelcast-tomcat11-sessionmanager` for Spring Boot 4.x, which embeds Tomcat 11. With Spring Boot 4.x also add `spring-boot-starter-hazelcast`, which is where Spring Boot 4 keeps its Hazelcast auto-configuration. There is no auto-configuration for Tomcat 9, as Spring Boot 2.7 is out of support. This will set Hazelcast Session Manager as the session manager of the Tomcat. If you would like to configure the session manager properties, you can setup the following properties in your `application.properties` file:
 
 - `tsm.autoconfig.enabled`: Allows to enable/disable Spring Boot Auto-configuration for Hazelcast Tomcat Session Manager. Default is `true`, you need to set it to `false` if you would like to configure Hazelcast Tomcat Session Manager manually with Spring Boot.
 - `tsm.config.location`: Allows to provide Hazelcast member or client configuration. If not provided, `hazelcast.xml` in the classpath is used by default. 
