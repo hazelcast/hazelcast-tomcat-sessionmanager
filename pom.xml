@@ -278,7 +278,7 @@
         </profile>
 
         <profile>
-            <id>findbugs</id>
+            <id>spotbugs</id>
             <build>
                 <plugins>
                     <plugin>
