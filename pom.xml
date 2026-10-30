@@ -35,25 +35,24 @@
         <timestamp>${maven.build.timestamp}</timestamp>
         <extraVmArgs/>
 
-        <hazelcast.version>5.5.0</hazelcast.version>
+        <hazelcast.version>5.7.0</hazelcast.version>
 
         <servlet.api.version>6.1.0</servlet.api.version>
         <junit.version>4.11</junit.version>
         <log4j.version>1.2.12</log4j.version>
-        <spring.boot.version>3.4.3</spring.boot.version>
 
         <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
 
-        <maven.surefire.plugin.version>3.5.2</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>3.6.1</maven.surefire.plugin.version>
         <maven.checkstyle.plugin.version>2.15</maven.checkstyle.plugin.version>
-        <bytebuddy.version>1.17.4</bytebuddy.version>
+        <bytebuddy.version>1.18.16</bytebuddy.version>
         
         <sonar.jacoco.jar>${basedir}/lib/jacocoagent.jar</sonar.jacoco.jar>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.language>java</sonar.language>
         <sonar.verbose>true</sonar.verbose>
-        <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
-        <kryo.version>5.0.0-RC4</kryo.version>
+        <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
+        <kryo.version>5.7.1</kryo.version>
         <javaModuleArgs>
             --add-exports java.base/jdk.internal.ref=ALL-UNNAMED
             --add-opens java.base/java.nio=ALL-UNNAMED
@@ -173,14 +172,7 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.11.4</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>${spring.boot.version}</version>
+                <version>6.1.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -226,7 +218,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.27.3</version>
+            <version>3.27.7</version>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>

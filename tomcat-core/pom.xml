@@ -27,7 +27,7 @@
     <artifactId>tomcat-core</artifactId>
     <packaging>jar</packaging>
     <properties>
-        <tomcat-version>10.1.36</tomcat-version>
+        <tomcat-version>10.1.61</tomcat-version>
         <!-- needed for checkstyle/findbugs -->
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
@@ -51,7 +51,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.2</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <goals>
