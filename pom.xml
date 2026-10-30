@@ -86,6 +86,8 @@
 
     <modules>
         <module>tomcat-core</module>
+        <module>tomcat-core-javax</module>
+        <module>tomcat9</module>
         <module>tomcat10</module>
         <module>tomcat11</module>
     </modules>

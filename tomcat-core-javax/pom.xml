@@ -1,0 +1,135 @@
+<!--
+  ~ Copyright 2020 Hazelcast Inc.
+  ~
+  ~ Licensed under the Hazelcast Community License (the "License"); you may not use
+  ~ this file except in compliance with the License. You may obtain a copy of the
+  ~ License at
+  ~
+  ~ http://hazelcast.com/hazelcast-community-license
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  ~ WARRANTIES OF ANY KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>hazelcast-tomcat-sessionmanager</artifactId>
+        <groupId>com.hazelcast</groupId>
+        <version>2.3-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      tomcat-core compiled for the javax.servlet namespace, for Tomcat 9.
+
+      This module has no sources. It takes the tomcat-core jar and test-jar and
+      rewrites every jakarta.servlet reference to javax.servlet with the Eclipse
+      Transformer, so Tomcat 9 keeps getting the same code and fixes as Tomcat
+      10.1 and 11 without a second copy of the sources.
+    -->
+    <name>Hazelcast Tomcat Session Manager(Tomcat-Core, javax.servlet)</name>
+    <artifactId>tomcat-core-javax</artifactId>
+    <packaging>jar</packaging>
+    <properties>
+        <!-- needed for checkstyle/findbugs -->
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
+
+    <dependencies>
+        <!-- provided so the jakarta.servlet jars are not passed on to users of this module -->
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>tomcat-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>tomcat-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.transformer</groupId>
+                <artifactId>transformer-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <rules>
+                        <jakartaDefaults>true</jakartaDefaults>
+                        <invert>true</invert>
+                    </rules>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <artifact>
+                                <groupId>com.hazelcast</groupId>
+                                <artifactId>tomcat-core</artifactId>
+                                <version>${project.version}</version>
+                            </artifact>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <artifact>
+                                <groupId>com.hazelcast</groupId>
+                                <artifactId>tomcat-core</artifactId>
+                                <version>${project.version}</version>
+                                <classifier>tests</classifier>
+                            </artifact>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <javadoc>true</javadoc>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.7.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
