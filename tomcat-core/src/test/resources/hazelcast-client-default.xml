@@ -21,6 +21,12 @@
                   xsi:schemaLocation="http://www.hazelcast.com/schema/client-config
                   http://www.hazelcast.com/schema/client-config/hazelcast-client-config-4.0.xsd">
 
+    <connection-strategy>
+        <connection-retry>
+            <cluster-connect-timeout-millis>20000</cluster-connect-timeout-millis>
+        </connection-retry>
+    </connection-strategy>
+
     <serialization>
         <serializers>
             <global-serializer>com.hazelcast.session.HazelcastGlobalKryoSerializer</global-serializer>
