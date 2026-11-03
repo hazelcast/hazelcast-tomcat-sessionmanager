@@ -16,6 +16,7 @@
 package com.hazelcast.session;
 
 import jakarta.servlet.ServletException;
+import org.apache.catalina.Session;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
@@ -60,8 +61,13 @@ public class HazelcastSessionChangeValve extends ValveBase {
             return;
         }
 
+        // Expire only the copy Tomcat loaded under the old ID.
+        // Using request.getSession() here could expire the renamed session instead.
+        Session staleSession = request.getSessionInternal(false);
         request.changeSessionId(getOrCreateHandledSessionId(currentSessionId, jvmRoute));
-        request.getSession().invalidate();
+        if (staleSession != null) {
+            staleSession.expire();
+        }
     }
 
     private String getOrCreateHandledSessionId(String currentSessionId, String jvmRoute)
