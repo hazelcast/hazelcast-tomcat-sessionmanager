@@ -6,6 +6,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.junit.Test;
 
+import static com.hazelcast.test.HazelcastTestSupport.sleepSeconds;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractSessionExpireTest extends AbstractHazelcastSessionsTest {

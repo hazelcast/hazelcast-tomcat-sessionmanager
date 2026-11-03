@@ -6,13 +6,16 @@ import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.StandardRoot;
 
 import java.io.File;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
-public class Tomcat9Configurator
-        extends WebContainerConfigurator<Tomcat> {
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+public class Tomcat9Configurator extends WebContainerConfigurator<Tomcat> {
 
     private Tomcat tomcat;
     private HazelcastSessionManager manager;
@@ -29,7 +32,7 @@ public class Tomcat9Configurator
     @Override
     public Tomcat configure() throws Exception {
         final URL root = new URL(TestServlet.class.getResource("/"), "../../../tomcat-core/target/test-classes");
-        final String cleanedRoot = URLDecoder.decode(root.getFile(), "UTF-8");
+        final String cleanedRoot = URLDecoder.decode(root.getFile(), UTF_8);
 
         final String fileSeparator = File.separator.equals("\\") ? "\\\\" : File.separator;
         final String docBase = cleanedRoot + File.separator + appName + fileSeparator;
@@ -57,6 +60,10 @@ public class Tomcat9Configurator
         Context context;
         try {
             context = tomcat.addWebapp(tomcat.getHost(), "/", docBase);
+            if (context.getResources() == null) {
+                context.setResources(new StandardRoot());
+            }
+            context.getResources().setReadOnly(true);
         } catch (final Exception e) {
             throw new IllegalStateException(e);
         }
@@ -67,12 +74,9 @@ public class Tomcat9Configurator
         context.setCookies(true);
         context.setBackgroundProcessorDelay(1);
         context.setReloadable(true);
-        context.addLifecycleListener(new LifecycleListener() {
-            @Override
-            public void lifecycleEvent(LifecycleEvent event) {
-                if (Lifecycle.BEFORE_START_EVENT.equals(event.getType())) {
-                    ((Context) event.getLifecycle()).setSessionTimeout(sessionTimeout);
-                }
+        context.addLifecycleListener(event -> {
+            if (Lifecycle.BEFORE_START_EVENT.equals(event.getType())) {
+                ((Context) event.getLifecycle()).setSessionTimeout(sessionTimeout);
             }
         });
 

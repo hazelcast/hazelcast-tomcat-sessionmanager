@@ -15,13 +15,14 @@
 
 package com.hazelcast.session;
 
+import jakarta.servlet.ServletException;
+import org.apache.catalina.Session;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class HazelcastSessionChangeValve extends ValveBase {
 
     private final SessionManager sessionManager;
 
-    private final Map<String, String> handledSessions = new HashMap<String, String>();
+    private final Map<String, String> handledSessions = new HashMap<>();
 
     public HazelcastSessionChangeValve(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
@@ -60,8 +61,13 @@ public class HazelcastSessionChangeValve extends ValveBase {
             return;
         }
 
+        // Expire only the copy Tomcat loaded under the old ID.
+        // Using request.getSession() here could expire the renamed session instead.
+        Session staleSession = request.getSessionInternal(false);
         request.changeSessionId(getOrCreateHandledSessionId(currentSessionId, jvmRoute));
-        request.getSession().invalidate();
+        if (staleSession != null) {
+            staleSession.expire();
+        }
     }
 
     private String getOrCreateHandledSessionId(String currentSessionId, String jvmRoute)
