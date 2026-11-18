@@ -26,8 +26,8 @@
     <!--
       tomcat-core compiled for the javax.servlet namespace, for Tomcat 9.
 
-      This module has no sources. It copies tomcat-core's compiled classes and test
-      classes, then rewrites jakarta.servlet references to javax.servlet with the Eclipse
+      This module has no sources. It unpacks tomcat-core's jar and test jar, then
+      rewrites jakarta.servlet references to javax.servlet with the Eclipse
       Transformer, so Tomcat 9 keeps getting the same code and fixes as Tomcat
       10.1 and 11 without a second copy of the sources.
     -->
@@ -66,44 +66,43 @@
 
     <build>
         <plugins>
-            <!-- Copy reactor output directories so compile/test do not require packaged jars. -->
+            <!--
+              Unpack tomcat-core's jar and test jar. The plugin can only unpack a jar, so
+              mvn compile and mvn test from the root stop here; run mvn package or later.
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.11.0</version>
                 <executions>
                     <execution>
-                        <id>copy-core-classes</id>
+                        <id>unpack-core-classes</id>
                         <phase>process-resources</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
+                            <includeGroupIds>com.hazelcast</includeGroupIds>
+                            <includeArtifactIds>tomcat-core</includeArtifactIds>
+                            <excludeClassifiers>tests</excludeClassifiers>
+                            <excludes>META-INF/maven/**,META-INF/MANIFEST.MF</excludes>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <overwrite>true</overwrite>
-                            <resources>
-                                <resource>
-                                    <directory>${project.parent.basedir}/tomcat-core/target/classes</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
+                            <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>copy-core-test-classes</id>
+                        <id>unpack-core-test-classes</id>
                         <phase>process-test-resources</phase>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
+                            <includeGroupIds>com.hazelcast</includeGroupIds>
+                            <includeArtifactIds>tomcat-core</includeArtifactIds>
+                            <includeClassifiers>tests</includeClassifiers>
+                            <excludes>META-INF/maven/**,META-INF/MANIFEST.MF</excludes>
                             <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
-                            <overwrite>true</overwrite>
-                            <resources>
-                                <resource>
-                                    <directory>${project.parent.basedir}/tomcat-core/target/test-classes</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
+                            <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
                     </execution>
                 </executions>
