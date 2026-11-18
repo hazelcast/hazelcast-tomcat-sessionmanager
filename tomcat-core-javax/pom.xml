@@ -35,7 +35,6 @@
     <artifactId>tomcat-core-javax</artifactId>
     <packaging>jar</packaging>
     <properties>
-        <tomcat-version>9.0.123</tomcat-version>
         <!-- needed for checkstyle/findbugs -->
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
@@ -45,7 +44,7 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina</artifactId>
-            <version>${tomcat-version}</version>
+            <version>${tomcat9.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- provided so the jakarta.servlet jars are not passed on to users of this module -->

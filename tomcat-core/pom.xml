@@ -27,7 +27,6 @@
     <artifactId>tomcat-core</artifactId>
     <packaging>jar</packaging>
     <properties>
-        <tomcat-version>10.1.61</tomcat-version>
         <!-- needed for checkstyle/findbugs -->
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
@@ -36,7 +35,7 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina</artifactId>
-            <version>${tomcat-version}</version>
+            <version>${tomcat10.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

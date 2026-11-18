@@ -37,6 +37,11 @@
 
         <hazelcast.version>5.7.0</hazelcast.version>
 
+        <!-- tomcat-core builds against Tomcat 10.1, and tomcat-core-javax against Tomcat 9 -->
+        <tomcat9.version>9.0.123</tomcat9.version>
+        <tomcat10.version>10.1.61</tomcat10.version>
+        <tomcat11.version>11.0.27</tomcat11.version>
+
         <servlet.api.version>6.1.0</servlet.api.version>
         <junit.version>4.11</junit.version>
         <log4j.version>1.2.12</log4j.version>

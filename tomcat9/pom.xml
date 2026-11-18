@@ -17,7 +17,6 @@
       is out of support.
     -->
     <properties>
-        <tomcat-version>9.0.123</tomcat-version>
         <!-- needed for checkstyle/findbugs -->
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
@@ -73,19 +72,19 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina</artifactId>
-            <version>${tomcat-version}</version>
+            <version>${tomcat9.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-coyote</artifactId>
-            <version>${tomcat-version}</version>
+            <version>${tomcat9.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jasper</artifactId>
-            <version>${tomcat-version}</version>
+            <version>${tomcat9.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
