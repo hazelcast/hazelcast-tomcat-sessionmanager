@@ -22,10 +22,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="TRACE">
+        <Root level="INFO">
             <AppenderRef ref="Console"/>
         </Root>
-        <Logger name="com.hazelcast.session" level="TRACE"/>
+        <Logger name="com.hazelcast.session" level="DEBUG"/>
 
     </Loggers>
 </Configuration>

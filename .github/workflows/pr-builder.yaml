@@ -25,12 +25,12 @@ jobs:
 
       - name: Build
         run: |
-          mvn install -DskipTests --update-snapshots --activate-profiles checkstyle
+          mvn clean compile --update-snapshots --activate-profiles checkstyle
 
-      - name: SpotBugs
+      - name: Test from clean outputs
         run: |
-          mvn compile --activate-profiles spotbugs
+          mvn test -Dmaven.test.failure.ignore=false
 
-      - name: Verify
+      - name: Verify packaging and SpotBugs
         run: |
-          mvn verify -Dmaven.test.failure.ignore=false
+          mvn verify -DskipTests --activate-profiles spotbugs

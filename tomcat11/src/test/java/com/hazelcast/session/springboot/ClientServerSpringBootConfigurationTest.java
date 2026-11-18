@@ -2,12 +2,12 @@ package com.hazelcast.session.springboot;
 
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.session.HazelcastSessionManagerConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 
 public class ClientServerSpringBootConfigurationTest
@@ -28,6 +28,8 @@ public class ClientServerSpringBootConfigurationTest
     }
 
     @SpringBootApplication
+    @ComponentScan(excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+            classes = P2PSpringBootConfigurationTest.SpringP2PApplication.class))
     @PropertySource("classpath:clientServer.properties")
     static class ClientServerApplication {
         public static void main(String[] args) {

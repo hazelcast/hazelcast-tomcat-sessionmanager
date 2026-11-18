@@ -26,8 +26,8 @@
     <!--
       tomcat-core compiled for the javax.servlet namespace, for Tomcat 9.
 
-      This module has no sources. It takes the tomcat-core jar and test-jar and
-      rewrites every jakarta.servlet reference to javax.servlet with the Eclipse
+      This module has no sources. It copies tomcat-core's compiled classes and test
+      classes, then rewrites jakarta.servlet references to javax.servlet with the Eclipse
       Transformer, so Tomcat 9 keeps getting the same code and fixes as Tomcat
       10.1 and 11 without a second copy of the sources.
     -->
@@ -35,11 +35,19 @@
     <artifactId>tomcat-core-javax</artifactId>
     <packaging>jar</packaging>
     <properties>
+        <tomcat-version>9.0.123</tomcat-version>
         <!-- needed for checkstyle/findbugs -->
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
 
     <dependencies>
+        <!-- Required when analyzing the transformed classes against the Tomcat 9 API. -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina</artifactId>
+            <version>${tomcat-version}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- provided so the jakarta.servlet jars are not passed on to users of this module -->
         <dependency>
             <groupId>com.hazelcast</groupId>
@@ -52,17 +60,58 @@
             <artifactId>tomcat-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Copy reactor output directories so compile/test do not require packaged jars. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-core-classes</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/tomcat-core/target/classes</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-core-test-classes</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/tomcat-core/target/test-classes</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.eclipse.transformer</groupId>
                 <artifactId>transformer-maven-plugin</artifactId>
                 <version>1.0.0</version>
-                <extensions>true</extensions>
                 <configuration>
                     <rules>
                         <jakartaDefaults>true</jakartaDefaults>
@@ -71,33 +120,43 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>default-jar</id>
+                        <id>transform-core-classes</id>
+                        <phase>compile</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>transform</goal>
                         </goals>
-                        <configuration>
-                            <artifact>
-                                <groupId>com.hazelcast</groupId>
-                                <artifactId>tomcat-core</artifactId>
-                                <version>${project.version}</version>
-                            </artifact>
-                        </configuration>
                     </execution>
                     <execution>
-                        <id>test-jar</id>
+                        <id>transform-core-test-classes</id>
+                        <phase>test-compile</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>transform</goal>
                         </goals>
                         <configuration>
-                            <artifact>
-                                <groupId>com.hazelcast</groupId>
-                                <artifactId>tomcat-core</artifactId>
-                                <version>${project.version}</version>
-                                <classifier>tests</classifier>
-                            </artifact>
+                            <transformDirectory>${project.build.testOutputDirectory}</transformDirectory>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- These tests run in tomcat-core and through the Tomcat 9 subclasses. -->
+                    <skipTests>true</skipTests>
+                </configuration>
             </plugin>
         </plugins>
     </build>
