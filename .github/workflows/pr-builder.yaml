@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # A hung test, such as a Hazelcast client retrying forever, would otherwise run until GitHub's six-hour limit.
     timeout-minutes: 60
 
     steps:
@@ -25,7 +26,7 @@ jobs:
 
       - name: Build
         run: |
-          mvn clean package -DskipTests --update-snapshots --activate-profiles checkstyle
+          mvn package -DskipTests --update-snapshots --activate-profiles checkstyle
 
       - name: Test from clean outputs
         run: |
