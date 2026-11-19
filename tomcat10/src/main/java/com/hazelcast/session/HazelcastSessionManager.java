@@ -28,14 +28,13 @@ import org.apache.juli.logging.LogFactory;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.time.Duration;
 
 public class HazelcastSessionManager extends ManagerBase implements Lifecycle, PropertyChangeListener, SessionManager {
 
     private static final String NAME = "HazelcastSessionManager";
 
     private static final int DEFAULT_SESSION_TIMEOUT = 60;
-
-    private static final int SECONDS_IN_MINUTE = 60;
 
     private final Log log = LogFactory.getLog(HazelcastSessionManager.class);
 
@@ -158,7 +157,8 @@ public class HazelcastSessionManager extends ManagerBase implements Lifecycle, P
     }
 
     private int getSessionTimeoutInSeconds() {
-        return getContext().getSessionTimeout() * SECONDS_IN_MINUTE;
+        long seconds = Duration.ofMinutes(getContext().getSessionTimeout()).toSeconds();
+        return (int) Math.max(Integer.MIN_VALUE, Math.min(Integer.MAX_VALUE, seconds));
     }
 
     @Override
