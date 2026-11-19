@@ -89,11 +89,13 @@ public class HazelcastSessionManagerConfiguration {
             manager.setDeferredWrite(deferredWrite);
             manager.setHazelcastInstanceName(hazelcastInstanceName);
             context.setManager(manager);
-            log.info(String.format(
-                    "Tomcat context is configured with HazelcastSessionManager => clientOnly: %s, mapName: %s, "
-                            + "isSticky: %s, processExpiresFrequency: %d, deferredWrite: %s, "
-                            + "hazelcastInstanceName: %s",
-                    clientOnly, mapName, sticky, processExpiresFrequency, deferredWrite, hazelcastInstanceName));
+            if (log.isInfoEnabled()) {
+                log.info(String.format(
+                        "Tomcat context is configured with HazelcastSessionManager => clientOnly: %s, mapName: %s, "
+                                + "isSticky: %s, processExpiresFrequency: %d, deferredWrite: %s, "
+                                + "hazelcastInstanceName: %s",
+                        clientOnly, mapName, sticky, processExpiresFrequency, deferredWrite, hazelcastInstanceName));
+            }
         });
     }
 
