@@ -5,8 +5,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 @WebServlet(asyncSupported = true, value = "/AsyncServlet")
 public class AsyncServlet extends HttpServlet {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AsyncServlet.class);
+    private static final Log LOGGER = LogFactory.getLog(AsyncServlet.class);
     private static final BlockingQueue<AsyncContext> queue = new ArrayBlockingQueue<>(20000);
 
     public AsyncServlet() {
