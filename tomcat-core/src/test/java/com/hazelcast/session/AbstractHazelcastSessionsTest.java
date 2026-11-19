@@ -2,7 +2,6 @@ package com.hazelcast.session;
 
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.Hazelcast;
-import com.hazelcast.test.HazelcastTestSupport;
 import org.apache.catalina.Manager;
 import org.apache.catalina.session.StandardSession;
 import org.apache.http.HttpEntity;
@@ -18,7 +17,7 @@ import org.junit.After;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport {
+public abstract class AbstractHazelcastSessionsTest {
 
     protected static int SERVER_PORT_1 = findFreeTCPPort();
     protected static int SERVER_PORT_2 = findFreeTCPPort();
@@ -31,8 +30,12 @@ public abstract class AbstractHazelcastSessionsTest extends HazelcastTestSupport
 
     @After
     public void cleanup() throws Exception {
-        instance1.stop();
-        instance2.stop();
+        if (instance1 != null) {
+            instance1.stop();
+        }
+        if (instance2 != null) {
+            instance2.stop();
+        }
         HazelcastClient.shutdownAll();
         Hazelcast.shutdownAll();
     }

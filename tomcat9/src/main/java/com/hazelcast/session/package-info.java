@@ -14,6 +14,6 @@
  */
 
 /**
- * This package provides Filterless Session Replication for Tomcat 9
+ * This package provides Filterless Session Replication for Tomcat 10
  */
 package com.hazelcast.session;
