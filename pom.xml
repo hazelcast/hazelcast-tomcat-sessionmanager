@@ -45,7 +45,7 @@
         <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
 
         <maven.surefire.plugin.version>3.6.1</maven.surefire.plugin.version>
-        <bytebuddy.version>1.18.16</bytebuddy.version>
+        <bytebuddy.version>1.18.17</bytebuddy.version>
         
         <sonar.jacoco.jar>${basedir}/lib/jacocoagent.jar</sonar.jacoco.jar>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
