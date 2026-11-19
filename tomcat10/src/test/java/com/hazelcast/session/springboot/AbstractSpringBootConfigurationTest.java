@@ -59,7 +59,7 @@ public abstract class AbstractSpringBootConfigurationTest {
             List<DistributedObject> distributedObjects = new ArrayList<>(hazelcastInstance.getDistributedObjects());
             assertThat(distributedObjects).isNotEmpty();
             IMap<Object, Object> sessionMap = hazelcastInstance.getMap(distributedObjects.get(0).getName());
-            assertEquals("Session should be created.",1, sessionMap.size());
+            assertEquals("Session should be created.", 1, sessionMap.size());
         });
     }
 }
