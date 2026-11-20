@@ -57,16 +57,14 @@ public class HazelcastSessionChangeValve extends ValveBase {
             requestedJvmRoute = currentSessionId.substring(index + 1);
         }
 
-        if (requestedJvmRoute == null || requestedJvmRoute.equals(jvmRoute)) {
-            return;
-        }
-
-        // Expire only the copy Tomcat loaded under the old ID.
-        // Using request.getSession() here could expire the renamed session instead.
-        Session staleSession = request.getSessionInternal(false);
-        request.changeSessionId(getOrCreateHandledSessionId(currentSessionId, jvmRoute));
-        if (staleSession != null) {
-            staleSession.expire();
+        if (requestedJvmRoute != null && !requestedJvmRoute.equals(jvmRoute)) {
+            // Expire only the copy Tomcat loaded under the old ID.
+            // Using request.getSession() here could expire the renamed session instead.
+            Session staleSession = request.getSessionInternal(false);
+            request.changeSessionId(getOrCreateHandledSessionId(currentSessionId, jvmRoute));
+            if (staleSession != null) {
+                staleSession.expire();
+            }
         }
     }
 
