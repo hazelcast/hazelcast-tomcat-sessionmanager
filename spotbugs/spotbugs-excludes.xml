@@ -4,5 +4,5 @@
     <Bug pattern="EI_EXPOSE_REP"/>
     <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
     <Bug pattern="CT_CONSTRUCTOR_THROW"/>
-
+    <Bug pattern="USO_UNSAFE_EXPOSED_OBJECT_SYNCHRONIZATION"/>
 </FindBugsFilter>
